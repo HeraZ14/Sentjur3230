@@ -1,10 +1,265 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Šentjur Metropola</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./vars.css">
+  <link rel="stylesheet" href="{% static './style.css' %}">
+  
+  
+  <style>
+   a,
+   button,
+   input,
+   select,
+   h1,
+   h2,
+   h3,
+   h4,
+   h5,
+   * {
+       box-sizing: border-box;
+       margin: 0;
+       padding: 0;
+       border: none;
+       text-decoration: none;
+       background: none;
+   
+       -webkit-font-smoothing: antialiased;
+   }
+   
+   menu, ol, ul {
+       list-style-type: none;
+       margin: 0;
+       padding: 0;
+   }
+   </style>
+  <title>Document</title>
 </head>
 <body>
-
+  <div class="examples-landing-page">
+    <div class="header">
+      <div class="block">
+        <img class="figma" style="background: url({% static 'figma0.png' %}) center; background-size: cover; background-repeat: no-repeat;" src="{% static 'figma0.png' %}" />
+      </div>
+      <div class="navigation-pill-list">
+        <div class="navigation-pill">
+          <div class="title">Domov</div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title">Šentjur merch</div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title">Ostali merch</div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title">Cenik</div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title">Kontakt</div>
+        </div>
+      </div>
+      <div class="header-auth">
+        <div class="button">
+          <div class="button2">Sign in</div>
+        </div>
+        <div class="button3">
+          <div class="button4">Register</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-image"></div>
+    <div class="panel-image-double"></div>
+    <div class="card-grid-icon">
+      <div class="text-content-heading">
+        <div class="heading">Heading</div>
+        <div class="subheading">Subheading</div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <img class="info" src="{% static 'info0.svg' %}" />
+          <div class="body">
+            <div class="text">
+              <div class="title2">Title</div>
+              <div
+                class="body-text-for-whatever-you-d-like-to-say-add-main-takeaway-points-quotes-anecdotes-or-even-a-very-very-short-story"
+              >
+                Body text for whatever you’d like to say. Add main takeaway
+                points, quotes, anecdotes, or even a very very short story.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card2">
+          <img class="info2" src="{% static 'info1.svg' %}" />
+          <div class="body">
+            <div class="text">
+              <div class="title2">Title</div>
+              <div
+                class="body-text-for-whatever-you-d-like-to-say-add-main-takeaway-points-quotes-anecdotes-or-even-a-very-very-short-story"
+              >
+                Body text for whatever you’d like to say. Add main takeaway
+                points, quotes, anecdotes, or even a very very short story.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card2">
+          <img class="info3" src="{% static 'info2.svg' %}" />
+          <div class="body">
+            <div class="text">
+              <div class="title2">Title</div>
+              <div
+                class="body-text-for-whatever-you-d-like-to-say-add-main-takeaway-points-quotes-anecdotes-or-even-a-very-very-short-story"
+              >
+                Body text for whatever you’d like to say. Add main takeaway
+                points, quotes, anecdotes, or even a very very short story.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card2">
+          <img class="info4" src="{% static 'info3.svg' %}" />
+          <div class="body">
+            <div class="text">
+              <div class="title2">Title</div>
+              <div
+                class="body-text-for-whatever-you-d-like-to-say-add-main-takeaway-points-quotes-anecdotes-or-even-a-very-very-short-story"
+              >
+                Body text for whatever you’d like to say. Add main takeaway
+                points, quotes, anecdotes, or even a very very short story.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card2">
+          <img class="info5" src="{% static 'info4.svg' %}" />
+          <div class="body">
+            <div class="text">
+              <div class="title2">Title</div>
+              <div
+                class="body-text-for-whatever-you-d-like-to-say-add-main-takeaway-points-quotes-anecdotes-or-even-a-very-very-short-story"
+              >
+                Body text for whatever you’d like to say. Add main takeaway
+                points, quotes, anecdotes, or even a very very short story.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card2">
+          <img class="info6" src="{% static 'info5.svg' %}" />
+          <div class="body">
+            <div class="text">
+              <div class="title2">Title</div>
+              <div
+                class="body-text-for-whatever-you-d-like-to-say-add-main-takeaway-points-quotes-anecdotes-or-even-a-very-very-short-story"
+              >
+                Body text for whatever you’d like to say. Add main takeaway
+                points, quotes, anecdotes, or even a very very short story.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer" style="width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; padding: 20px 0; box-sizing: border-box;">
+      <div class="title3">
+        <img class="figma" style="background: url({% static 'figma0.png' %}) center; background-size: cover; background-repeat: no-repeat;" src="{% static 'figma0.png' %}" />
+        <div class="button-list">
+          <img class="x-logo" src="{% static 'x-logo0.svg' %}" />
+          <img class="logo-instagram" src="{% static 'logo-instagram0.svg' %}" />
+          <img class="logo-you-tube" src="{% static 'logo-you-tube0.svg' %}" />
+          <img class="linked-in" src="{% static 'linked-in0.svg' %}" />
+        </div>
+      </div>
+      <div class="text-link-list">
+        <div class="title4">
+          <div class="text-strong">
+            <div class="text-strong2">Use cases</div>
+          </div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item">UI design</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item2">UX design</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item3">Wireframing</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item4">Diagramming</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item5">Brainstorming</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item6">Online whiteboard</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item7">Team collaboration</div>
+        </div>
+      </div>
+      <div class="text-link-list">
+        <div class="title4">
+          <div class="text-strong">
+            <div class="text-strong2">Explore</div>
+          </div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item8">Design</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item9">Prototyping</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item10">Development features</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item11">Design systems</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item12">Collaboration features</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item13">Design process</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item14">FigJam</div>
+        </div>
+      </div>
+      <div class="text-link-list">
+        <div class="title4">
+          <div class="text-strong">
+            <div class="text-strong2">Resources</div>
+          </div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item15">Blog</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item16">Best practices</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item17">Colors</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item18">Color wheel</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item19">Support</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item20">Developers</div>
+        </div>
+        <div class="text-link-list-item">
+          <div class="list-item21">Resource library</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </body>
 </html>
