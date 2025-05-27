@@ -20,3 +20,13 @@ Thumbs.db
 
 # Environment settings
 .env
+
+# Django static in media (če jih generiraš lokalno)
+staticfiles/
+media/
+
+# Django migracije, če ne želiš slediti njim med razvojem (neobvezno)
+*.pyc
+*.pyo
+*.pyd
+*.db-journal
