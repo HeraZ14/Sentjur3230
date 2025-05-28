@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Moja trgovina{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Osnovni dark mode stil */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+        header, footer {
+            background-color: #1f1f1f;
+            padding: 1em;
+            text-align: center;
+        }
+
+        nav a {
+            color: #f0f0f0;
+            margin: 0 1em;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 2em auto;
+            padding: 1em;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5em;
+        }
+
+        .product-card {
+            background-color: #1e1e1e;
+            padding: 1em;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .product-card img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        a.button {
+            display: inline-block;
+            margin-top: 1em;
+            padding: 0.5em 1em;
+            background-color: #3f51b5;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        a.button:hover {
+            background-color: #5c6bc0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Šentjur Merch</h1>
+        <nav>
+            <a href="{% url 'home' %}">Domov</a>
+            <a href="{% url 'sentjur-merch' %}">Merch</a>
+            <!-- Lahko dodaš še druge povezave -->
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; {{ now|date:"Y" }} Šentjur Merch. Vse pravice pridržane.</p>
+    </footer>
+
+</body>
+</html>

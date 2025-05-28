@@ -1,0 +1,20 @@
+{% extends 'shop/base.html' %}
+{% block title %}Šentjur Merch{% endblock %}
+
+{% block content %}
+<h2>Šentjur Merch</h2>
+<div class="product-grid">
+    {% for product in products %}
+        <div class="product-card">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.price }} €</p>
+            <a href="#">Poglej več</a>
+        </div>
+    {% empty %}
+        <p>Ni izdelkov v tej kategoriji.</p>
+    {% endfor %}
+</div>
+{% endblock %}

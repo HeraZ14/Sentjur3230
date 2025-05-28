@@ -42,14 +42,14 @@
   <div class="examples-landing-page">
     <div class="header">
       <div class="block">
-        <img class="figma" style="background: url({% static 'figma0.png' %}) center; background-size: cover; background-repeat: no-repeat;" src="{% static 'figma0.png' %}" />
+          <a href="{% url 'home' %}"><img class="figma" style="background: url({% static 'figma0.png' %}) center; background-size: cover; background-repeat: no-repeat;" src="{% static 'figma0.png' %}" /></a>
       </div>
       <div class="navigation-pill-list">
         <div class="navigation-pill">
-          <div class="title">Domov</div>
+          <div class="title"><a href="{% url 'home' %}">Domov</a></div>
         </div>
         <div class="navigation-pill2">
-          <div class="title">Šentjur merch</div>
+          <div class="title"><a href="{% url 'sentjur-merch' %}">Šentjur merch</a></div>
         </div>
         <div class="navigation-pill2">
           <div class="title">Ostali merch</div>
