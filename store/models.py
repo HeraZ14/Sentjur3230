@@ -25,6 +25,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE,default=1)
     description = models.TextField(default="", blank=True,null=True)
     image = models.ImageField(upload_to='uploads/product/')
+    stock = models.ForeignKey(Category, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 
