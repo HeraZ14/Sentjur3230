@@ -1,94 +1,130 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Moja trgovina{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        /* Osnovni dark mode stil */
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #f0f0f0;
-        }
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/vars.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
 
-        header, footer {
-            background-color: #1f1f1f;
-            padding: 1em;
-            text-align: center;
-        }
 
-        nav a {
-            color: #f0f0f0;
-            margin: 0 1em;
-            text-decoration: none;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        main {
-            max-width: 1000px;
-            margin: 2em auto;
-            padding: 1em;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5em;
-        }
-
-        .product-card {
-            background-color: #1e1e1e;
-            padding: 1em;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-
-        .product-card img {
-            width: 100%;
-            max-height: 180px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        a.button {
-            display: inline-block;
-            margin-top: 1em;
-            padding: 0.5em 1em;
-            background-color: #3f51b5;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        a.button:hover {
-            background-color: #5c6bc0;
-        }
-    </style>
+  <style>
+   a,
+   button,
+   input,
+   select,
+   h1,
+   h2,
+   h3,
+   h4,
+   h5,
+   * {
+       box-sizing: border-box;
+       margin: 0;
+       padding: 0;
+       border: none;
+       text-decoration: none;
+       background: none;
+       -webkit-font-smoothing: antialiased;
+   }
+   menu, ol, ul {
+       list-style-type: none;
+       margin: 0;
+       padding: 0;
+   }
+  </style>
+  <title>{% block title %}Stran{% endblock %}</title>
 </head>
 <body>
+  <div class="examples-landing-page">
+    <div class="header">
+      <div class="title3">
+        <a href="{% url 'home' %}"><img class="figma" style="background: url({% static 'home.png' %}) center; background-size: cover; background-repeat: no-repeat;" src="{% static 'home.png' %}" /></a>
+      </div>
+      <div class="button">
+        <div class="navigation-pill">
+          <div class="title"><a href="{% url 'home' %}">Domov</a></div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title"><a href="{% url 'sentjur-merch' %}">Šentjur merch</a></div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title">Ostali merch</div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title">Cenik</div>
+        </div>
+        <div class="navigation-pill2">
+          <div class="title">Kontakt</div>
+        </div>
+      </div>
+      <div class="header-auth">
+        <div class="signin_button {
+">
+          <div class="button2">Sign in</div>
+        </div>
+        <div class="registration_button">
+          <div class="button4">Register</div>
+        </div>
+      </div>
+    </div>
 
-    <header>
-        <h1>Šentjur Merch</h1>
-        <nav>
-            <a href="{% url 'home' %}">Domov</a>
-            <a href="{% url 'sentjur-merch' %}">Merch</a>
-            <!-- Lahko dodaš še druge povezave -->
-        </nav>
-    </header>
+    {% block content %}{% endblock %}
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-
-    <footer>
-        <p>&copy; {{ now|date:"Y" }} Šentjur Merch. Vse pravice pridržane.</p>
-    </footer>
-
+    <div class="footer" style="width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; padding: 20px 0; box-sizing: border-box;">
+      <div class="title3">
+        <div class="button-list">
+          <img class="x-logo" src="{% static 'x-logo0.svg' %}" />
+          <img class="logo-instagram" src="{% static 'logo-instagram0.svg' %}" />
+          <img class="logo-you-tube" src="{% static 'logo-you-tube0.svg' %}" />
+          <img class="linked-in" src="{% static 'linked-in0.svg' %}" />
+        </div>
+      </div>
+      <div class="text-link-list">
+        <div class="title4">
+          <div class="text-strong">
+            <div class="text-strong2">Use cases</div>
+          </div>
+        </div>
+        <div class="text-link-list-item"><div class="list-item">UI design</div></div>
+        <div class="text-link-list-item"><div class="list-item2">UX design</div></div>
+        <div class="text-link-list-item"><div class="list-item3">Wireframing</div></div>
+        <div class="text-link-list-item"><div class="list-item4">Diagramming</div></div>
+        <div class="text-link-list-item"><div class="list-item5">Brainstorming</div></div>
+        <div class="text-link-list-item"><div class="list-item6">Online whiteboard</div></div>
+        <div class="text-link-list-item"><div class="list-item7">Team collaboration</div></div>
+      </div>
+      <div class="text-link-list">
+        <div class="title4">
+          <div class="text-strong">
+            <div class="text-strong2">Explore</div>
+          </div>
+        </div>
+        <div class="text-link-list-item"><div class="list-item8">Design</div></div>
+        <div class="text-link-list-item"><div class="list-item9">Prototyping</div></div>
+        <div class="text-link-list-item"><div class="list-item10">Development features</div></div>
+        <div class="text-link-list-item"><div class="list-item11">Design systems</div></div>
+        <div class="text-link-list-item"><div class="list-item12">Collaboration features</div></div>
+        <div class="text-link-list-item"><div class="list-item13">Design process</div></div>
+        <div class="text-link-list-item"><div class="list-item14">FigJam</div></div>
+      </div>
+      <div class="text-link-list">
+        <div class="title4">
+          <div class="text-strong">
+            <div class="text-strong2">Resources</div>
+          </div>
+        </div>
+        <div class="text-link-list-item"><div class="list-item15">Blog</div></div>
+        <div class="text-link-list-item"><div class="list-item16">Best practices</div></div>
+        <div class="text-link-list-item"><div class="list-item17">Colors</div></div>
+        <div class="text-link-list-item"><div class="list-item18">Color wheel</div></div>
+        <div class="text-link-list-item"><div class="list-item19">Support</div></div>
+        <div class="text-link-list-item"><div class="list-item20">Developers</div></div>
+        <div class="text-link-list-item"><div class="list-item21">Resource library</div></div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

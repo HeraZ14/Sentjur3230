@@ -1,0 +1,243 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color, #121212);
+  color: var(--text-color, #ffffff);
+  line-height: 1.6;
+  padding: 0;
+  margin: 0;
+}
+
+.header {
+  background-color: var(--header-bg, #1e1e1e);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+  background-color: var(--footer-bg, #1e1e1e);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header a {
+  color: var(--text-color);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+}
+
+.header a:hover {
+  color: var(--accent-color);
+}
+
+.header-auth {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+
+/* ======= HERO SECTION ======= */
+.hero-image {
+  background-image: url('/static/images/hero.jpg'); /* ali drug statični hero */
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+}
+
+/* ======= KARTICE IZDELKOV ======= */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  max-width: 100px;
+  margin-bottom: 1rem;
+}
+
+.card .title2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.card .body-text {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.figma {
+  width: 24px;
+  height: auto;
+}
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;         /* Prelomi vrstice, ko zmanjka prostora */
+  gap: 1rem;               /* Razmik med karticami */
+  justify-content: flex-start; /* Poravnava od leve */
+}
+
+.product-card {
+  flex: 1 1 200px;         /* Osnovna širina kartice je 200px, lahko se manjša ali veča */
+  max-width: 250px;        /* Maksimalna širina kartice */
+  background-color: var(--card-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+}
+
+
+/* ======= FOOTER ======= */
+
+.footer img {
+  width: 24px;
+  margin-right: 1rem;
+}
+
+.footer .list-item {
+  margin: 0.3rem 0;
+  cursor: pointer;
+}
+
+.footer .list-item:hover {
+  color: var(--accent-color);
+}
+
+/* ======= GUMBI ======= */
+.button,
+.button3 {
+  display: flex;          /* naredi vsebnik fleksibilen */
+  align-items: center;    /* vertikalna poravnava */
+  justify-content: center; /* horizontalna poravnava */
+}
+
+.signin_button {
+  background-color:  #f5f5f5;
+  color: #333;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.signin_button:hover {
+  transform: scale(1.01);
+}
+.registration_button {
+  background-color: #333;
+      color: #ccc;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+.registration_button:hover {
+  transform: scale(1.01);
+}
+
+.button:hover,
+.button2:hover,
+.button3:hover,
+.button4:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;    /* Centriraj celoten grid na sredino */
+  padding: 1rem 0;
+}
+
+.product-card {
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  border-radius: 10px;
+  padding: 1rem;
+  width: 220px;               /* Enotna širina kartice */
+  display: flex;
+  flex-direction: column;
+  align-items: center;        /* Poravnaj vsebino na sredino */
+  text-align: center;         /* Centriraj besedilo */
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.product-card img {
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  max-width: 100%;
+  height: auto;
+}
+
+.product-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.product-card p {
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+  color: var(--accent-color);
+}
+
+.product-card a {
+  color: var(--button-bg);
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid var(--button-bg);
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.product-card a:hover {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+}
+
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  font-weight: 700;
+}

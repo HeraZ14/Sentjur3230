@@ -40,3 +40,21 @@ class Order(models.Model):
     status = models.BooleanField(default=False)
     def __str__(self):
         return f"{self.customer} - {self.product}"
+
+class Cart(models.Model):
+    user = models.OneToOneField(Customer, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cart ({self.customer.username})"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name}"
+
+    def total_price(self):
+        return self.product.price * self.quantity

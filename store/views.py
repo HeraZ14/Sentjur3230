@@ -6,7 +6,7 @@ from store.models import Product
 # Create your views here.
 
 def home(request):
-    return render(request, 'home.html',{})
+    return render(request, 'shop/home.html',{})
 
 def sentjur_merch(request):
     products = Product.objects.all()
