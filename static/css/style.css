@@ -241,3 +241,9 @@ h2 {
   color: var(--text-color);
   font-weight: 700;
 }
+
+.center-block {
+  display: block;
+  width: fit-content; /* ali določena širina, npr. 300px */
+  margin: 0 auto;
+}

@@ -1,9 +1,8 @@
-
 {% extends 'shop/base.html' %}
 {% block title %}Metropola{% endblock %}
 
 {% block content %}
-<h2>Šentjur Merch</h2>
+<h2>Ostali Merch</h2>
 <div class="product-grid">
     {% for product in products %}
         <div class="product-card">
@@ -16,7 +15,7 @@
             </a>
         </div>
 
-    {% empty %}
+  {% empty %}
         <p>Ni izdelkov v tej kategoriji.</p>
     {% endfor %}
 </div>

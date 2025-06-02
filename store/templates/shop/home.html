@@ -1,8 +1,12 @@
 {% extends "shop/base.html" %}
+{% load static %}
 
 {% block title %}Metropola{% endblock %}
 
 {% block content %}
-<h2>Dobrodošli!</h2>
-<p>To je začetna stran ali merch.</p>
+<div class="center-block">
+    <img src="{% static '3230_header.png' %}" alt="METROPOLA" class="w-full object-cover"
+         class="w-full h-96 object-cover rounded-lg shadow-lg">
+      <h1 class="text-4xl text-white font-bold">Serbos!</h1>
+</div>
 {% endblock %}
