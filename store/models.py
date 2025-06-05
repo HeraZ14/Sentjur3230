@@ -21,7 +21,7 @@ class Customer(models.Model):
 #Produkti
 class Product(models.Model):
     name = models.CharField(max_length=100)
-    price = models.FloatField()
+    weight = models.FloatField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE,default=1)
     description = models.TextField(default="", blank=True,null=True)
     image = models.ImageField(upload_to='uploads/product/')
@@ -29,14 +29,35 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-class ProductPrice(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='prices')
-    label = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    def getOnePrice(self, priceTypeName):
+        return round(self.weight * PriceTypes.price, 2)
+
+class PriceTypes(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(default="", blank=True,null=True, max_length=100)
+    price = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
+class Size(models.Model):
+    name = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.name
 
 class ProductSize(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='sizes')
-    label = models.CharField(max_length=100)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_sizes')
+    size = models.ForeignKey(Size, on_delete=models.CASCADE, default=1)
+    quantity = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('product', 'size')
+
+    def __str__(self):
+        return f"{self.product.name} - {self.size.name} ({self.quantity})"
+
+
 
 #Naročila strank
 class Order(models.Model):
@@ -55,7 +76,7 @@ class Cart(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Cart ({self.customer.username})"
+        return f"Cart ({Customer.username})"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')

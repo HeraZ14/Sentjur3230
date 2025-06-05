@@ -12,7 +12,10 @@
                 <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
             {% endif %}
             <h3>{{ product.name }}</h3>
-            <p>{{ product.price }} €</p>
+            {% for product in products %}
+  <p>{{ product.name }}</p>
+  <p>{{ product.weight|floatformat:2 }} × {{ priceType.price|floatformat:2 }} = {{ product.weight|floatformat:2|add:"0"|floatformat:2|floatformat:2|floatformat:2|add:priceType.price|floatformat:2 }} €</p>
+{% endfor %}
             </a>
         </div>
 

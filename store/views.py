@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from pyexpat.errors import messages
-from store.models import Product, Customer, Cart, CartItem, Order, Category
+from store.models import Product, Customer, Cart, CartItem, Order, Category, PriceTypes
 
 
 # Create your views here.
@@ -10,8 +10,9 @@ def home(request):
 
 def sentjur_merch(request):
     products = Product.objects.filter(category__name='Šentjur Merch')
+    prices = PriceTypes.objects.all()
     print("Najdenih izdelkov:", products.count())
-    return render(request, 'shop/sentjur-merch.html', {'products':products})
+    return render(request, 'shop/sentjur-merch.html', {'products':products},{'prices':prices} )
 
 def ostali_merch(request):
     products = Product.objects.filter(category__name='Ostali Merch')
@@ -21,6 +22,7 @@ def ostali_merch(request):
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'shop/product_detail.html', {'product': product})
+
 
 def kontakt(request):
     return render(request, 'shop/kontakt.html')
