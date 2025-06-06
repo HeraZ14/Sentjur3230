@@ -1,0 +1,34 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Metropola{% endblock %}
+
+{% block content %}
+{% if cart %}
+    <ul>
+        {% for item in cart %}
+            <li>
+                {{ item.product_name }} — {{ item.price_info }} —
+                Količina: {{ item.quantity }} —
+                Cena na enoto: {{ item.price_per_unit }}€
+                Skupaj: {{ item.total_price }}€
+            </li>
+            <form method="POST" action="{% url 'update_cart' %}">
+                {% csrf_token %}
+              <input type="hidden" name="product_id" value="{{ item.product_id }}">
+              <input type="hidden" name="price_info" value="{{ item.price_info }}">
+              <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+              <button type="submit">Posodobi</button>
+            </form>
+            <form method="POST" action="{% url 'remove_from_cart' %}">
+            {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ item.product_id }}">
+                <input type="hidden" name="price_info" value="{{ item.price_info }}">
+                <button type="submit">Odstrani</button>
+            </form>
+        {% endfor %}
+        <p>Skupna cena: {{ total_price }}€</p>
+    </ul>
+{% else %}
+    <p>Košarica je prazna.</p>
+{% endif %}
+{% endblock %}

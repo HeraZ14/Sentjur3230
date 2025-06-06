@@ -241,7 +241,15 @@ h2 {
   width: fit-content; /* ali določena širina, npr. 300px */
   margin: 0 auto;
 }
-
+.vozek_button {
+  background-color: #333;
+      color: #ccc;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
 
 /*Dropdown SELECT*/
 

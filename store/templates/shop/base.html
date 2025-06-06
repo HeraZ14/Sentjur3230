@@ -32,8 +32,10 @@
         </div>
       </div>
       <div class="header-auth">
-        <div class="signin_button {
-">
+        <div class="registration_button {">
+          <div class="button2"><a href="{% url 'vojzek' %}">Vojzek</a></div>
+        </div>
+        <div class="signin_button {">
           <div class="button2">Sign in</div>
         </div>
         <div class="registration_button">
@@ -97,5 +99,6 @@
       </div>
     </div>
   </div>
+   {% block scripts %}{% endblock %}
 </body>
 </html>

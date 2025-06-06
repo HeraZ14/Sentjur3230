@@ -9,23 +9,54 @@
         {% for product in products %}
             <div class="product-card">
                 <a href="{% url 'product_detail' product.id %}">
+                    <h3>{{ product.name }}</h3>
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
                     {% endif %}
-                    <h3>{{ product.name }}</h3>
-
                 </a>
-                    <select>
-                        <option>Izberi ceno</option>
-                        {% for priceType in priceTypes %}
-                        <option>{{productPrices.product.priceType.name}}{{ priceType.name }}: {{priceType.description}}</option>
-                        {% endfor %}
-
+                <form method="POST" action="/add-to-cart/">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <select name="selected_info" onchange="updateDisplayedText(this)">
+                        <option disabled selected hidden>Izberi ceno</option>
+                            {% for p in product.productprice_set.all %}
+                                {% if p.product.id == product.id %}
+                        <option value="{{ p.price_type.name }} {{ p.price }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}">
+                            {{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}</option>
+                                {% endif %}
+                            {% endfor %}
                     </select>
+                    <div>
+                        <input type="submit" class="vozek_button" value="V vojzek">
+                    </div>
+                </form>
             </div>
         {% endfor %}
     {% else %}
         <p>Ni izdelkov v tej kategoriji.</p>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateDisplayedText(select) {
+    const options = select.options;
+
+    // Najprej resetiramo vsa besedila na originalno
+    for (let i = 0; i < options.length; i++) {
+        const opt = options[i];
+        if (opt.dataset.originalText) {
+            opt.textContent = opt.dataset.originalText;
+        }
+    }
+
+    const selected = select.options[select.selectedIndex];
+    if (!selected || !selected.value) return;
+
+    // Nastavimo samo za izbrano možnost prikaz: "150 €"
+    selected.textContent = selected.value + ' €';
+}
+</script>
+
 {% endblock %}

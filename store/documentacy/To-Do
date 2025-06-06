@@ -1,0 +1,15 @@
+Validacija zaloge: Preveri, če je dovolj zaloge, ko uporabnik doda/posodobi količino.
+
+Persistenca košarice: Shrani košarico uporabniku, če je prijavljen, da jo lahko dostopa iz več naprav ali ob ponovnem obisku.
+
+Obračun davkov in stroškov pošiljanja: Če prodajaš realno, se ti to lahko zelo hitro zmeša, če ne boš imel teh izračunov.
+
+Uporabniški vmesnik (UI): Dodaj AJAX posodobitve, da ni treba osveževat celotne strani, ko uporabnik spreminja količine ali izbira izdelke.
+
+Varnost: Poskrbi, da podatki o cenah in izdelkih niso zgolj na klientu (JS), ampak da na serverju preveriš veljavnost.
+
+Obvladovanje napak: Kaj, če nekdo manipulira s podatki v seji? Kaj, če nekdo pošlje nerealne količine? Robustnost.
+
+Checkout proces: Plačilni sistem, obrazci za dostavo, potrditev naročila itd.
+
+Sejanje (cart expiration): Po določenem času (npr. 30 minut) se košarica lahko izbriše.
