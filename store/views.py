@@ -10,9 +10,22 @@ def home(request):
 
 def sentjur_merch(request):
     products = Product.objects.filter(category__name='Šentjur Merch')
-    prices = PriceTypes.objects.all()
-    print("Najdenih izdelkov:", products.count())
-    return render(request, 'shop/sentjur-merch.html', {'products':products},{'prices':prices} )
+    priceTypes = PriceTypes.objects.all()
+    product_prices = {}
+    for product in products:
+        product_prices = {
+            'product': product,
+            'prices': {}
+        }
+        for pt in priceTypes:
+            price = round(product.weight * pt.price, 2)
+            product_prices['prices'][pt.name] = price
+
+    return render(request, 'shop/sentjur-merch.html', {
+        'products': products,
+        'priceTypes': priceTypes,
+        'productPrices': product_prices,
+    })
 
 def ostali_merch(request):
     products = Product.objects.filter(category__name='Ostali Merch')

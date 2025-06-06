@@ -1,8 +1,8 @@
 /* Default (dark mode) */
 .root {
   --bg-color: #121212;          /* temno siva, skoraj črna */
-  --text-color: #e0e0e0;        /* svetlo siva */
-  --accent-color: #bb86fc;      /* mehka vijolična, primerna za dark mode poudarke */
+  --accent-color: #0c0c0c;      /* mehka vijolična, primerna za dark mode poudarke */
+  --text-color: #dcdcdc;
   --header-bg: #0d0d0d;         /* zelo temno ozadje headerja */
   --card-bg: #1e1e1e;           /* temno siva kartice, loči se od bg */
   --card-shadow: 0 2px 10px rgba(0,0,0,0.7); /* močnejša senca za kontrast */

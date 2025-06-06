@@ -1,7 +1,7 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--bg-color, #121212);
-  color: var(--text-color, #ffffff);
+  color: #dcdcdc;
   line-height: 1.6;
   padding: 0;
   margin: 0;
@@ -30,14 +30,12 @@ body {
 }
 
 .header a {
-  color: var(--text-color);
+  color: #e0e0e0 ;
   font-weight: 500;
   padding: 0.5rem 1rem;
+  text-decoration: none;
   transition: color 0.3s ease;
-}
 
-.header a:hover {
-  color: var(--accent-color);
 }
 
 .header-auth {
@@ -45,14 +43,8 @@ body {
   gap: 1rem;
   align-items: center;
 }
+.h3{
 
-
-/* ======= HERO SECTION ======= */
-.hero-image {
-  background-image: url('/static/images/hero.jpg'); /* ali drug statični hero */
-  background-size: cover;
-  background-position: center;
-  height: 400px;
 }
 
 /* ======= KARTICE IZDELKOV ======= */
@@ -141,7 +133,7 @@ body {
 }
 
 .signin_button {
-  background-color:  #f5f5f5;
+  background-color: #ededed;
   color: #333;
   padding: 6px 12px;
   border: none;
@@ -173,6 +165,8 @@ body {
   background-color: var(--button-hover-bg);
 }
 
+/*Product cards*/
+
 .product-grid {
   display: flex;
   flex-wrap: wrap;
@@ -196,7 +190,7 @@ body {
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
@@ -204,7 +198,7 @@ body {
   border-radius: 8px;
   margin-bottom: 0.8rem;
   max-width: 100%;
-  height: auto;
+  height: 270px;
 }
 
 .product-card h3 {
@@ -247,3 +241,41 @@ h2 {
   width: fit-content; /* ali določena širina, npr. 300px */
   margin: 0 auto;
 }
+
+
+/*Dropdown SELECT*/
+
+.dropdown-wrapper {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: #1e1e1e;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+
+    select {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        background: #272626;
+        color: var(--text-color);
+        border: 1px solid #444;
+        border-radius: 8px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        margin-top: 0.5rem;
+    }
+
+    option {
+        background-color: #2c2c2c;
+        color: var(--text-color);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: var(--text-color);
+    }

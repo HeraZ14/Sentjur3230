@@ -1,5 +1,10 @@
 from django.db import models
 import datetime
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
 # Create your models here.
 
 #Kategorije produktov
@@ -39,6 +44,28 @@ class PriceTypes(models.Model):
 
     def __str__(self):
         return self.name
+
+class ProductPrice(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price_type = models.ForeignKey(PriceTypes, on_delete=models.CASCADE)
+    price = models.FloatField()
+
+    class Meta:
+        unique_together = ('product', 'price_type')
+
+    def __str__(self):
+        return f"{self.product.name} – {self.price_type.name}: {self.price} €"
+
+@receiver(post_save, sender=Product)
+def generate_product_prices(sender, instance, **kwargs):
+    from .models import PriceTypes, ProductPrice
+    for pt in PriceTypes.objects.all():
+        price = round(instance.weight * pt.price, 2)
+        ProductPrice.objects.update_or_create(
+            product=instance,
+            price_type=pt,
+            defaults={'price': price}
+        )
 
 class Size(models.Model):
     name = models.CharField(max_length=10)

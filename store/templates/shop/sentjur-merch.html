@@ -1,26 +1,31 @@
-
 {% extends 'shop/base.html' %}
+{% load static %}
 {% block title %}Metropola{% endblock %}
 
 {% block content %}
 <h2>Šentjur Merch</h2>
 <div class="product-grid">
-    {% for product in products %}
-        <div class="product-card">
-            <a href="{% url 'product_detail' product.id %}">
-            {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
-            {% endif %}
-            <h3>{{ product.name }}</h3>
-            {% for product in products %}
-  <p>{{ product.name }}</p>
-  <p>{{ product.weight|floatformat:2 }} × {{ priceType.price|floatformat:2 }} = {{ product.weight|floatformat:2|add:"0"|floatformat:2|floatformat:2|floatformat:2|add:priceType.price|floatformat:2 }} €</p>
-{% endfor %}
-            </a>
-        </div>
+    {% if products %}
+        {% for product in products %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.id %}">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+                    {% endif %}
+                    <h3>{{ product.name }}</h3>
 
-    {% empty %}
+                </a>
+                    <select>
+                        <option>Izberi ceno</option>
+                        {% for priceType in priceTypes %}
+                        <option>{{productPrices.product.priceType.name}}{{ priceType.name }}: {{priceType.description}}</option>
+                        {% endfor %}
+
+                    </select>
+            </div>
+        {% endfor %}
+    {% else %}
         <p>Ni izdelkov v tej kategoriji.</p>
-    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
