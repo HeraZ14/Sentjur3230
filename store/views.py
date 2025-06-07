@@ -39,12 +39,18 @@ def kontakt(request):
 @require_POST
 def add_to_cart(request):
     product_id = request.POST.get('product_id')
-    selected_info = request.POST.get('selected_info')
     selected_size = request.POST.get('selected_size')
-
-    if not selected_info or not product_id or not selected_size:
+    selected_price_id = request.POST.get('selected_price_id')
+    if not selected_price_id or not selected_size:
         messages.warning(request, "Izpolni obvezna polja gospodič.")
+        print(product_id)
         return redirect('product_detail', pk=product_id)
+    selected_price_id = int(selected_price_id)
+    get_price_item = ProductPrice.objects.get(id=selected_price_id)
+    price_item = str(get_price_item.price)
+
+
+
 
     #product_size = ProductSize.objects.get(product=product, size=size)
     #if quantity_requested > product_size.quantity:
@@ -58,7 +64,7 @@ def add_to_cart(request):
     found = False
     for item in cart:
         if (str(item['product_id']) == str(product.id)
-                and item['price_info'] == selected_info):
+                and item['selected_price_id'] == selected_price_id):
             item['quantity'] += 1
             found = True
             break
@@ -67,7 +73,8 @@ def add_to_cart(request):
         cart.append({
             'product_id': product.id,
             'product_name': product.name,
-            'price_info': selected_info,
+            'selected_price_id':selected_price_id,
+            'price_item': price_item,
             'quantity': 1,
         })
 
@@ -79,17 +86,16 @@ def add_to_cart(request):
 @require_POST
 def remove_from_cart(request):
         product_id = request.POST.get('product_id')
-        price_info = request.POST.get('price_info')
+        selected_price_id = int(request.POST.get('selected_price_id'))
 
         cart = request.session.get('cart', [])
 
         updated_cart = []
         for item in cart:
             if (str(item['product_id']) == str(product_id)
-                    and item['price_info'] == price_info):
-                if item['quantity'] > 1:
-                    item['quantity'] -= 1
-                    updated_cart.append(item)
+                    and item['selected_price_id'] == selected_price_id):
+                if item['quantity'] > 0:
+                    item['quantity'] = 0
                 # Else: ne dodamo več (kar pomeni, da ga izbrišemo)
             else:
                 updated_cart.append(item)
@@ -100,7 +106,7 @@ def remove_from_cart(request):
 @require_POST
 def update_cart(request):
     product_id = request.POST.get('product_id')
-    price_info = request.POST.get('price_info')
+    selected_price_id = int(request.POST.get('selected_price_id'))
     quantity = request.POST.get('quantity')
 
     try:
@@ -113,7 +119,7 @@ def update_cart(request):
     cart = request.session.get('cart', [])
     for item in cart:
         if (str(item['product_id']) == str(product_id)
-                and item['price_info'] == price_info):
+                and item['selected_price_id'] == selected_price_id):
             item['quantity'] = quantity
             break
 
@@ -126,7 +132,8 @@ def cart_view(request):
 
     total_price = 0
     for item in cart:
-        item_price = float(item['price_info'].split(' ')[-1])
+        print(item['price_item'])
+        item_price = float(item['price_item'])
         item_total = item_price * item['quantity']
         item['price_per_unit'] = item_price
         item['total_price'] = item_total

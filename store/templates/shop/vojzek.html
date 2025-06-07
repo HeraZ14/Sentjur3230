@@ -6,7 +6,7 @@
     <ul>
         {% for item in cart %}
             <li>
-                {{ item.product_name }} — {{ item.price_info }} —
+                {{ item.product_name }} — {{ item.selected_price_id }} —
                 Količina: {{ item.quantity }} —
                 Cena na enoto: {{ item.price_per_unit }}€
                 Skupaj: {{ item.total_price }}€
@@ -14,14 +14,14 @@
             <form method="POST" action="{% url 'update_cart' %}">
                 {% csrf_token %}
               <input type="hidden" name="product_id" value="{{ item.product_id }}">
-              <input type="hidden" name="price_info" value="{{ item.price_info }}">
+              <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
               <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
               <button type="submit">Posodobi</button>
             </form>
-            <form method="POST" action="{% url 'remove_from_cart' %}">
+            <form method="POST" action="{% url 'remove_from_cart' %}" onsubmit="return confirm('Si ziher, da hočeš odstraniti najboljši izdelek?')">
             {% csrf_token %}
                 <input type="hidden" name="product_id" value="{{ item.product_id }}">
-                <input type="hidden" name="price_info" value="{{ item.price_info }}">
+                <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
                 <button type="submit">Odstrani</button>
             </form>
         {% endfor %}

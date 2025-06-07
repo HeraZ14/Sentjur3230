@@ -20,11 +20,12 @@
                 <form method="POST" action="/add-to-cart/">
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{ product.id }}">
-                    <select name="selected_info" onchange="updateDisplayedText(this)" required>
+                    <input type="hidden" name="productprice_id" value="{{ productprice.id }}">
+                    <select name="selected_price_id" onchange="updateDisplayedText(this)" required>
                         <option disabled selected hidden>Izberi ceno</option>
                             {% for p in product.productprice_set.all %}
                                 {% if p.product.id == product.id %}
-                        <option value="{{ p.price_type.name }} {{ p.price }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}">
+                        <option value="{{ p.id }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}">
                             {{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}</option>
                                 {% endif %}
                             {% endfor %}
