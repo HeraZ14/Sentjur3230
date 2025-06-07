@@ -1,13 +1,78 @@
 {% extends "shop/base.html" %}
-
 {% block content %}
-<div class="product-grid">
-        <div class="product-card">
-            <a href="{% url 'product_detail' product.id %}">
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.price }} €</p>
-            </a>
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
         </div>
+    {% endif %}
+<div class="product-grid">
+    <div class="product-card">
+                <a href="{% url 'product_detail' product.id %}">
+                    <h3>{{ product.name }}</h3>
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+                    {% endif %}
+                </a>
+                <form method="POST" action="/add-to-cart/">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <select name="selected_info" onchange="updateDisplayedText(this)" required>
+                        <option disabled selected hidden>Izberi ceno</option>
+                            {% for p in product.productprice_set.all %}
+                                {% if p.product.id == product.id %}
+                        <option value="{{ p.price_type.name }} {{ p.price }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}">
+                            {{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}</option>
+                                {% endif %}
+                            {% endfor %}
+                    </select>
+
+                    <select name="selected_size" required>
+                        <option disabled selected hidden>Izberi velikost</option>
+                        {% for ps in product.product_sizes.all %}
+                        <option value="{{ ps.size.id }}">{{ ps.size.name }} (Še {{ ps.quantity }} kosov)</option>
+                        {% endfor %}
+                    </select>
+                    <div>
+                        <input type="submit" class="vozek_button" value="V vojzek">
+                    </div>
+                </form>
+            </div>
+
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+function updateDisplayedText(select) {
+    const options = select.options;
+
+    // Najprej resetiramo vsa besedila na originalno
+    for (let i = 0; i < options.length; i++) {
+        const opt = options[i];
+        if (opt.dataset.originalText) {
+            opt.textContent = opt.dataset.originalText;
+        }
+    }
+
+    const selected = select.options[select.selectedIndex];
+    if (!selected || !selected.value) return;
+
+    // Nastavimo samo za izbrano možnost prikaz: "150 €"
+    selected.textContent = selected.value + ' €';
+}
+document.addEventListener("DOMContentLoaded", function () {
+    const alerts = document.querySelectorAll(".alert");
+    setTimeout(() => {
+      alerts.forEach(alert => {
+        alert.style.transition = "opacity 0.5s ease-out";
+        alert.style.opacity = "0";
+        setTimeout(() => alert.remove(), 500); // Počakaj, da se animacija zaključi, nato odstrani
+      });
+    }, 3000); // 3000 ms = 3 sekunde
+  });
+</script>
+
 {% endblock %}

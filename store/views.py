@@ -1,18 +1,14 @@
 from django.db.models import Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from pyexpat.errors import messages
-from store.models import Product, Customer, Cart, CartItem, Order, Category, PriceTypes, ProductPrice
+from django.contrib import messages
+from store.models import Product, Customer, Cart, CartItem, Order, Category, PriceTypes, ProductPrice, ProductSize
 
 
 # Create your views here.
 
-def home(request):
-    return render(request, 'shop/home.html',{})
-
 def sentjur_merch(request):
     if request.method == 'POST':
-        selected_info = request.POST.get('selected_info')
         return redirect('sentjur-merch')
 
     products = Product.objects.filter(category__name='Šentjur Merch').prefetch_related(
@@ -44,9 +40,16 @@ def kontakt(request):
 def add_to_cart(request):
     product_id = request.POST.get('product_id')
     selected_info = request.POST.get('selected_info')
+    selected_size = request.POST.get('selected_size')
 
-    if not product_id or not selected_info:
-        return redirect('sentjur-merch')
+    if not selected_info or not product_id or not selected_size:
+        messages.warning(request, "Izpolni obvezna polja gospodič.")
+        return redirect('product_detail', pk=product_id)
+
+    #product_size = ProductSize.objects.get(product=product, size=size)
+    #if quantity_requested > product_size.quantity:
+    #    messages.error(request, "Na voljo je samo še {} kosov.".format(product_size.quantity))
+    #    return redirect('product_detail', pk=product.id)
 
     product = Product.objects.get(id=product_id)
     cart = request.session.get('cart', [])

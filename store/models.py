@@ -30,12 +30,12 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE,default=1)
     description = models.TextField(default="", blank=True,null=True)
     image = models.ImageField(upload_to='uploads/product/')
-    stock = models.IntegerField(default=0)
+    def total_stock(self):
+        print(f"Product: {self.name}, Sizes: {[ps.quantity for ps in self.product_sizes.all()]}")
+        return sum(ps.quantity for ps in self.product_sizes.all())
+    total_stock.short_description = 'Total Stock'
     def __str__(self):
         return self.name
-
-    def getOnePrice(self, priceTypeName):
-        return round(self.weight * PriceTypes.price, 2)
 
 class PriceTypes(models.Model):
     name = models.CharField(max_length=100)
