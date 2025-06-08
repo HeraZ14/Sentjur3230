@@ -2,6 +2,15 @@
 {% load static %}
 
 {% block content %}
+{% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% if cart %}
     <ul>
         {% for item in cart %}
@@ -15,7 +24,8 @@
                 {% csrf_token %}
               <input type="hidden" name="product_id" value="{{ item.product_id }}">
               <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
-              <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                <input type="hidden" name="selected_size_id" value="{{ item.selected_size_id }}">
+              <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1">
               <button type="submit">Posodobi</button>
             </form>
             <form method="POST" action="{% url 'remove_from_cart' %}" onsubmit="return confirm('Si ziher, da hočeš odstraniti najboljši izdelek?')">
@@ -30,4 +40,18 @@
 {% else %}
     <p>Košarica je prazna.</p>
 {% endif %}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const alerts = document.querySelectorAll(".alert");
+    setTimeout(() => {
+      alerts.forEach(alert => {
+        alert.style.transition = "opacity 0.5s ease-out";
+        alert.style.opacity = "0";
+        setTimeout(() => alert.remove(), 500); // Počakaj, da se animacija zaključi, nato odstrani
+      });
+    }, 3000); // 3000 ms = 3 sekunde
+  });
+</script>
 {% endblock %}

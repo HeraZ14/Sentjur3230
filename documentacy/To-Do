@@ -6,7 +6,7 @@ Obračun davkov in stroškov pošiljanja: Če prodajaš realno, se ti to lahko z
 
 Uporabniški vmesnik (UI): Dodaj AJAX posodobitve, da ni treba osveževat celotne strani, ko uporabnik spreminja količine ali izbira izdelke.
 
-Varnost: Poskrbi, da podatki o cenah in izdelkih niso zgolj na klientu (JS), ampak da na serverju preveriš veljavnost.
+Varnost: Poskrbi, da podatki o cenah in izdelkih niso zgolj na klientu (JS), ampak da na serverju preveriš veljavnost. OK
 
 Obvladovanje napak: Kaj, če nekdo manipulira s podatki v seji? Kaj, če nekdo pošlje nerealne količine? Robustnost.
 

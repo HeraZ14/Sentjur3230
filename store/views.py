@@ -39,44 +39,56 @@ def kontakt(request):
 @require_POST
 def add_to_cart(request):
     product_id = request.POST.get('product_id')
-    selected_size = request.POST.get('selected_size')
+    selected_size_id = request.POST.get('selected_size_id')
     selected_price_id = request.POST.get('selected_price_id')
-    if not selected_price_id or not selected_size:
+    selected_quantity = request.POST.get('selected_quantity')
+    if not selected_price_id or not selected_size_id:
         messages.warning(request, "Izpolni obvezna polja gospodič.")
-        print(product_id)
         return redirect('product_detail', pk=product_id)
     selected_price_id = int(selected_price_id)
-    get_price_item = ProductPrice.objects.get(id=selected_price_id)
+    try:
+        get_price_item = ProductPrice.objects.get(id=selected_price_id, product_id=product_id)
+    except ProductPrice.DoesNotExist:
+        messages.error(request, "Že tak je čist zapstoj, pa še bi se muzljal. Tako ja, udrihaj bo ubogem človeku.")
+        return redirect('product_detail', pk=product_id)
     price_item = str(get_price_item.price)
 
-
-
-
-    #product_size = ProductSize.objects.get(product=product, size=size)
-    #if quantity_requested > product_size.quantity:
-    #    messages.error(request, "Na voljo je samo še {} kosov.".format(product_size.quantity))
-    #    return redirect('product_detail', pk=product.id)
-
+    ###Preverjamo Zalogo + če izdelka ni v košarici, ga dodamo z selected_quantity,
+    ###Če pa izdelek je v košarici mu samo povečamo količino.
     product = Product.objects.get(id=product_id)
     cart = request.session.get('cart', [])
+    get_available_stock = ProductSize.objects.get(product_id=product.id, size_id=selected_size_id)
+    available_stock = get_available_stock.quantity
 
-    # Preveri, če tak produkt + cena že obstaja
+    # Preveri, če tak produkt + cena že obstaja + če je dovolj zaloge
     found = False
+    same_item_quantity = 0
     for item in cart:
-        if (str(item['product_id']) == str(product.id)
-                and item['selected_price_id'] == selected_price_id):
-            item['quantity'] += 1
-            found = True
-            break
+        if str(item['product_id']) == str(product.id):
+            if item['selected_price_id'] == selected_price_id:
+                item['quantity'] += int(selected_quantity)
+                found = True
+            print('začetek f: ', same_item_quantity)
+            same_item_quantity += int(item['quantity'])
+            print('Konec f: ',same_item_quantity)
+
+        if available_stock < int(selected_quantity) + same_item_quantity:
+            messages.error(request, f"Na voljo je samo še {available_stock} kosov.")
+            return redirect('product_detail', pk=product_id)
 
     if not found:
-        cart.append({
-            'product_id': product.id,
-            'product_name': product.name,
-            'selected_price_id':selected_price_id,
-            'price_item': price_item,
-            'quantity': 1,
-        })
+        if available_stock >= int(selected_quantity):
+            cart.append({
+                'product_id': product.id,
+                'product_name': product.name,
+                'selected_price_id':selected_price_id,
+                'selected_size_id':selected_size_id,
+                'price_item': price_item,
+                'quantity': int(selected_quantity),
+            })
+        else:
+            messages.error(request, f"Na voljo je samo še {available_stock} kosov.")
+            return redirect('product_detail', pk=product_id)
 
     request.session['cart'] = cart
     return redirect('sentjur-merch')
@@ -107,21 +119,31 @@ def remove_from_cart(request):
 def update_cart(request):
     product_id = request.POST.get('product_id')
     selected_price_id = int(request.POST.get('selected_price_id'))
-    quantity = request.POST.get('quantity')
+    selected_quantity = request.POST.get('selected_quantity')
+    selected_size_id = request.POST.get('selected_size_id')
+
+    get_available_stock = ProductSize.objects.get(product_id=product_id, size_id=selected_size_id)
+    available_stock = get_available_stock.quantity
 
     try:
-        quantity = int(quantity)
-        if quantity < 1:
-            quantity = 1
+        selected_quantity = int(selected_quantity)
+        if selected_quantity < 1:
+            selected_quantity = 1
     except (ValueError, TypeError):
         return redirect('vojzek')  # Neveljavna količina, nič ne spremeni
 
     cart = request.session.get('cart', [])
+    same_item_quantity = 0
     for item in cart:
-        if (str(item['product_id']) == str(product_id)
-                and item['selected_price_id'] == selected_price_id):
-            item['quantity'] = quantity
-            break
+        if str(item['product_id']) == str(product_id):
+            if item['selected_price_id'] == selected_price_id:
+                item['quantity'] = selected_quantity
+            else:
+                same_item_quantity += int(item['quantity'])
+
+        if selected_quantity + same_item_quantity > available_stock:
+            messages.error(request, f"Na voljo je samo še {available_stock} kosov.")
+            return redirect('vojzek')
 
     request.session['cart'] = cart
     return redirect('vojzek')

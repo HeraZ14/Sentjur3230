@@ -31,12 +31,15 @@
                             {% endfor %}
                     </select>
 
-                    <select name="selected_size" required>
+                    <select name="selected_size_id" required>
                         <option disabled selected hidden>Izberi velikost</option>
                         {% for ps in product.product_sizes.all %}
                         <option value="{{ ps.size.id }}">{{ ps.size.name }} (Še {{ ps.quantity }} kosov)</option>
                         {% endfor %}
                     </select>
+
+                    <input type="number" name="selected_quantity" min="1" value="1" required>
+
                     <div>
                         <input type="submit" class="vozek_button" value="V vojzek">
                     </div>
@@ -47,23 +50,6 @@
 {% endblock %}
 {% block scripts %}
 <script>
-function updateDisplayedText(select) {
-    const options = select.options;
-
-    // Najprej resetiramo vsa besedila na originalno
-    for (let i = 0; i < options.length; i++) {
-        const opt = options[i];
-        if (opt.dataset.originalText) {
-            opt.textContent = opt.dataset.originalText;
-        }
-    }
-
-    const selected = select.options[select.selectedIndex];
-    if (!selected || !selected.value) return;
-
-    // Nastavimo samo za izbrano možnost prikaz: "150 €"
-    selected.textContent = selected.value + ' €';
-}
 document.addEventListener("DOMContentLoaded", function () {
     const alerts = document.querySelectorAll(".alert");
     setTimeout(() => {
@@ -74,6 +60,12 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }, 3000); // 3000 ms = 3 sekunde
   });
+function updateDisplayedText(selectElement) {
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+    var text = selectedOption.getAttribute('data-original-text');
+    // Tu lahko nastaviš tekst na nek element ali kamorkoli želiš
+    console.log(text);
+}
 </script>
 
 {% endblock %}
