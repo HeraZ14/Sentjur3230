@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from store.models import Order, Category, Customer, Product, Size, ProductSize, PriceTypes
+from store.models import Order, Category, Product, Size, ProductSize, PriceTypes
 
 
 class ProductSizeInline(admin.TabularInline):
@@ -13,7 +13,6 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ['total_stock']
 
 admin.site.register(Category)
-admin.site.register(Customer)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order)
 admin.site.register(Size)

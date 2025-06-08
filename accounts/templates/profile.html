@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Profil</h1>
+<p>Prijavljen si kot <strong>{{ user.username }}</strong></p>
+<p>Email: {{ user.email }}</p>
+
+<a href="{% url 'logout' %}">Odjava</a>
+{% endblock %}

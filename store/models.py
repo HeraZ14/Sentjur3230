@@ -14,15 +14,6 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-#Stranke
-class Customer(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=100)
-
 #Produkti
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -89,7 +80,7 @@ class ProductSize(models.Model):
 #Naročila strank
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    #customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     address = models.TextField(max_length=100, default="", blank=True,null=True)
     phone = models.CharField(max_length=100,default="",blank=True,null=True)
@@ -99,11 +90,11 @@ class Order(models.Model):
         return f"{self.customer} - {self.product}"
 
 class Cart(models.Model):
-    user = models.OneToOneField(Customer, on_delete=models.CASCADE)
+    #user = models.OneToOneField(Customer, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Cart ({Customer.username})"
+        return f"Cart )"#({Customer.username})"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
