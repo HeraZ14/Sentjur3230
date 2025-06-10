@@ -2,7 +2,7 @@ from django.db.models import Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from store.models import Product, Cart, CartItem, Order, Category, PriceTypes, ProductPrice, ProductSize
+from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize
 
 
 # Create your views here.

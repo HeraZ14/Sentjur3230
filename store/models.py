@@ -75,20 +75,6 @@ class ProductSize(models.Model):
     def __str__(self):
         return f"{self.product.name} - {self.size.name} ({self.quantity})"
 
-
-
-#Naročila strank
-class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    #customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
-    address = models.TextField(max_length=100, default="", blank=True,null=True)
-    phone = models.CharField(max_length=100,default="",blank=True,null=True)
-    date = models.DateTimeField(default=datetime.datetime.now)
-    status = models.BooleanField(default=False)
-    def __str__(self):
-        return f"{self.customer} - {self.product}"
-
 class Cart(models.Model):
     #user = models.OneToOneField(Customer, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)

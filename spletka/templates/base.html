@@ -1,9 +1,4 @@
 {% load static %}
-{% if user.is_authenticated %}
-    <a href="{% url 'profile' %}">Moj profil</a>
-{% else %}
-    <a href="{% url 'login' %}">Prijava</a>
-{% endif %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,11 +36,17 @@
           <div class="button2"><a href="{% url 'vojzek' %}">Vojzek</a></div>
         </div>
         <div class="signin_button {">
-          <div class="button2">Sign in</div>
+          {% if user.is_authenticated %}
+          <div class="button2"><a href="{% url 'profile' %}">Moj profil</a></div>
+          {% else %}
+          <div class="button2"><a href="{% url 'login' %}">Sign in</a></div>
+          <div class="registration_button">
+          <div class="button4"><a href="{% url 'register' %}">Register</a></div>
+          </div>
+          {% endif %}
+
         </div>
-        <div class="registration_button">
-          <div class="button4">Register</div>
-        </div>
+
       </div>
     </div>
 

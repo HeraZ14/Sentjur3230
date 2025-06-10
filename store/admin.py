@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from store.models import Order, Category, Product, Size, ProductSize, PriceTypes
+from store.models import Category, Product, Size, ProductSize, PriceTypes, ProductPrice
 
 
 class ProductSizeInline(admin.TabularInline):
@@ -14,7 +14,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Order)
 admin.site.register(Size)
 admin.site.register(PriceTypes)
+admin.site.register(ProductPrice)
 
