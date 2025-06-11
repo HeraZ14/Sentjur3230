@@ -5,5 +5,8 @@
 <p>Prijavljen si kot <strong>{{ user.username }}</strong></p>
 <p>Email: {{ user.email }}</p>
 
-<a href="{% url 'logout' %}">Odjava</a>
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Odjava</button>
+</form>
 {% endblock %}

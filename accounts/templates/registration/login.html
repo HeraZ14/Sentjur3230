@@ -31,6 +31,7 @@
             <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors duration-200">Prijavi se</button>
         </form>
         <p class="mt-4 text-center text-gray-400">Nimate računa? <a href="{% url 'register' %}" class="text-blue-400 hover:underline">Registrirajte se</a></p>
+        <a href="{% url 'password_reset' %}">Pozabljeno geslo?</a>
     </div>
 </div>
 {% endblock %}

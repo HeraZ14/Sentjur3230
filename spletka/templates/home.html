@@ -2,6 +2,15 @@
 {% load static %}
 
 {% block content %}
+{% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
 <div class="center-block">
     <img src="{% static '3230_header.png' %}" alt="METROPOLA" class="w-full object-cover"
          class="w-full h-96 object-cover rounded-lg shadow-lg">

@@ -37,6 +37,9 @@
         {% endfor %}
         <p>Skupna cena: {{ total_price }}€</p>
     </ul>
+    <a href="{% url 'checkout' %}">
+    <button type="button">Na checkout</button>
+    </a>
 {% else %}
     <p>Košarica je prazna.</p>
 {% endif %}

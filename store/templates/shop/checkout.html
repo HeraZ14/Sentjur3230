@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Checkout</h2>
+
+{% if cart %}
+<table>
+  <thead>
+    <tr><th>Izdelek</th><th>Količina</th><th>Cena</th></tr>
+  </thead>
+  <tbody>
+    {% for item in cart %}
+    <tr>
+      <li>
+                {{ item.product_name }} — {{ item.selected_price_id }} —
+                Količina: {{ item.quantity }} —
+                Cena na enoto: {{ item.price_per_unit }}€
+                Skupaj: {{ item.total_price }}€
+      </li>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<form method="post">
+  {% csrf_token %}
+  <label for="email">Email:</label><br>
+  <input type="email" name="email" id="email" required><br><br>
+
+  <label for="address">Naslov:</label><br>
+  <textarea name="address" id="address" required></textarea><br><br>
+
+  <label for="phone">Telefon:</label><br>
+  <input type="text" name="phone" id="phone" required><br><br>
+
+  <button type="submit">Oddaj naročilo</button>
+</form>
+
+{% else %}
+<p>Košarica je prazna.</p>
+{% endif %}
+
+{% endblock %}

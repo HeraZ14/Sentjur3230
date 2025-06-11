@@ -1,8 +1,9 @@
+from django.core.mail import send_mail
 from django.db.models import Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize
+from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Order, OrderItem
 
 
 # Create your views here.
@@ -166,3 +167,72 @@ def cart_view(request):
         'total_price': total_price,
     }
     return render(request, 'shop/vojzek.html',context)
+
+
+#CHECKOUT
+
+def get_cart_items(request):
+    if request.user.is_authenticated:
+        return CartItem.objects.filter(user=request.user)
+    else:
+        session_key = request.session.session_key
+        if not session_key:
+            request.session.create()
+            session_key = request.session.session_key
+        return CartItem.objects.filter(session_key=session_key)
+
+
+def checkout(request):
+    session_key = request.session.session_key
+
+    if not session_key:
+        request.session.create()
+        session_key = request.session.session_key
+
+    cart = request.session.get('cart', [])
+
+    if request.method == 'POST':
+        user = request.user if request.user.is_authenticated else None
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        phone = request.POST.get('phone')
+
+        if not email or not address:
+            messages.error(request, "Vsa polja so obvezna.")
+            return render(request, 'shop/checkout.html', {'cart': cart})
+
+        order = Order.objects.create(
+            user=user,
+            email=email,
+            address=address,
+            phone=phone,
+            status=False
+        )
+
+        for item in cart:
+            product = Product.objects.get(id=item['product_id'])
+            price = ProductPrice.objects.get(id=item['selected_price_id'])
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=item['quantity'],
+                price=price,
+
+            )
+
+        # Pošlji email (zaenkrat na konzolo)
+        send_mail(
+            subject='Potrditev naročila',
+            message=f"Hvala za naročilo. Število artiklov: {len(cart)}",
+            from_email='no-reply@tvoja-domena.si',
+            recipient_list=[email],
+            fail_silently=True,
+        )
+
+        # Počisti košarico
+        del request.session['cart']
+
+        messages.success(request, "Naročilo je bilo uspešno oddano. Preveri email.")
+        return redirect('home')  # ali kamor želiš
+
+    return render(request, 'shop/checkout.html', {'cart': cart})
