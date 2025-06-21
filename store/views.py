@@ -23,10 +23,9 @@ def sentjur_merch(request):
 
 
 
-def ostali_merch(request):
-    products = Product.objects.filter(category__name='Ostali Merch')
-    print("Najdenih izdelkov:", products.count())
-    return render(request, 'shop/ostali-merch.html', {'products':products})
+def smarski_merch(request):
+    products = Product.objects.filter(category__name='Šmarski Merch')
+    return render(request, 'zajebancija/glasovanje.html', {'products':products})
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -77,6 +76,8 @@ def add_to_cart(request):
             messages.error(request, f"Na voljo je samo še {available_stock} kosov.")
             return redirect('product_detail', pk=product_id)
 
+
+
     if not found:
         if available_stock >= int(selected_quantity):
             cart.append({
@@ -86,6 +87,7 @@ def add_to_cart(request):
                 'selected_size_id':selected_size_id,
                 'price_item': price_item,
                 'quantity': int(selected_quantity),
+                'image_url': product.image.url if product.image else '',
             })
         else:
             messages.error(request, f"Na voljo je samo še {available_stock} kosov.")
@@ -155,7 +157,6 @@ def cart_view(request):
 
     total_price = 0
     for item in cart:
-        print(item['price_item'])
         item_price = float(item['price_item'])
         item_total = item_price * item['quantity']
         item['price_per_unit'] = item_price

@@ -17,7 +17,7 @@
       <div class="header-auth">
         <a class="transparent_button" href="{% url 'home' %}">Domov</a>
         <a class="transparent_button" href="{% url 'sentjur-merch' %}">Šentjur merch</a>
-        <a class="transparent_button" href="{% url 'ostali-merch' %}">Ostali merch</a>
+        <a class="transparent_button" href="{% url 'smarski-merch' %}">Šmarski merch</a>
         <a class="transparent_button" href="{% url 'kontakt' %}">Kontakt</a>
       </div>
       <div class="header-auth">
@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    {% block content %}{% endblock %}
+     <main class="block">{% block content %}{% endblock %}</main>
 
     <div class="footer">
       <div class="footer-auth">

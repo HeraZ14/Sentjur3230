@@ -2,6 +2,7 @@
 
 {% block content %}
 <h2>Šentjur Merch</h2>
+
 <div class="product-grid">
     {% if products %}
         {% for product in products %}
@@ -16,4 +17,5 @@
         <p>Ni izdelkov v tej kategoriji.</p>
     {% endif %}
 </div>
+
 {% endblock %}

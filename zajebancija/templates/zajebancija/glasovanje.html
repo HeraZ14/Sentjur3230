@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="poll-container">
+  <h1 class="poll-title">{{ poll.question }}</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    {% for option in poll.options.all %}
+      <button
+        type="submit"
+        name="option"
+        value="{{ option.id }}"
+        class="poll-option"
+      >
+        {{ option.text }}
+      </button>
+    {% endfor %}
+  </form>
+
+  <div class="poll-footer">
+    Povej svoje mnenje – Šmarska skupnost šteje! 💬
+  </div>
+</div>
+{% endblock %}
+

@@ -10,6 +10,7 @@
         </div>
     {% endif %}
 <div class="product-grid">
+<div class="product-detail">
     <div class="product-card">
                 <a href="{% url 'product_detail' product.id %}">
                     <h3>{{ product.name }}</h3>
@@ -17,7 +18,10 @@
                         <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
                     {% endif %}
                 </a>
-                <form method="POST" action="/add-to-cart/">
+            </div>
+
+<div class="product-detail-form">
+<form method="POST" action="/add-to-cart/">
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{ product.id }}">
                     <input type="hidden" name="productprice_id" value="{{ productprice.id }}">
@@ -38,15 +42,15 @@
                         {% endfor %}
                     </select>
 
-                    <input type="number" name="selected_quantity" min="1" value="1" required>
+                    <input type="number" name="selected_quantity" min="1" value="1" class="cart-input" required>
 
                     <div>
                         <input type="submit" class="vozek_button" value="V vojzek">
                     </div>
                 </form>
-            </div>
-
-</div>
+    </div>
+    </div>
+    </div>
 {% endblock %}
 {% block scripts %}
 <script>
