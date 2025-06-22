@@ -6,22 +6,37 @@
   <h1 class="poll-title">{{ poll.question }}</h1>
 
   <form method="POST">
-    {% csrf_token %}
-    {% for option in poll.options.all %}
-      <button
-        type="submit"
-        name="option"
-        value="{{ option.id }}"
-        class="poll-option"
-      >
-        {{ option.text }}
-      </button>
-    {% endfor %}
-  </form>
+      {% csrf_token %}
 
-  <div class="poll-footer">
-    Povej svoje mnenje – Šmarska skupnost šteje! 💬
-  </div>
+        {% for option in poll.options.all %}
+          {% if option.text == "Ne" %}
+            <button class="tricolor-button-sentjur"
+                    type="submit"
+                    name="option"
+                    value="{{ option.id }}">
+              {{ option.text }}
+            </button>
+          {% else %}
+          <div id="leftarea" class="left-area"></div>
+          <div id="centerarea" class="center-area">
+            <button
+                id="btn-da-{{ option.id }}"
+                class="tricolor-button-smarje"
+                type="submit"
+                name="option"
+                value="{{ option.id }}">
+              {{ option.text }}
+            </button>
+          </div>
+            <div id="rightarea" class="right-area"></div>
+          {% endif %}
+        {% endfor %}
+
+
+    </form>
 </div>
 {% endblock %}
+{% block scripts %}
+    <script src="{% static 'zajebancija/poll_logic.js' %}"></script>
+    {% endblock %}
 

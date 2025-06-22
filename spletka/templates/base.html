@@ -41,6 +41,8 @@
           <img class="linked-in" src="{% static 'linked-in0.svg' %}" />
       </div>
     </div>
-   {% block scripts %}{% endblock %}
+   {% block scripts %}
+    <script src="{% static 'zajebancija/poll_logic.js' %}"></script>
+    {% endblock %}
 </body>
 </html>

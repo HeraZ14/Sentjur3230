@@ -270,7 +270,7 @@ main.block{
             linear-gradient(120deg, rgba(0, 0, 0, 0.8), rgba(255, 0, 0, 0) 60.71%),
             linear-gradient(240deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 60.71%),
             linear-gradient(360deg, rgba(255, 0, 0, 0.8), rgba(0, 0, 255, 0) 60.71%);
-    animation: animate 7s linear infinite;
+    animation: product-tablet 7s linear infinite;
     transition: all 0.2s linear;
 }
 
@@ -281,7 +281,7 @@ main.block{
     border-radius: 15px;
     background: #232222;
 }
-@keyframes animate {
+@keyframes product-tablet {
   from {
     transform: rotate(0deg);
   }
@@ -462,7 +462,7 @@ h2 {
 /* glasovanja */
 
 .poll-container {
-    max-width: 500px;
+    max-width: 700px;
     margin: 80px auto;
     background-color: #222;
     color: #fff;
@@ -470,6 +470,7 @@ h2 {
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     font-family: Arial, sans-serif;
+    text-align: center;
   }
 
   .poll-title {
@@ -479,28 +480,35 @@ h2 {
     text-align: center;
   }
 
-  .poll-option {
-    display: block;
+
+.tricolor-button-sentjur {
+    background: linear-gradient(135deg, green, white, red);
+    margin-bottom: 20px;
+  color: black;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
     width: 100%;
-    padding: 12px 20px;
-    margin-bottom: 15px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(to right, #4CAF50, #388E3C);
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-  }
+}
+.tricolor-button-smarje {
+    background: linear-gradient(135deg, blue, white, yellow);
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-  .poll-option:hover {
-    background: linear-gradient(to right, #66BB6A, #43A047);
-    transform: scale(1.02);
-  }
-
-  .poll-footer {
-    margin-top: 25px;
-    font-size: 14px;
-    color: #aaa;
-    text-align: center;
-  }
+.left-area {
+  float: left;
+}
+.center-area {
+  display: inline-block;
+  width: 10%;
+  text-align: center;
+}
+.right-area {
+  float: right;
+}
