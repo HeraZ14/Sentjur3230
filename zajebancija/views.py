@@ -4,7 +4,6 @@ import random
 
 def glasovanje(request):
     poll = Poll.objects.first()
-    print(request)
     if request.method == 'POST':
         option_id = request.POST.get('option')
         option = get_object_or_404(PollOption, id=option_id)
@@ -13,12 +12,20 @@ def glasovanje(request):
 
         # Izberi random reakcijo iz baze
         reactions = Reaction.objects.filter(pollOption_id=option_id)
-        print(reactions)
         reaction = random.choice(reactions)
+
+        da_count = (PollOption.objects.get(id=1)).votes
+        ne_count = (PollOption.objects.get(id=2)).votes
+        print(da_count, ne_count)
+        total = da_count + ne_count
+        da_procent = (da_count / total) * 100
+        ne_procent = (ne_count / total) * 100
 
         return render(request, 'zajebancija/rezultati.html', {
             'poll': poll,
-            'reaction': reaction.text
+            'reaction': reaction.text,
+            "da_procent": da_procent,
+            "ne_procent": ne_procent,
         })
     return render(request, 'zajebancija/glasovanje.html', {'poll': poll})
 

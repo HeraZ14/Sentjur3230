@@ -21,7 +21,7 @@
               <input type="hidden" name="product_id" value="{{ item.product_id }}">
               <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
                 <input type="hidden" name="selected_size_id" value="{{ item.selected_size_id }}">
-              <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1" class="cart-input">
+              <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1" style="width: 80px;" class="cart-input">
               <button  class="signin_button" type="submit">Posodobi</button>
             </form>
             <form method="POST" action="{% url 'remove_from_cart' %}" style="display: flex; align-items: center; gap: 0.5rem;" onsubmit="return confirm('Si ziher, da hočeš odstraniti najboljši izdelek?')">

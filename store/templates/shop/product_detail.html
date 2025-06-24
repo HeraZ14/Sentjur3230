@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
     {% if messages %}
         <div class="message-container">
@@ -26,50 +27,38 @@
                     <input type="hidden" name="product_id" value="{{ product.id }}">
                     <input type="hidden" name="productprice_id" value="{{ productprice.id }}">
                     <select name="selected_price_id" onchange="updateDisplayedText(this)" required>
-                        <option disabled selected hidden>Izberi ceno</option>
-                            {% for p in product.productprice_set.all %}
-                                {% if p.product.id == product.id %}
-                        <option value="{{ p.id }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}">
-                            {{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}</option>
-                                {% endif %}
-                            {% endfor %}
-                    </select>
+                    <option disabled {% if not selected_price_id %}selected{% endif %} hidden>Izberi ceno</option>
+                    {% for p in product.productprice_set.all %}
+                        {% if p.product.id == product.id %}
+                            <option value="{{ p.id }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}"
+                                {% if p.id|stringformat:"s" == selected_price_id|stringformat:"s" %} selected {% endif %}>
+                                {{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
 
-                    <select name="selected_size_id" required>
-                        <option disabled selected hidden>Izberi velikost</option>
-                        {% for ps in product.product_sizes.all %}
-                        <option value="{{ ps.size.id }}">{{ ps.size.name }} (Še {{ ps.quantity }} kosov)</option>
-                        {% endfor %}
-                    </select>
+                <select name="selected_size_id" required>
+                    <option disabled {% if not selected_size_id %}selected{% endif %} hidden>Izberi velikost</option>
+                    {% for ps in product.product_sizes.all %}
+                        <option value="{{ ps.size.id }}" {% if ps.size.id|stringformat:"s" == selected_size_id|stringformat:"s" %} selected {% endif %}>
+                            {{ ps.size.name }} (Še {{ ps.quantity }} kosov)
+                        </option>
+                    {% endfor %}
+                </select>
 
-                    <input type="number" name="selected_quantity" min="1" value="1" class="cart-input" required>
-
-                    <div>
-                        <input type="submit" class="vozek_button" value="V vojzek">
+                    <div style="margin-top: 1rem;">
+                    <input type="number" name="selected_quantity" min="1" value="{{ selected_quantity|default:'1' }}" class="cart-input" required>
                     </div>
+                <div style="margin-top: 1rem;">
+                    <input type="submit" class="vozek_button" value="V vojzek">
+                </div>
                 </form>
     </div>
     </div>
     </div>
 {% endblock %}
 {% block scripts %}
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const alerts = document.querySelectorAll(".alert");
-    setTimeout(() => {
-      alerts.forEach(alert => {
-        alert.style.transition = "opacity 0.5s ease-out";
-        alert.style.opacity = "0";
-        setTimeout(() => alert.remove(), 500); // Počakaj, da se animacija zaključi, nato odstrani
-      });
-    }, 3000); // 3000 ms = 3 sekunde
-  });
-function updateDisplayedText(selectElement) {
-    var selectedOption = selectElement.options[selectElement.selectedIndex];
-    var text = selectedOption.getAttribute('data-original-text');
-    // Tu lahko nastaviš tekst na nek element ali kamorkoli želiš
-    console.log(text);
-}
-</script>
+    <script src="{% static 'store/product_detail.js' %}"></script>
 
 {% endblock %}

@@ -2,17 +2,21 @@
 {% load static %}
 
 {% block content %}
-  <div class="max-w-md mx-auto bg-gray-800 rounded-xl shadow-md p-6">
-    <h1 class="text-xl font-bold mb-4">Suma sumaro</h1>
+  <div class="poll-container">
+    <h2>Suma Sumaro</h2>
+    {{reaction}}
     <ul>
       {% for option in poll.options.all %}
-        <li class="mb-2">
           {{ option.text }}: <strong>{{ option.votes }}</strong> glasov
-        </li>
       {% endfor %}
     </ul>
-    <div class="mt-4 text-sm text-gray-400">
-      Hvala za nič! 🗳️
+    <div class="vote-bar-container">
+    <div class="vote-bar yes" style="width: {{ da_procent }}%;"></div>
+    <div class="vote-bar no" style="width: {{ ne_procent }}%;"></div>
     </div>
+
+    <h3>
+      Hvala za nič!
+    </h3>
   </div>
 {% endblock %}

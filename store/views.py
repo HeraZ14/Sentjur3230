@@ -44,7 +44,16 @@ def add_to_cart(request):
     selected_quantity = request.POST.get('selected_quantity')
     if not selected_price_id or not selected_size_id:
         messages.warning(request, "Izpolni obvezna polja gospodič.")
-        return redirect('product_detail', pk=product_id)
+
+        product = get_object_or_404(Product, pk=product_id)
+
+        return render(request, 'shop/product_detail.html', {
+            "product": product,
+            "selected_price_id": selected_price_id,
+            "selected_size_id": selected_size_id,
+            "selected_quantity": selected_quantity,
+        })
+
     selected_price_id = int(selected_price_id)
     try:
         get_price_item = ProductPrice.objects.get(id=selected_price_id, product_id=product_id)

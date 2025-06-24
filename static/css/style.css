@@ -63,6 +63,7 @@ main.block{
     flex: 1;
   min-height: 100vh;
 }
+
 /* ======= KARTICE IZDELKOV ======= */
 .cards {
   display: grid;
@@ -126,13 +127,12 @@ main.block{
 
 /* ======= GUMBI ======= */
 .signin_button {
+    display: inline-block;
     background-color: #ededed;
-        display: flex;          /* naredi vsebnik fleksibilen */
         align-items: center;    /* vertikalna poravnava */
         justify-content: center; /* horizontalna poravnava */
         color: #333;
         padding: 6px 12px;
-        border: 1px solid #333;
         border-radius: 10px;
         cursor: pointer;
         font-size: 14px;
@@ -165,7 +165,6 @@ main.block{
       align-items: center;    /* vertikalna poravnava */
       justify-content: center; /* horizontalna poravnava */
       color: #ccc;
-      border: 1px solid #ccc;
       padding: 6px 12px;
       border-radius: 10px;
       cursor: pointer;
@@ -185,6 +184,35 @@ main.block{
     padding: 6px 12px;
     cursor: pointer;
     font-size: 14px;
+}
+
+.register_button{
+    display: inline-block;
+    background: #2ec52e;
+    color: black;
+    padding: 6px 12px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+    text-decoration: none;
+    margin-right: 10px;
+    width: 160px;
+}
+.forget_password_button{
+    display: inline-block;
+    background: #c31919;
+    color: black;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+    gap: 50px;
+    text-decoration: none;
+    margin-left: 25px;
+    width: 160px;
 }
 
 /*Product cards*/
@@ -306,7 +334,7 @@ h2 {
 .vozek_button {
   background-color: #333;
       color: #ccc;
-      border: 1px solid #ccc;
+      border: 1px solid #333;
       padding: 6px 12px;
       border-radius: 10px;
       cursor: pointer;
@@ -352,9 +380,15 @@ h2 {
 
     /*ALERTS*/
 .message-container {
-    margin: 20px auto;
+    position: fixed;
+    top: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
     max-width: 600px;
+    width: 90%;
     padding: 0 20px;
+    pointer-events: none; /* da ne blokira klikov pod sabo, opcijsko */
 }
 
 .alert {
@@ -401,36 +435,25 @@ h2 {
   border: 1px solid #444;
 }
 
-.cart-input[type="number"] {
+.cart-input {
   background-color: #111;           /* temna podlaga */
   color: #fff;                      /* bel tekst */
   border: 1px solid #444;           /* siva obroba */
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
-  width: 80px;
   font-size: 1rem;
   outline: none;
   transition: border 0.2s ease;
+    -moz-appearance: textfield;
 }
 
-.cart-input[type="number"]:hover {
+.cart-input:hover {
   border-color: #888;               /* svetlejša obroba ob hoverju */
 }
 
-.cart-input[type="number"]:focus {
+.cart-input:focus {
   border-color: #fff;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2); /* subtilen fokus efekt */
-}
-/* Chrome, Safari, Edge */
-.cart-input::-webkit-inner-spin-button,
-.cart-input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-.cart-input {
-  -moz-appearance: textfield;
 }
 
 .product-detail-form {
@@ -471,6 +494,7 @@ h2 {
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     font-family: Arial, sans-serif;
     text-align: center;
+    margin-bottom: 10px;
   }
 
   .poll-title {
@@ -501,6 +525,19 @@ h2 {
   cursor: pointer;
 }
 
+
+.tricolor-button-dvoboj {
+    background: linear-gradient(135deg, green, white, red);
+    margin-bottom: 20px;
+    width: 100%;
+  color: black;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .left-area {
   float: left;
 }
@@ -511,4 +548,140 @@ h2 {
 }
 .right-area {
   float: right;
+}
+
+.form-group-floating {
+    position: relative;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.input-floating {
+    width: 100%;
+    padding: 12px 12px 12px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: black;
+    color: #999;
+}
+
+.input-floating:focus {
+    outline: none;
+    border-color: white;
+}
+
+.form-group-floating label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: none;
+    color: #999;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    padding: 0 4px;
+}
+
+.input-floating:focus + label,
+.input-floating:not(:placeholder-shown):valid + label {
+    top: -2px;
+    left: 8px;
+    font-size: 12px;
+}
+
+.form-group-remember {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #ddd;
+}
+.custom-checkbox {
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #ddd;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Skrij originalni checkbox */
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Prazni kvadratek */
+.custom-checkbox .checkmark {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    height: 18px;
+    width: 18px;
+    background-color: #000;
+    border: 1px solid #444;
+    border-radius: 3px;
+}
+
+/* Ko je označeno – rdeče ozadje */
+.custom-checkbox input:checked + .checkmark {
+    background-color: red;
+}
+
+/* Klasična "kljukica" */
+.custom-checkbox .checkmark::after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Pokaži "kljukico", ko je checkbox označen */
+.custom-checkbox input:checked + .checkmark::after {
+    display: block;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.form-actions > * {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.form-actions-row {
+    display: block;
+}
+
+.vote-bar-container {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.vote-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.vote-bar.yes {
+    background: linear-gradient(135deg, green, white, red);
+}
+
+.vote-bar.no {
+    background: linear-gradient(135deg, blue, white, yellow);
 }
