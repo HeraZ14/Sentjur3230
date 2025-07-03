@@ -16,7 +16,6 @@ def glasovanje(request):
 
         da_count = (PollOption.objects.get(id=1)).votes
         ne_count = (PollOption.objects.get(id=2)).votes
-        print(da_count, ne_count)
         total = da_count + ne_count
         da_procent = (da_count / total) * 100
         ne_procent = (ne_count / total) * 100

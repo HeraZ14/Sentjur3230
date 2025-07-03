@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'store',
     'accounts',
     'zajebancija',
+    'widget_tweaks',
 ]
 LOGIN_REDIRECT_URL = '/profile/'     # ali karkoli
 LOGOUT_REDIRECT_URL = '/accounts/login/'

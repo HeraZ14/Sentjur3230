@@ -1,29 +1,32 @@
 {% extends "base.html" %}
-
+{% load widget_tweaks %}
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gray-900">
-    <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 hover:scale-105">
-        <h2 class="text-3xl font-bold text-white mb-6 text-center">Registracija</h2>
+<div class="poll-container">
+        <h2>Registracija</h2>
         {% if messages %}
-            <div class="mb-4">
-                {% for message in messages %}
-                    <div class="bg-green-600 text-white p-4 rounded-lg {{ message.tags }} transition-opacity duration-300">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
+        <div class="message-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
         {% endif %}
         {% if form.errors %}
             <div class="bg-red-600 text-white p-4 rounded-lg mb-4">
                 Prosimo, popravite napake v obrazcu.
             </div>
         {% endif %}
-        <form method="post" class="space-y-4">
+        <form method="post">
             {% csrf_token %}
              {% for field in form %}
         <div>
-            {{ field.label_tag }}
-            {{ field }}
+
+            <div class="form-group-floating">
+            {{ field|add_class:"input-floating" }}
+            <label {{ field.label_tag }}</label>
+            </div>
+
             {% for error in field.errors %}
                 <div style="color:red;">{{ error }}</div>
             {% endfor %}
@@ -33,9 +36,8 @@
             {% for error in form.non_field_errors %}
         <div style="color:red;">{{ error }}</div>
             {% endfor %}
-            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors duration-200">Registriraj se</button>
+            <button type="submit" class="signin_button" style="margin-bottom: 1rem;">Registriraj se</button>
         </form>
-        <p class="mt-4 text-center text-gray-400">Že imate račun? <a href="{% url 'login' %}" class="text-blue-400 hover:underline">Prijavite se</a></p>
+    <a href="{% url 'login' %}" class="tricolor-button-register" >Že imate račun? Prijavite se</a>
     </div>
-</div>
 {% endblock %}
