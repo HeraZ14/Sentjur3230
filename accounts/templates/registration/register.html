@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load widget_tweaks %}
 {% block content %}
 <div class="poll-container">
@@ -12,11 +13,6 @@
             {% endfor %}
         </div>
         {% endif %}
-        {% if form.errors %}
-            <div class="bg-red-600 text-white p-4 rounded-lg mb-4">
-                Prosimo, popravite napake v obrazcu.
-            </div>
-        {% endif %}
         <form method="post">
             {% csrf_token %}
              {% for field in form %}
@@ -24,7 +20,7 @@
 
             <div class="form-group-floating">
             {{ field|add_class:"input-floating" }}
-            <label {{ field.label_tag }}</label>
+            {{ field.label_tag }}
             </div>
 
             {% for error in field.errors %}
@@ -40,4 +36,8 @@
         </form>
     <a href="{% url 'login' %}" class="tricolor-button-register" >Že imate račun? Prijavite se</a>
     </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'store/product_detail.js' %}"></script>
+
 {% endblock %}

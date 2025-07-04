@@ -15,12 +15,6 @@
         </div>
           {% endif %}
 
-        {% if form.errors %}
-            <div class="error">
-                Napačno uporabniško ime ali geslo. Poskusite znova.
-            </div>
-        {% endif %}
-
         <form method="post">
     {% csrf_token %}
     <div class="form-group-floating">

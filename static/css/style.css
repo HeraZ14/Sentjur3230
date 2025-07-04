@@ -216,6 +216,7 @@ main.block{
 }
 
 .tricolor-button-register {
+    display: inline-block;
     background: linear-gradient(135deg, green, white, red);
     text-decoration: none;
     color: #3e3b3a;
@@ -224,8 +225,12 @@ main.block{
         border-radius: 10px;
         cursor: pointer;
         margin-top: 1rem;
+        transition: transform 0.2s;
 }
 
+.tricolor-button-register:hover {
+  transform: scale(1.02);
+}
 
 /*Product cards*/
 
