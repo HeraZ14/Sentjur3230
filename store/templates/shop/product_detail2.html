@@ -26,18 +26,12 @@
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{ product.id }}">
                     <input type="hidden" name="productprice_id" value="{{ productprice.id }}">
-                    <select name="selected_price_id" onchange="updateDisplayedText(this)" required>
-                    <option disabled {% if not selected_price_id %}selected{% endif %} hidden>Izberi ceno</option>
-                    {% for p in product.productprice_set.all %}
-                        {% if p.product.id == product.id %}
-                            <option value="{{ p.id }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}"
-                                {% if p.id|stringformat:"s" == selected_price_id|stringformat:"s" %} selected {% endif %}>
-                                {{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}
-                            </option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
 
+    <div>
+        <span id="rangeValue">10</span>
+        <input class="range" id="slider" type="range" min="0" max="100" value="0">
+        <input type="hidden" id="selected_price" name="selected_price" value="10">
+    </div>
 
                 <select name="selected_size_id" required>
                     <option disabled {% if not selected_size_id %}selected{% endif %} hidden>Izberi velikost</option>
@@ -62,6 +56,7 @@
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'store/product_detail.js' %}"></script>
+    <script src="{% static 'store/slider.js' %}"></script>
 
 
 {% endblock %}
