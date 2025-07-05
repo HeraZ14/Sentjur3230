@@ -1,5 +1,8 @@
+import stripe
+from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Prefetch
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -238,11 +241,38 @@ def checkout(request):
             recipient_list=[email],
             fail_silently=True,
         )
+        stripe.api_key = settings.STRIPE_SECRET_KEY
 
-        # Počisti košarico
-        del request.session['cart']
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price': ProductPrice.objects.get(id=item['selected_price_id']).stripe_price_id,
+                        'quantity': item['quantity'],
+                    }
+                    for item in cart
+                ],
+                mode='payment',
+                success_url=request.build_absolute_uri('/uspeh/'),
+                cancel_url=request.build_absolute_uri('/preklicano/'),
+                customer_email=email,
+            )
+            # Počisti košarico
+            del request.session['cart']
 
-        messages.success(request, "Naročilo je bilo uspešno oddano. Preveri email.")
-        return redirect('home')  # ali kamor želiš
+            messages.success(request, "Naročilo je bilo uspešno oddano. Preveri email.")
+            return redirect(checkout_session.url)  # ali kamor želiš
+
+        except Exception as e:
+            messages.error(request, f"Napaka pri povezavi s Stripe: {str(e)}")
+            return render(request, 'shop/checkout.html', {'cart': cart})
 
     return render(request, 'shop/checkout.html', {'cart': cart})
+
+
+def payment_success(request):
+    return HttpResponse("Plačilo uspešno. Hvala za naročilo!")
+
+def payment_cancel(request):
+    return HttpResponse("Plačilo preklicano.")

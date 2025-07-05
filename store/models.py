@@ -41,6 +41,8 @@ class ProductPrice(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price_type = models.ForeignKey(PriceTypes, on_delete=models.CASCADE)
     price = models.FloatField()
+    stripe_product_id = models.CharField(max_length=100, blank=True, null=True)
+    stripe_price_id = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         unique_together = ('product', 'price_type')

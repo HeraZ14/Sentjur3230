@@ -22,10 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ylu!!)q^bq&nq@)&3)(qpv&_(xoj!yxd*0$)2fl$b-g&#sq#5('
 
+STRIPE_SECRET_KEY = "sk_test_51RhZ7GQILlH3U32jyqbbKE2jpLY3dTToCxbNc036kT5iNuiAbyhmUX7zbABbUEAFpiiRmsc2S8Uxd910WqhB14P000EBSCmkAQ"  # iz Stripe Dashboard
+STRIPE_PUBLISHABLE_KEY = "pk_test_51RhZ7GQILlH3U32jLvpI5ZDdNSHZlbmKEZIPTRKZsXZBNYhc6IMozRkeVrdALvq7BwJhARjZrAb2rBzGM8T68AiE00fyDExrCE"
+DOMAIN = "http://localhost:8000"  # pozneje spremeni na https://sentjur-metropola.si
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok-free.app']
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.app",
+]
 
 
 # Application definition
