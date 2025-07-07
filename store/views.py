@@ -1,3 +1,5 @@
+import json
+
 import stripe
 from django.conf import settings
 from django.core.mail import send_mail
@@ -361,6 +363,6 @@ def stripe_logs_create(event_id, event_type, order, event, payment_intent):
         event_id=event_id,
         event_type=event_type,
         order_id=order,
-        payload=event,
+        payload=json.dumps(event),
         processed_successfully=payment_intent
     )

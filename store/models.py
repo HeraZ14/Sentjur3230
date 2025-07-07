@@ -110,7 +110,7 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=100, default="", blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.username}"
+        return str(self.user) if self.user else "Anonimen"
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
