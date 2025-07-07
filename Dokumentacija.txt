@@ -1,0 +1,7 @@
+Stripe: cmd
+cd C:\Users\MSi\PyCharmMiscProject\stripe
+.\stripe listen --forward-to localhost:8000/webhook/
+
+Ngrok (local hosting service: cmd
+cd C:\Users\MSi\PyCharmMiscProject\ngrok
+.\ngrok.exe http 8000

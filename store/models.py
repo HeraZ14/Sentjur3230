@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 import datetime
 
+from django.db.models import TextField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -106,6 +107,7 @@ class Order(models.Model):
     email = models.EmailField(max_length=100, default="", blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
+    payment_method = models.CharField(max_length=100, default="", blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username}"
@@ -115,3 +117,15 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.ForeignKey(ProductPrice, on_delete=models.CASCADE,null=True, blank=True)
+
+class StripeLogs(models.Model):
+    event_id = models.CharField(max_length=255, unique=True)
+    event_type = models.CharField(max_length=100)
+    order_id = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='stripe_logs')
+    received_at = models.DateTimeField(auto_now_add=True)
+    payload = models.JSONField(null=True, blank=True)
+    processed_successfully = models.BooleanField(default=False)
+    error_message = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.event_type} | Order #{self.order_id} | {self.event_id}"
