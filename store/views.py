@@ -1,6 +1,10 @@
+import hashlib
+import hmac
 import json
+import logging
 
 import stripe
+from coinbase_commerce import Client
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Prefetch
@@ -9,7 +13,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Order, OrderItem, StripeLogs
+from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Order, OrderItem, StripeLogs, CoinbaseLogs
 
 
 # Create your views here.
@@ -203,6 +207,7 @@ def checkout(request):
     return render(request, 'shop/checkout.html', {'cart': cart})
 
 
+#Stripe plačila (paypal, revolut, applepay, googlepay, sepa, card itd...
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -339,15 +344,114 @@ def create_payment_intent(request):
                 # Dodaj po potrebi – preveri v dashboardu, kaj imaš omogočeno
             ]
         )
-        return JsonResponse({'client_secret': intent.client_secret})
+        print(order.id)
+        return JsonResponse({
+            'client_secret': intent.client_secret,
+            'order_id': order.id
+        })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
 
 def stripe_pay(request):
     client_secret = request.GET.get('client_secret')
+    order_id = request.GET.get('order_id')
+    print(order_id)
 
     return render(request, 'shop/stripe_pay.html', {
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
-        'client_secret': client_secret
+        'client_secret': client_secret,
+        'order_id': order_id,
     })
+
+
+#Crypto plačila wihi
+COINBASE_API_KEY = settings.COINBASE_API_KEY
+client = Client(api_key=COINBASE_API_KEY)
+
+def create_crypto_charge(order):
+    try:
+        charge = client.charge.create(
+            name=f"Order #{order.id}",
+            description="Plačilo z kriptovaluto",
+            local_price={"amount": f"{order.get_total():.2f}", "currency": "EUR"},
+            pricing_type="fixed_price",
+            metadata={"order_id": str(order.id)},
+            redirect_url= "https://5cec6f189adb.ngrok-free.app/success/", #"https://sentjur-metropola.si/success/",
+            cancel_url="https://5cec6f189adb.ngrok-free.app/cancel/" #"https://sentjur-metropola.si/cancel/"
+        )
+        return charge.hosted_url
+
+    except Exception as e:
+        logging.exception("Coinbase charge creation failed")
+        return None
+
+def crypto_payment_redirect(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    hosted_url = create_crypto_charge(order)
+    if hosted_url:
+        return redirect(hosted_url)
+    else:
+        # fallback stran
+        return redirect("/cancel/")
+
+def coinbase_logs_create(event_id, event_type, order, event, payment_intent):
+    CoinbaseLogs.objects.create(
+        event_id=event_id,
+        event_type=event_type,
+        order_id=order,
+        payload=json.dumps(event),
+        processed_successfully=payment_intent
+    )
+@csrf_exempt
+def coinbase_webhook(request):
+    secret = settings.COINBASE_WEBHOOK_SECRET
+    signature = request.META.get('HTTP_X_CC_WEBHOOK_SIGNATURE', '')
+    payload = request.body
+
+    computed_sig = hmac.new(
+        key=bytes(secret, 'utf-8'),
+        msg=payload,
+        digestmod=hashlib.sha256
+    ).hexdigest()
+
+    if not hmac.compare_digest(computed_sig, signature):
+        return HttpResponse("Invalid signature", status=400)
+
+    try:
+        event = json.loads(payload)
+    except json.JSONDecodeError:
+        return HttpResponse("Invalid JSON", status=400)
+
+    # Shrani log
+    order_id = event["event"]["data"]["metadata"].get("order_id")
+    order = None
+    if order_id:
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            order = None
+
+    coinbase_logs_create(event["id"], event["event"]["type"], order, event, False)
+
+    # Posodobi order status
+    metadata = event.get("event", {}).get("data", {}).get("metadata") or {}
+    order_id = metadata.get("order_id")
+    #TEST
+    order_id = 65
+
+    if not order_id:
+        return HttpResponse("Missing order_id", status=400)
+    try:
+        order = Order.objects.get(id=order_id)
+        event_type = event["event"]["type"]
+
+        if event_type == "charge:confirmed":
+            order.status = True
+            order.save()
+
+    except Order.DoesNotExist:
+        pass  # ali logiraj
+
+    return HttpResponse("OK", status=200)

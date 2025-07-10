@@ -8,14 +8,26 @@
   <div id="error-message"></div>
 </form>
 
+<form method="POST" id="crypto-payment-form" action="">
+  {% csrf_token %}
+  <button type="submit">Plačaj s kriptovaluto</button>
+</form>
+
 <script src="https://js.stripe.com/v3/"></script>
 <script>
   const stripe = Stripe("{{ stripe_publishable_key }}");
   const clientSecret = "{{ client_secret }}";
+  const orderId = "{{ order_id }}";
 
   const elements = stripe.elements({ clientSecret });
   const paymentElement = elements.create("payment");
   paymentElement.mount("#payment-element");
+
+  // Nastavi kripto action
+  if (orderId) {
+    const cryptoForm = document.getElementById("crypto-payment-form");
+    cryptoForm.action = `/api/crypto/${orderId}/`;
+  }
 
   document.getElementById("payment-form").addEventListener("submit", async (event) => {
     event.preventDefault();

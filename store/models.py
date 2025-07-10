@@ -112,6 +112,9 @@ class Order(models.Model):
     def __str__(self):
         return str(self.user) if self.user else "Anonimen"
 
+    def get_total(self):
+        return sum(item.price.price * item.quantity for item in self.items.all())
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -126,6 +129,19 @@ class StripeLogs(models.Model):
     payload = models.JSONField(null=True, blank=True)
     processed_successfully = models.BooleanField(default=False)
     error_message = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.event_type} | Order #{self.order_id} | {self.event_id}"
+
+class CoinbaseLogs(models.Model):
+    event_id = models.CharField(max_length=255, unique=True)
+    event_type = models.CharField(max_length=100)
+    order_id = models.ForeignKey('Order', null=True, blank=True, on_delete=models.CASCADE, related_name='coinbase_logs')
+    received_at = models.DateTimeField(auto_now_add=True)
+    payload = models.JSONField(null=True, blank=True)
+    processed_successfully = models.BooleanField(default=False)
+    error_message = models.TextField(null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.event_type} | Order #{self.order_id} | {self.event_id}"
