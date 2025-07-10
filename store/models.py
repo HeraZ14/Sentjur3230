@@ -121,7 +121,7 @@ class OrderItem(models.Model):
 class StripeLogs(models.Model):
     event_id = models.CharField(max_length=255, unique=True)
     event_type = models.CharField(max_length=100)
-    order_id = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='stripe_logs')
+    order_id = models.ForeignKey('Order', null=True, blank=True, on_delete=models.CASCADE, related_name='stripe_logs')
     received_at = models.DateTimeField(auto_now_add=True)
     payload = models.JSONField(null=True, blank=True)
     processed_successfully = models.BooleanField(default=False)

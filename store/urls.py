@@ -11,9 +11,12 @@ urlpatterns = [
     path('update-cart/', views.update_cart, name='update_cart'),
     path('vojzek/', views.cart_view, name='vojzek'),
     path('checkout/', views.checkout, name='checkout'),
+    path('stripe_pay/', views.stripe_pay, name='stripe_pay'),
     path('success/', views.payment_success, name='success'),
     path('cancel/', views.payment_cancel, name='cancel'),
+    path('api/create-payment-intent/', views.create_payment_intent, name='create_payment_intent'),
     path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'),
+
 
 
 ]

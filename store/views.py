@@ -4,7 +4,7 @@ import stripe
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Prefetch
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -199,80 +199,9 @@ def get_cart_items(request):
 
 
 def checkout(request):
-    session_key = request.session.session_key
-
-    if not session_key:
-        request.session.create()
-        session_key = request.session.session_key
-
     cart = request.session.get('cart', [])
-
-    if request.method == 'POST':
-        user = request.user if request.user.is_authenticated else None
-        email = request.POST.get('email')
-        address = request.POST.get('address')
-        phone = request.POST.get('phone')
-
-        if not email or not address:
-            messages.error(request, "Vsa polja so obvezna.")
-            return render(request, 'shop/checkout.html', {'cart': cart})
-
-        order = Order.objects.create(
-            user=user,
-            email=email,
-            address=address,
-            phone=phone,
-            status=False
-        )
-
-        for item in cart:
-            product = Product.objects.get(id=item['product_id'])
-            price = ProductPrice.objects.get(id=item['selected_price_id'])
-            OrderItem.objects.create(
-                order=order,
-                product=product,
-                quantity=item['quantity'],
-                price=price,
-
-            )
-
-        # Pošlji email (zaenkrat na konzolo)
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-
-        try:
-
-            checkout_session = stripe.checkout.Session.create(
-                payment_method_types=['card','sepa_debit'],
-                line_items=[
-                    {
-                        'price': ProductPrice.objects.get(id=item['selected_price_id']).stripe_price_id,
-                        'quantity': item['quantity'],
-                    }
-                    for item in cart
-                ],
-                mode='payment',
-                success_url=request.build_absolute_uri('/success/'),
-                cancel_url=request.build_absolute_uri('/cancel/'),
-                client_reference_id=str(order.id),
-                customer_email=email,
-            )
-            send_mail(
-                subject='Potrditev naročila',
-                message=f"Hvala za naročilo. Število artiklov: {len(cart)}",
-                from_email='no-reply@tvoja-domena.si',
-                recipient_list=[email],
-                fail_silently=True,
-            )
-            # Počisti košarico
-            del request.session['cart']
-
-            return redirect(checkout_session.url)  # ali kamor želiš
-
-        except Exception as e:
-            messages.error(request, f"Napaka pri povezavi s Stripe: {str(e)}")
-            return render(request, 'shop/checkout.html', {'cart': cart})
-
     return render(request, 'shop/checkout.html', {'cart': cart})
+
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -287,69 +216,55 @@ def stripe_webhook(request):
     except (ValueError, stripe.error.SignatureVerificationError):
         return HttpResponse(status=400)
 
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        email = session.get('customer_email')
-        order_id = session.get('client_reference_id')
+    if event['type'] == 'payment_intent.succeeded':
+        intent = event['data']['object']
+        metadata = intent.get('metadata', {})
+        order_id = metadata.get('order_id')
+        email = intent.get('receipt_email')
 
         if order_id:
             try:
                 order = Order.objects.get(id=order_id)
-                payment_intent_id = session.get('payment_intent')
-                payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
-                payment_method_id = payment_intent.payment_method
-                payment_method = stripe.PaymentMethod.retrieve(payment_method_id)
-                payment_type = payment_method.type
-                order.payment_method = payment_type
-
-                #Stripe logs
-
-                if payment_type == 'card':
-                    order.status = True  # kartično plačilo je instantno potrjeno
-                    print(f"✅ Naročilo {order_id} za {email} plačano s kartico.")
-
-                elif payment_type == 'sepa_debit':
-                    order.status = False  # še ne vemo, če bo SEPA uspešen
-                    print(f"⏳ Naročilo {order_id} za {email} čaka SEPA potrditev.")
-
-                else:
-                    print(f"⚠️ Nepodprt način plačila: {payment_type}")
-
+                order.status = True
+                payment_method_id = intent.get('payment_method')
+                if payment_method_id:
+                    method = stripe.PaymentMethod.retrieve(payment_method_id)
+                    order.payment_method = method.type
                 order.save()
-                stripe_logs_create(event['id'],event['type'],order,event, True)
-
+                if email:
+                    send_mail(
+                        subject='Plačilo uspešno',
+                        message='Vaše naročilo je bilo uspešno plačano. Hvala!',
+                        from_email='no-reply@tvoja-domena.si',
+                        recipient_list=[email],
+                        fail_silently=True,
+                    )
+                print(f"✅ Naročilo {order_id} za {email} uspešno plačano (Elements).")
+                stripe_logs_create(event['id'], event['type'], order, event, True)
             except Order.DoesNotExist:
+                print(f"⚠️ Naročilo z ID {order_id} ni najdeno.")
                 stripe_logs_create(event['id'], event['type'], None, event, False)
-                print(f"⚠️ Naročilo z ID {order_id} ni bilo najdeno.")
-        else:
-            print(f"⚠️ Manjka client_reference_id v sessionu.")
 
-    elif event['type'] == 'checkout.session.async_payment_succeeded': # za SEPA potrditev, delayed payment
-        session = event['data']['object']
-        email = session.get('customer_email')
-        order_id = session.get('client_reference_id')
+    elif event['type'] == 'payment_intent.payment_failed':
+        intent = event['data']['object']
+        metadata = intent.get('metadata', {})
+        order_id = metadata.get('order_id')
+        error_message = intent.get('last_payment_error', {}).get('message', 'Ni sporočila.')
 
-        if order_id:
-            try:
-                order = Order.objects.get(id=order_id)
-
-                if not order.status:
-                    order.status = True  # označi kot plačano samo enkrat
-                    order.save()
-                    stripe_logs_create(event['id'], event['type'], order, event, True)
-                    print(f"✅ (ASYNC) Naročilo {order_id} za {email} je bilo uspešno plačano.")
-                else:
-                    print(f"ℹ️ (ASYNC) Naročilo {order_id} je že bilo označeno kot plačano.")
-
-            except Order.DoesNotExist:
-                stripe_logs_create(event['id'],event['type'],None,event, False)
-                print(f"⚠️ (ASYNC) Naročilo z ID {order_id} ni bilo najdeno.")
-        else:
-            print(f"⚠️ (ASYNC) Manjka client_reference_id v sessionu.")
+        print(f"❌ Plačilo spodletelo za naročilo {order_id}: {error_message}")
+        stripe_logs_create(event['id'], event['type'], None, event, False)
+        
+    elif event['type'] == 'payment_intent.processing':
+        intent = event['data']['object']
+        order_id = intent.get('metadata', {}).get('order_id')
+        print(f"⏳ Plačilo za naročilo {order_id} je v obdelavi (processing).")
+        stripe_logs_create(event['id'], event['type'], None, event, True)
 
     return HttpResponse(status=200)
 
 def payment_success(request):
+    if 'cart' in request.session:
+        del request.session['cart']
     messages.success(request, "Naročilo je bilo uspešno oddano. Preveri email.")
     return redirect('home')
 
@@ -366,3 +281,73 @@ def stripe_logs_create(event_id, event_type, order, event, payment_intent):
         payload=json.dumps(event),
         processed_successfully=payment_intent
     )
+
+@csrf_exempt
+def create_payment_intent(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid method'}, status=405)
+
+    # CSRF je že poslan prek Fetch z headerjem, zato lahko uporabljamo request.POST
+    email = request.POST.get('email')
+    address = request.POST.get('address')
+    phone = request.POST.get('phone')
+
+    if not email or not address or not phone:
+        return JsonResponse({'error': 'Vsa polja so obvezna.'}, status=400)
+
+    cart = request.session.get('cart', [])
+    if not cart:
+        return JsonResponse({'error': 'Košarica je prazna.'}, status=400)
+
+    user = request.user if request.user.is_authenticated else None
+
+    total_amount = 0
+    for item in cart:
+        price = ProductPrice.objects.get(id=item['selected_price_id'])
+        total_amount += int(price.price * 100) * item['quantity']
+
+    order = Order.objects.create(
+        user=user,
+        email=email,
+        address=address,
+        phone=phone,
+        status=False
+    )
+
+    for item in cart:
+        product = Product.objects.get(id=item['product_id'])
+        price = ProductPrice.objects.get(id=item['selected_price_id'])
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=item['quantity'],
+            price=price,
+        )
+
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=total_amount,
+            currency='eur',
+            metadata={'order_id': str(order.id)},
+            receipt_email=email,
+            payment_method_types=[
+                'card',
+                'sepa_debit',
+                'paypal',
+                'revolut_pay',
+                # Dodaj po potrebi – preveri v dashboardu, kaj imaš omogočeno
+            ]
+        )
+        return JsonResponse({'client_secret': intent.client_secret})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def stripe_pay(request):
+    client_secret = request.GET.get('client_secret')
+
+    return render(request, 'shop/stripe_pay.html', {
+        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+        'client_secret': client_secret
+    })

@@ -1,40 +1,55 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <h2>Checkout</h2>
 
 {% if cart %}
 <table>
-  <thead>
-    <tr><th>Izdelek</th><th>Količina</th><th>Cena</th></tr>
-  </thead>
+  <thead><tr><th>Izdelek</th><th>Količina</th><th>Cena</th></tr></thead>
   <tbody>
     {% for item in cart %}
     <tr>
-      <li>
-                {{ item.product_name }} — {{ item.selected_price_id }} —
-                Količina: {{ item.quantity }} —
-                Cena na enoto: {{ item.price_per_unit }}€
-                Skupaj: {{ item.total_price }}€
-      </li>
+      <td>{{ item.product_name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.total_price }}€</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
-<form method="post">
+<form id="checkout-form">
   {% csrf_token %}
-  <label for="email">Email:</label><br>
-  <input type="email" name="email" id="email" required><br><br>
+  <label>Email:</label><br>
+  <input type="email" name="email" required><br><br>
 
-  <label for="address">Naslov:</label><br>
-  <textarea name="address" id="address" required></textarea><br><br>
+  <label>Naslov:</label><br>
+  <textarea name="address" required></textarea><br><br>
 
-  <label for="phone">Telefon:</label><br>
-  <input type="text" name="phone" id="phone" required><br><br>
+  <label>Telefon:</label><br>
+  <input type="text" name="phone" required><br><br>
 
-
-  <button type="submit">Oddaj naročilo</button>
+  <button type="submit">Nadaljuj na plačilo</button>
 </form>
+
+<script>
+document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const response = await fetch("{% url 'create_payment_intent' %}", {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+    },
+    body: formData,
+  });
+  const data = await response.json();
+  if (data.client_secret) {
+    window.location.href = `/stripe_pay/?client_secret=${data.client_secret}`;
+  } else {
+    alert(data.error || 'Napaka pri ustvarjanju plačila');
+  }
+});
+</script>
 
 {% else %}
 <p>Košarica je prazna.</p>

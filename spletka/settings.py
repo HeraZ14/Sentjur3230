@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-ylu!!)q^bq&nq@)&3)(qpv&_(xoj!yxd*0$)2fl$b-g&#sq#5(
 STRIPE_SECRET_KEY = "sk_test_51RhZ7GQILlH3U32jyqbbKE2jpLY3dTToCxbNc036kT5iNuiAbyhmUX7zbABbUEAFpiiRmsc2S8Uxd910WqhB14P000EBSCmkAQ"  # iz Stripe Dashboard
 STRIPE_PUBLISHABLE_KEY = "pk_test_51RhZ7GQILlH3U32jLvpI5ZDdNSHZlbmKEZIPTRKZsXZBNYhc6IMozRkeVrdALvq7BwJhARjZrAb2rBzGM8T68AiE00fyDExrCE"
 STRIPE_WEBHOOK_SECRET = 'whsec_3247759521c4baccc1db2124f1180a990797281accd7bdd53bf303f8dbb511db' #to je treba zamenjati, ko gremo v prod
+COINBASE_API_KEY = 'c2354d2d-233e-4747-87f0-ae9316c70513'
 DOMAIN = "http://localhost:8000"  # pozneje spremeni na https://sentjur-metropola.si
 
 # SECURITY WARNING: don't run with debug turned on in production!
