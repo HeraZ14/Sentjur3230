@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Poll, PollOption, Reaction
+from .models import Poll, PollOption, Reaction, Comment
 import random
+from .forms import CommentForm
 
 def glasovanje(request):
     poll = Poll.objects.first()
@@ -27,4 +28,23 @@ def glasovanje(request):
             "ne_procent": ne_procent,
         })
     return render(request, 'zajebancija/glasovanje.html', {'poll': poll})
+
+
+def forum(request):
+    if request.method == 'POST':
+        form = CommentForm(request.POST, request=request)  # <<< ključna linija
+        if form.is_valid():
+            comment = form.save(commit=False)
+            if request.user.is_authenticated:
+                comment.created_by = request.user
+            comment.save()
+            return redirect('forum')  # ali karkoli je tvoj forum URL
+    else:
+        form = CommentForm(request=request)  # <<< tudi tu!
+
+    top_level_comments = Comment.objects.filter(parent__isnull=True).order_by('-created_at')
+    return render(request, 'zajebancija/forum.html', {
+        'form': form,
+        'top_level_comments': top_level_comments
+    })
 

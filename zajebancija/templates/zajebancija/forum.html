@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Forum</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Dodaj komentar</button>
+</form>
+
+<hr>
+
+{% for comment in top_level_comments %}
+    <div style="margin-bottom: 20px;">
+        <strong>{{ comment.created_by|default:'Anonymous' }}</strong>: {{ comment.content }}
+        <br>
+        <small>{{ comment.created_at }}</small>
+
+        <!-- Replies -->
+        {% for reply in comment.replies.all %}
+            <div style="margin-left: 2rem; margin-top: 10px;">
+                <strong>{{ reply.created_by|default:'Anonymous' }}</strong>: {{ reply.content }}
+                <br>
+                <small>{{ reply.created_at }}</small>
+            </div>
+        {% endfor %}
+
+        <!-- Reply form (optional for each comment) -->
+        <form method="post" style="margin-top: 10px;">
+            {% csrf_token %}
+            <textarea name="content" rows="2" cols="40"></textarea>
+            <input type="hidden" name="parent" value="{{ comment.id }}">
+            <button type="submit">Odgovori</button>
+        </form>
+    </div>
+{% empty %}
+    <p>Ni še komentarjev.</p>
+{% endfor %}
+{% endblock %}

@@ -5,8 +5,7 @@ body {
   color: #dcdcdc;
   line-height: 1.6;
   padding: 0;
-  margin: 0;display: flex;
-  flex-direction: column;
+  margin: 0;
 
 }
 
@@ -792,5 +791,35 @@ Ce bomo kdaj rabli, se html:
   border: 4px solid #333;
   box-shadow: -407px 0 0 400px #00fd0a;
 }
+
+.image-container {
+    width: 100%; /* Celotna širina zaslona */
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+  }
+  .fixed-header {
+    top: 0;
+    left: 0;
+    width: 100%; /* Celotna širina zaslona */
+    height: auto;
+    z-index: 10;
+    object-fit: cover; /* Pokrije celotno širino, ohranja razmerje */
+    opacity: 1; /* Začetni opacity */
+    transition: opacity 0.2s; /* Gladko bledenje */
+  }
+  .floating-header {
+    position: fixed; /* Fiksiran na vrhu, vedno viden */
+    top: 0;
+    left: 0;
+    width: 100%; /* Celotna širina zaslona */
+    height: auto;
+    z-index: 15; /* Nad fiksirano sliko */
+    object-fit: cover; /* Pokrije celotno širino, ohranja razmerje */
+    opacity: 0
+  }
+  .center-block {
+    text-align: center;
+  }
 
 

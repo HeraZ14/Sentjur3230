@@ -1,0 +1,50 @@
+{% load static %}
+  <link rel="stylesheet" href="{% static 'css/vars.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+{% block content %}
+{% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="scroll-wrapper">
+  <div class="image-container">
+    <img src="{% static 'sentjur_header.jpg' %}" class="city-image fixed-header" />
+    <img src="{% static 'sentjur_skyline.png' %}" class="city-line floating-header" />
+  </div>
+</div>
+
+<div class="center-block">
+    <img src="{% static '3230_header.png' %}" alt="METROPOLA">
+    <h1>Serbos!</h1>
+</div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'store/product_detail.js' %}"></script>
+    <script>
+      window.addEventListener('scroll', () => {
+        const fixedImg = document.querySelector('.fixed-header');
+        const floatingImg = document.querySelector('.floating-header');
+        const scrollY = window.scrollY;
+
+        // Spreminjanje opacity plavajoče slike glede na pomik
+
+        const fixedOpacity = Math.max(0, 1 - scrollY / 700); // Prilagodi 500 za hitrost bledenja
+        let floatingOpacity = 0;
+        if (scrollY >= 300) {
+            floatingOpacity = Math.min(1, (scrollY - 300) / 300); // Narašča od 0 do 1 v razponu 300-600
+         }
+        console.log(window.scrollY);
+
+        fixedImg.style.opacity = fixedOpacity;
+        floatingImg.style.opacity = floatingOpacity;
+
+
+      });
+    </script>
+{% endblock %}
