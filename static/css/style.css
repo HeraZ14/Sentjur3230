@@ -34,6 +34,14 @@ body {
   align-items: center;
 }
 
+body a {
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+
 .footer {
   background-color: var(--footer-bg, #dfd9d9);
   display: flex;

@@ -32,7 +32,8 @@ def glasovanje(request):
 
 def forum(request):
     if request.method == 'POST':
-        form = CommentForm(request.POST, request=request)  # <<< ključna linija
+        form = CommentForm(request.POST or None, request=request)
+
         if form.is_valid():
             comment = form.save(commit=False)
             if request.user.is_authenticated:
