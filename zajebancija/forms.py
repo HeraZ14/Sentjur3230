@@ -1,4 +1,5 @@
 import random
+import re
 
 from django import forms
 from .models import Comment
@@ -8,7 +9,7 @@ class CommentForm(forms.ModelForm):
 
     class Meta:
         model = Comment
-        fields = ['content', 'parent']
+        fields = ['content', 'parent', 'captcha_answer']
         widgets = {
             'parent': forms.HiddenInput()
         }
@@ -57,12 +58,14 @@ class CommentForm(forms.ModelForm):
                             break
 
     def clean_captcha_answer(self):
-        answer = self.cleaned_data.get('captcha_answer', '').strip().lower()
+        raw_answer = self.cleaned_data.get('captcha_answer', '')
         correct_answers = self.request.session.get('captcha_result', [])
-        user_inputs = [w.lower() for w in answer.strip().split()]
-        print(user_inputs,correct_answers)
+
+        # Spucaj: vejice, pike, dvopičja, več presledkov
+        cleaned_input = re.sub(r'[^a-zA-Z0-9čšžČŠŽ\s]', ' ', raw_answer.lower())
+        user_inputs = [w.strip() for w in cleaned_input.split() if w.strip()]  # odstrani prazne vnose
 
         for word in user_inputs:
             if word not in correct_answers:
                 raise forms.ValidationError("Nisi Šentjurčan.")
-        return answer
+        return raw_answer

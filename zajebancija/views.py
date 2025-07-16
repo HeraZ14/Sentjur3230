@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Poll, PollOption, Reaction, Comment
 import random
@@ -36,6 +38,14 @@ def forum(request):
 
         if form.is_valid():
             comment = form.save(commit=False)
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+
+            comment.ip_address = ip
+
             if request.user.is_authenticated:
                 comment.created_by = request.user
             comment.save()
@@ -43,9 +53,14 @@ def forum(request):
     else:
         form = CommentForm(request=request)  # <<< tudi tu!
 
+    valid_answers = request.session.get('captcha_result', [])
+    question = form.fields['captcha_answer'].label
     top_level_comments = Comment.objects.filter(parent__isnull=True).order_by('-created_at')
     return render(request, 'zajebancija/forum.html', {
         'form': form,
-        'top_level_comments': top_level_comments
+        'top_level_comments': top_level_comments,
+        'valid_answers_json': json.dumps([a.lower() for a in valid_answers]),
+        'captcha_question': question,
+
     })
 

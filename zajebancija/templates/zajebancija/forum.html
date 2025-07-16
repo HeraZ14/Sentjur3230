@@ -4,21 +4,29 @@
 {% block content %}
 <h2>Čvekaj s sebi enakimi</h2>
 <div class="poll-container">
-<form method="post" >
+<form method="post" id="mainForm" method="post" action="{% url 'forum' %}">
     {% csrf_token %}
     <div class="form-group-floating">
         <textarea  name="content" class="input-floating" rows="5" required></textarea>
         <label>Začni lajež</label>
     </div>
-    
-    Da lahko prisostvuješ laježu, moraš z uspešnim vnosom polja, dokazati, da si Šentjurčan
-
-                    <div class="form-group-floating">
-                        <input class="input-floating" type="text" name="captcha_answer" required id="id_captcha_answer_{{ comment.id }}">
-                        <label>{{ form.captcha_answer.label }}</label>
-                    </div>
+    <input type="hidden" name="captcha_answer" id="captchaHidden">
     <button class="signin_button" type="submit">Laji</button>
+
 </form>
+    <div id="captchaModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+  <div style="background:#8e1c1c; margin:10% auto; padding:20px; width:300px; border-radius:8px; text-align:center;">
+    <p>Da lahko prisostvuješ laježu, dokaži, da si Šentjurčan</p>
+    <label id="captchaQuestion">{{ captcha_question }}</label>
+    <input type="text" id="captchaInput" autocomplete="off" />
+    <div id="captchaError" style="color:#28ec10; display:none; margin-top:10px;">Narobe bimbo!</div>
+      {% for error in form.content.errors %}
+      <div class="error">{{ error }}</div>
+    {% endfor %}
+    <button type="button" id="captchaSubmit">Potrdi</button>
+    <button type="button" id="captchaCancel">Prekliči</button>
+  </div>
+</div>
 
 {% for comment in top_level_comments %}
     <div class="poll-container">
@@ -39,7 +47,7 @@
         <a href="#" style="color: #777676;" onclick="toggleReplyForm({{ comment.id }}); return false;">Laji nazaj</a>
 
             <!-- Skrita reply forma -->
-            <div id="reply-form-{{ comment.id }}" style="display: none; margin-top: 10px;">
+            <div id="reply-form-{{ comment.id }}" style="display: none; margin-top: 10px;" class="replyForm">
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="parent" value="{{ comment.id }}">
@@ -48,12 +56,6 @@
                         <textarea name="content" class="input-floating" rows="3" required></textarea>
                         <label>Odgovor</label>
                     </div>
-                    Da lahko prisostvuješ laježu, moraš z uspešnim vnosom polja, dokazati, da si Šentjurčan
-                    <div class="form-group-floating">
-                        <input class="input-floating" type="text" name="captcha_answer" required id="id_captcha_answer_{{ comment.id }}">
-                        <label>{{ form.captcha_answer.label }}</label>
-                    </div>
-
                     <button class="signin_button" type="submit">Laji nazaj</button>
                 </form>
         </div>
@@ -65,13 +67,59 @@
 {% endblock %}
 {% block scripts %}
 <script>
+    let activeForm = null;
+
     function toggleReplyForm(commentId) {
         const form = document.getElementById('reply-form-' + commentId);
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-        } else {
-            form.style.display = 'none';
-        }
+        form.style.display = (form.style.display === 'none') ? 'block' : 'none';
     }
+
+    // Intercept all forms with a textarea
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const textarea = form.querySelector('textarea');
+            if (!textarea) return; // safety check
+
+            // Prepreči takojšen submit
+            e.preventDefault();
+
+            activeForm = form;
+            document.getElementById('captchaModal').style.display = 'block';
+            document.getElementById('captchaInput').value = '';  // reset
+            document.getElementById('captchaError').style.display = 'none';
+        });
+    });
+
+    // Cancel captcha
+    document.getElementById('captchaCancel').addEventListener('click', function() {
+        document.getElementById('captchaModal').style.display = 'none';
+    });
+
+    // Confirm captcha
+    document.getElementById('captchaSubmit').addEventListener('click', function () {
+        const userAnswer = document.getElementById('captchaInput').value.trim().toLowerCase();
+        const validAnswers = {{ valid_answers_json|safe }};
+        const userWords = userAnswer.split(/\s+/);
+        const allWordsValid = userWords.every(word => validAnswers.includes(word));
+
+        if (allWordsValid) {
+            const captchaInput = activeForm.querySelector('[name="captcha_answer"]');
+
+            if (captchaInput) {
+                captchaInput.value = userAnswer;
+            } else {
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'captcha_answer';
+                hidden.value = userAnswer;
+                activeForm.appendChild(hidden);
+            }
+
+            document.getElementById('captchaModal').style.display = 'none';
+            activeForm.submit();
+        } else {
+            document.getElementById('captchaError').style.display = 'block';
+        }
+    });
 </script>
 {% endblock %}
