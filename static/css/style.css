@@ -515,7 +515,6 @@ h2 {
     max-width: 700px;
     margin: 80px auto;
     background-color: #222;
-    color: #fff;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
@@ -829,5 +828,40 @@ Ce bomo kdaj rabli, se html:
   .center-block {
     text-align: center;
   }
+
+  .vote-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.2rem;
+}
+
+.vote-button {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.vote-button:hover {
+    color: #999;
+}
+
+.vote-score {
+    color: #ccc;
+    min-width: 20px;
+    text-align: center;
+}
+.vote-button.upvote.active {
+    color: #81c784; /* svetlo modra za upvote */
+}
+
+.vote-button.downvote.active {
+    color: #e57373; /* svetlo rdeča za downvote */
+}
 
 

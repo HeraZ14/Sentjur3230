@@ -2,6 +2,8 @@ from datetime import timezone
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Sum
+
 
 class Poll(models.Model):
     question = models.CharField(max_length=255)
@@ -45,5 +47,16 @@ class Comment(models.Model):
     def is_reply(self):
         return self.parent is not None
 
+    def vote_score(self):
+        return self.votes.aggregate(score=Sum('vote'))['score'] or 0
+
     def __str__(self):
         return f"{self.author_display()} – {self.content[:30]}"
+
+class CommentVote(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='votes')
+    ip_address = models.GenericIPAddressField()
+    vote = models.SmallIntegerField()  # 1 = upvote, -1 = downvote
+
+    class Meta:
+        unique_together = ('comment', 'ip_address')
