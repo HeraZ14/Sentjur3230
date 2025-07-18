@@ -5,6 +5,7 @@ from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib import messages
+from store.models import Order
 
 def register(request):
     if request.method == "POST":
@@ -21,7 +22,12 @@ def register(request):
 
 @login_required
 def profile_view(request):
-    return render(request, 'registration/profile.html')
+    user = request.user
+    orders = Order.objects.filter(user=user).order_by('-date')
+
+    return render(request, 'registration/profile.html', {
+        'orders': orders,
+    })
 
 class custom_login(LoginView):
     template_name = 'registration/login.html'

@@ -1,12 +1,116 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<h1>Profil</h1>
-<p>Prijavljen si kot <strong>{{ user.username }}</strong></p>
-<p>Email: {{ user.email }}</p>
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
 
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Odjava</button>
+<div class="profile-container">
+    <h2 class="profile-heading">Profil uporabnika</h2>
+
+    <!-- Navigacija zavihkov -->
+    <div class="tab-nav">
+        <button class="tab-link active" data-tab="tab-profile">Profil</button>
+        <button class="tab-link" data-tab="tab-orders">Naročila</button>
+        <button class="tab-link" data-tab="tab-settings">Nastavitve</button>
+        {% if saved_products %}
+        <button class="tab-link" data-tab="tab-saved">Shranjeni izdelki</button>
+        {% endif %}
+    </div>
+
+    <!-- Vsebina zavihkov -->
+    <div class="tab-content active" id="tab-profile">
+        <h3>Osnovni podatki</h3>
+        <p><strong>Uporabniško ime:</strong> {{ request.user.username }}</p>
+        <p><strong>Email:</strong> {{ request.user.email }}</p>
+        <p><strong>Datum registracije:</strong> {{ request.user.date_joined|date:"d.m.Y H:i" }}</p>
+    </div>
+
+    <div class="tab-content" id="tab-orders">
+        <h3>Zgodovina naročil</h3>
+        {% if orders %}
+<table class="order-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Datum</th>
+            <th>Znesek</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.date|date:"d.m.Y H:i" }}</td>
+            <td>{{ order.total_price }} €</td>
+            <td>
+                {% if order.status %}
+                    <span class="status paid">Plačano</span>
+                {% else %}
+                    <span class="status unpaid">Nezaključeno</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Ni zaključenih naročil.</p>
+{% endif %}
+    </div>
+
+    <div class="tab-content" id="tab-settings">
+        <h3>Nastavitve</h3>
+        <div>
+    <a href="{% url 'password_change' %}" class="link-blue">Spremeni geslo</a><br>
+    <span class="link-blue" style="cursor: pointer; padding: 0.5rem 1rem;" onclick="document.getElementById('logout-form').submit();">Odjava</span><br>
+    <a href="{% url 'delete_account' %}" class="link-red">Izbriši račun</a>
+</div>
+
+<form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+    {% csrf_token %}
 </form>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab-link').forEach(button => {
+    button.addEventListener('click', () => {
+        // Odstrani active class od vseh
+        document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+
+        // Dodaj active na kliknjen tab
+        button.classList.add('active');
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+
+        // Shrani aktivni tab v localStorage
+        localStorage.setItem('activeTab', tabId);
+    });
+});
+
+// Ob nalaganju strani nastavi aktivni tab iz localStorage
+document.addEventListener('DOMContentLoaded', () => {
+    const activeTab = localStorage.getItem('activeTab');
+    if (activeTab && document.getElementById(activeTab)) {
+        // Odstrani active class od vseh
+        document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+
+        // Nastavi aktivni tab
+        document.querySelector(`.tab-link[data-tab="${activeTab}"]`).classList.add('active');
+        document.getElementById(activeTab).classList.add('active');
+    } else {
+        // Če ni shranjenega, nastavi prvi tab kot aktiven (po želji)
+        const firstTabButton = document.querySelector('.tab-link');
+        const firstTabContent = document.querySelector('.tab-content');
+        if (firstTabButton && firstTabContent) {
+            firstTabButton.classList.add('active');
+            firstTabContent.classList.add('active');
+        }
+    }
+});
+
+</script>
 {% endblock %}

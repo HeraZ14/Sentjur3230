@@ -113,13 +113,18 @@ class Order(models.Model):
         return str(self.user) if self.user else "Anonimen"
 
     def get_total(self):
-        return sum(item.price.price * item.quantity for item in self.items.all())
+        return sum(item.price_at_order * item.quantity for item in self.items.all())
+
+    @property
+    def total_price(self):
+        return sum(item.price_at_order * item.quantity for item in self.items.all())
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.ForeignKey(ProductPrice, on_delete=models.CASCADE,null=True, blank=True)
+    price_at_order = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
 class StripeLogs(models.Model):
     event_id = models.CharField(max_length=255, unique=True)
