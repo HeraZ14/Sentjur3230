@@ -48,11 +48,12 @@
                     {% endfor %}
                 </select>
 
-                    <div style="margin-top: 1rem;">
+                    <div class="vozek-wrapper" style="margin-top: 1rem;">
+                    <input type="submit" class="vozek_button" value="V vojzek">
                     <input type="number" name="selected_quantity" min="1" value="{{ selected_quantity|default:'1' }}" class="cart-input" required>
                     </div>
                 <div style="margin-top: 1rem;">
-                    <input type="submit" class="vozek_button" value="V vojzek">
+
                 </div>
                 </form>
     </div>

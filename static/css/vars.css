@@ -1,7 +1,6 @@
 /* Default (dark mode) */
 .root {
-  --bg-color: #121212;          /* temno siva, skoraj črna */
-  --accent-color: #0c0c0c;      /* mehka vijolična, primerna za dark mode poudarke */
+  --bg-color: #4d4d4d;          /* temno siva, skoraj črna */
   --text-color: #dcdcdc;
   --header-bg: #0d0d0d;         /* zelo temno ozadje headerja */
   --card-bg: #838282;           /* temno siva kartice, loči se od bg */
@@ -12,4 +11,11 @@
   --button-bg: #3700b3;         /* temno vijolična za gumb */
   --button-text: #ffffff;       /* bela barva teksta na gumbu */
   --button-hover-bg: #6200ee;   /* svetlejša vijolična za hover */
+
+    /* Fonts */
+  --text-font-family: Roboto-Regular, sans-serif;
+  --text-font-size: 12px;
+  --text-line-height: 16px;
+  --text-font-weight: 400;
+  --text-font-style: normal;
 }

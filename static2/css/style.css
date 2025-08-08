@@ -1,0 +1,238 @@
+.frame-1,
+.frame-1 * {
+  box-sizing: border-box;
+}
+.frame-1 {
+  background: #4d4d4d;
+  height: 1632px;
+  position: relative;
+  overflow: hidden;
+}
+.cela-stran {
+  background: #bfbfbf;
+  width: 1200px;
+  height: 1632px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.header {
+  width: 1200px;
+  height: 219px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  overflow: visible;
+}
+.block {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  left: calc(50% - -27px);
+  top: 60px;
+}
+.figma {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 49px;
+  position: relative;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.vozek-1 {
+  width: 70.05px;
+  height: 70.05px;
+  position: absolute;
+  left: 908px;
+  top: 57.88px;
+  transform-origin: 0 0;
+  transform: rotate(-12.264deg) scale(1, 1);
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+.domov {
+  color: #ffffff;
+  text-align: center;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
+  font-size: 17px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  position: absolute;
+  left: 290px;
+  top: 113.95px;
+  width: 195px;
+  height: 79px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+}
+.entjur-merch {
+  color: #ffffff;
+  text-align: center;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
+  font-size: 17px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  position: absolute;
+  left: 401px;
+  top: 113.95px;
+  width: 195px;
+  height: 79px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+}
+.marje-merch {
+  color: #ffffff;
+  text-align: center;
+  font-family: "MySoul-Regular", sans-serif;
+  font-size: 17px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  position: absolute;
+  left: 526.71px;
+  top: 107px;
+  width: 195px;
+  height: 79px;
+  transform-origin: 0 0;
+  transform: rotate(4.148deg) scale(1, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+}
+.vek {
+  color: #ffffff;
+  text-align: center;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
+  font-size: 17px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  position: absolute;
+  left: 713px;
+  top: 115px;
+  width: 195px;
+  height: 79px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+}
+.kontakt {
+  color: #ffffff;
+  text-align: center;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
+  font-size: 17px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  position: absolute;
+  left: 627px;
+  top: 114.95px;
+  width: 195px;
+  height: 79px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+}
+.mstile-150-x-150-1 {
+  width: 110px;
+  height: 110px;
+  position: absolute;
+  left: 501px;
+  top: 39px;
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+.rectangle-8 {
+  background: #ffffff;
+  border-radius: 26px;
+  width: 87px;
+  height: 26px;
+  position: absolute;
+  left: 982px;
+  top: 72px;
+  box-shadow: inset 0px 3px 17.9px 1px rgba(0, 0, 0, 0.15),
+    0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.prijavi-se {
+  color: #000000;
+  text-align: center;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  position: absolute;
+  left: 904px;
+  top: 46px;
+  width: 244px;
+  height: 79px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+}
+._123-1 {
+  width: 652px;
+  height: 1304px;
+  position: absolute;
+  left: 627px;
+  top: -33px;
+  object-fit: cover;
+  aspect-ratio: 652/1304;
+}
+.button-white {
+  width: 244px;
+  height: 79px;
+  position: absolute;
+  left: 1019px;
+  top: 45px;
+}
+.rectangle-9 {
+  background: #ffffff;
+  border-radius: 26px;
+  width: 41.39%;
+  height: 32.91%;
+  position: absolute;
+  right: 29.1%;
+  left: 29.51%;
+  bottom: 32.91%;
+  top: 34.18%;
+  box-shadow: inset 0px 3px 17.9px 1px rgba(0, 0, 0, 0.15),
+    0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.registriraj-se {
+  color: #000000;
+  text-align: center;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+}

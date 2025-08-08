@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 2rem auto; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background-color: #fdfdfd;">
+    <h2 style="margin-bottom: 1rem;">Izbris računa</h2>
+    <p style="margin-bottom: 1rem;">Ali si prepričan, da želiš izbrisati svoj račun? Ta dejanje je <strong>nepovratno</strong>.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">
+            Izbriši račun
+        </button>
+        <a href="{% url 'profile' %}" style="margin-left: 1rem; text-decoration: underline; color: #2563eb;">Prekliči</a>
+    </form>
+</div>
+{% endblock %}

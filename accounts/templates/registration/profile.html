@@ -2,9 +2,17 @@
 {% load static %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
 
-<div class="profile-container">
+<div class="profile-container" style="color: black;">
     <h2 class="profile-heading">Profil uporabnika</h2>
 
     <!-- Navigacija zavihkov -->
@@ -60,19 +68,77 @@
     </div>
 
     <div class="tab-content" id="tab-settings">
-        <h3>Nastavitve</h3>
-        <div>
-    <a href="{% url 'password_change' %}" class="link-blue">Spremeni geslo</a><br>
-    <span class="link-blue" style="cursor: pointer; padding: 0.5rem 1rem;" onclick="document.getElementById('logout-form').submit();">Odjava</span><br>
-    <a href="{% url 'delete_account' %}" class="link-red">Izbriši račun</a>
-</div>
+    <h3>Nastavitve</h3>
+    <div>
+        <!-- Gumb za spremembo gesla -->
+        <span class="link-blue" style="cursor: pointer;" onclick="showPasswordChange()">Spremeni geslo</span><br>
 
-<form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
-    {% csrf_token %}
-</form>
+        <!-- Odjava -->
+        <span class="link-blue" style="cursor: pointer;" onclick="document.getElementById('logout-form').submit();">Odjava</span><br>
+
+        <!-- Gumb za izbris računa -->
+        <span class="link-red" style="cursor: pointer;" onclick="openModal('deleteModal')">Izbriši račun</span>
     </div>
+        <div id="password-change-section" style="display: none; margin-top: 1.5rem; border-top: 1px solid #ccc; padding-top: 1rem;">
+    <form method="post" action="{% url 'password_change' %}">
+    {% csrf_token %}
+    <div style="margin-bottom: 1rem;">
+        <label><strong>Staro geslo</strong></label><br>
+        {{ password_form.old_password }}
+        {% if password_form.old_password.errors %}
+            <div style="color: #dc2626; font-size: 0.9rem;">{{ password_form.old_password.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+        <label><strong>Novo geslo</strong></label><br>
+        {{ password_form.new_password1 }}
+        {% if password_form.new_password1.errors %}
+            <div style="color: #dc2626; font-size: 0.9rem;">{{ password_form.new_password1.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+        <label><strong>Ponovi novo geslo</strong></label><br>
+        {{ password_form.new_password2 }}
+        {% if password_form.new_password2.errors %}
+            <div style="color: #dc2626; font-size: 0.9rem;">{{ password_form.new_password2.errors }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit" style="background-color: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">
+        Shrani novo geslo
+    </button>
+    <button type="button" onclick="hidePasswordChange()" style="margin-left: 1rem; text-decoration: underline; background:none; border:none; color:#2563eb; cursor:pointer;">
+        Prekliči
+    </button>
+</form>
+
 </div>
 
+    <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+        {% csrf_token %}
+    </form>
+</div>
+<div id="deleteModal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+        <h2>Izbris računa</h2>
+        <p>Ali si prepričan, da želiš izbrisati svoj račun? To je <strong>nepovratno</strong>.</p>
+        <form method="post" action="{% url 'delete_account' %}">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button type="submit" class="btn-red">Izbriši</button>
+                <button type="button" class="btn-cancel" onclick="closeModal('deleteModal')">Prekliči</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'store/product_detail.js' %}"></script>
 <script>
 document.querySelectorAll('.tab-link').forEach(button => {
     button.addEventListener('click', () => {
@@ -111,6 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
+function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+}
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+    function showPasswordChange() {
+    document.getElementById('password-change-section').style.display = 'block';
+}
+function hidePasswordChange() {
+    document.getElementById('password-change-section').style.display = 'none';
+}
 </script>
 {% endblock %}

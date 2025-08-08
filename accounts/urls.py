@@ -20,10 +20,7 @@ urlpatterns = [
          name='password_reset_confirm'),
     path('reset/done/', CustomPasswordResetCompleteView.as_view(
         template_name='registration/password_reset_complete.html'),name='password_reset_complete'),
-    path('password-change/', CustomPasswordResetCompleteView.as_view(
-        template_name='registration/password_change.html'),name='password_change'),
-    path('delete-account', CustomPasswordResetCompleteView.as_view(
-        template_name='registration/delete_account.html'),name='delete_account'),
-
+    path('delete-account/', views.delete_account, name='delete_account'),
+    path('password-change/', views.change_password, name='password_change'),
 
 ]

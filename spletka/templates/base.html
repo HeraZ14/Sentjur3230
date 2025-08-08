@@ -8,29 +8,35 @@
   <link rel="stylesheet" href="{% static 'css/vars.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=My+Soul&family=Radio+Canada:wdth,wght@100..125,300..700&display=swap" rel="stylesheet">
+
 
   <title>{% block title %}Metropola{% endblock %}</title>
 </head>
 <body>
     <div class="header">
-        <a href="{% url 'home' %}"><img class="figma" style="background: url({% static 'home.png' %}) center; background-size: cover; background-repeat: no-repeat;" src="{% static 'home.png' %}" /></a>
-      <div class="header-auth">
+        <div class="header-auth" style="margin-top: 40px;">
+        <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'sentjur-logo.png' %}" /></a>
+        <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>
+        </div>
+        <div class="header-auth" style="justify-content: flex-end; position: absolute; right: 3%; top: 50%;transform: translateY(-50%);display: flex; gap: 1rem;">
+            <a class="registration_button " href="{% url 'vojzek' %}">Vojzek</a>
+        {% if user.is_authenticated %}
+          <a class="signin_button" href="{% url 'profile' %}">Moj profil</a>
+          {% else %}
+          <a class="prijavi_se_button prijavi_se_rectangle" style="width:65px;" href="{% url 'login' %}">Prijavi se</a>
+          <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'register' %}">Registriraj se</a>
+          {% endif %}
+        </div>
+        <div class="header-auth" style="margin-bottom: 40px; margin-top: 20px;">
         <a class="transparent_button" href="{% url 'home' %}">Domov</a>
         <a class="transparent_button" href="{% url 'sentjur-merch' %}">Šentjur merch</a>
-        <a class="transparent_button" href="{% url 'smarski-merch' %}">Šmarski merch</a>
+        <a class="transparent_button_smarje" href="{% url 'smarski-merch' %}">Šmarski merch</a>
         <a class="transparent_button" href="{% url 'kontakt' %}">Kontakt</a>
         <a class="transparent_button" href="{% url 'forum' %}">Čvek</a>
 
       </div>
-      <div class="header-auth">
-        <a class="registration_button " href="{% url 'vojzek' %}">Vojzek</a>
-        {% if user.is_authenticated %}
-          <a class="signin_button" href="{% url 'profile' %}">Moj profil</a>
-          {% else %}
-          <a class="signin_button" href="{% url 'login' %}">Sign in</a>
-          <a class="registration_button" href="{% url 'register' %}">Register</a>
-          {% endif %}
-        </div>
+
     </div>
 
      <main class="block">{% block content %}{% endblock %}</main>
