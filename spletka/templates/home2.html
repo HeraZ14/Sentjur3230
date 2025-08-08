@@ -1,50 +1,44 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'css/vars.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
 
-{% block content %}
-{% if messages %}
-  <div class="message-container">
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-      </div>
-    {% endfor %}
+  <title>{% block title %}Metropola{% endblock %}</title>
+</head>
+
+
+<div class="frame-1">
+  <div class="cela-stran"></div>
+  <img class="header" src="{% static 'header0.svg' %}"/>
+  <div class="block">
+    <img
+      class="figma"
+      style="
+        background: url(figma0.png) center;
+        background-size: cover;
+        background-repeat: no-repeat;
+      "
+      src="{% static 'figma0.png' %}"
+    />
   </div>
-{% endif %}
-<div class="scroll-wrapper">
-  <div class="image-container">
-    <img src="{% static 'sentjur_header.jpg' %}" class="city-image fixed-header" />
-    <img src="{% static 'sentjur_skyline.png' %}" class="city-line floating-header" />
+  <img class="vozek-1" src="{% static 'vozek-10.png' %}" />
+  <div class="domov">Domov</div>
+  <div class="entjur-merch">Šentjur merch</div>
+  <div class="marje-merch">Šmarje merch</div>
+  <div class="vek">Čvek</div>
+  <div class="kontakt">Kontakt</div>
+  <img class="mstile-150-x-150-1" src="{% static 'mstile-150-x-150-10.png' %}"/>
+  <div class="rectangle-8"></div>
+  <div class="prijavi-se">Prijavi se</div>
+  <img class="_123-1" src="{% static '_123-10.png' %}" />
+  <div class="button-white">
+    <div class="rectangle-9"></div>
+    <div class="registriraj-se">Registriraj se</div>
   </div>
 </div>
-
-<div class="center-block">
-    <img src="{% static '3230_header.png' %}" alt="METROPOLA">
-    <h1>Serbos!</h1>
-</div>
-{% endblock %}
-{% block scripts %}
-    <script src="{% static 'store/product_detail.js' %}"></script>
-    <script>
-      window.addEventListener('scroll', () => {
-        const fixedImg = document.querySelector('.fixed-header');
-        const floatingImg = document.querySelector('.floating-header');
-        const scrollY = window.scrollY;
-
-        // Spreminjanje opacity plavajoče slike glede na pomik
-
-        const fixedOpacity = Math.max(0, 1 - scrollY / 700); // Prilagodi 500 za hitrost bledenja
-        let floatingOpacity = 0;
-        if (scrollY >= 300) {
-            floatingOpacity = Math.min(1, (scrollY - 300) / 300); // Narašča od 0 do 1 v razponu 300-600
-         }
-        console.log(window.scrollY);
-
-        fixedImg.style.opacity = fixedOpacity;
-        floatingImg.style.opacity = floatingOpacity;
-
-
-      });
-    </script>
-{% endblock %}
