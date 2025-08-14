@@ -45,12 +45,14 @@ class CommentForm(forms.ModelForm):
                     questions = [
                         "Dve besedi in število:",
                         "Župan velemesta:",
-                        "Reka, brezdomec:"
+                        "Reka, brezdomec:",
+                        "Hrib z razglednim stolpom:"
                     ]
                     valid_answers = [
                         ["šentjur", "sentjur", "3230", "metropola"],
                         ["marko", "diaci"],
-                        ["pešnica", "pešnca", "beco"]
+                        ["pešnica", "pešnca", "beco"],
+                        ["resevna"]
                     ]
                     for i, answers in enumerate(valid_answers):
                         if answers == captcha_result:

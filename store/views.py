@@ -13,7 +13,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Order, OrderItem, StripeLogs, CoinbaseLogs
+from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs
 
 
 # Create your views here.
@@ -64,6 +64,7 @@ def add_to_cart(request):
             "selected_quantity": selected_quantity,
         })
 
+    size_name = (Size.objects.get(pk=selected_size_id)).name
     selected_price_id = int(selected_price_id)
     try:
         get_price_item = ProductPrice.objects.get(id=selected_price_id, product_id=product_id)
@@ -104,6 +105,7 @@ def add_to_cart(request):
                 'product_name': product.name,
                 'selected_price_id':selected_price_id,
                 'selected_size_id':selected_size_id,
+                'size_name': size_name,
                 'price_item': price_item,
                 'quantity': int(selected_quantity),
                 'image_url': product.image.url if product.image else '',
@@ -113,6 +115,11 @@ def add_to_cart(request):
             return redirect('product_detail', pk=product_id)
 
     request.session['cart'] = cart
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        total_items = sum(item['quantity'] for item in cart) #Štejemo elemente v košarici
+        return JsonResponse({'cart_count': total_items})
+
     return redirect('sentjur-merch')
 
 
@@ -143,6 +150,7 @@ def update_cart(request):
     selected_price_id = int(request.POST.get('selected_price_id'))
     selected_quantity = request.POST.get('selected_quantity')
     selected_size_id = request.POST.get('selected_size_id')
+
 
     get_available_stock = ProductSize.objects.get(product_id=product_id, size_id=selected_size_id)
     available_stock = get_available_stock.quantity
@@ -181,9 +189,14 @@ def cart_view(request):
         item['price_per_unit'] = item_price
         item['total_price'] = item_total
         total_price += item_total
+    total_price_no_ddv = round(total_price/1.22,2)
+    ddv = round(total_price-total_price/1.22,2)
+
 
     context = {
         'cart': cart,
+        'ddv': ddv,
+        'total_price_no_ddv': total_price_no_ddv,
         'total_price': total_price,
     }
     return render(request, 'shop/vojzek.html',context)

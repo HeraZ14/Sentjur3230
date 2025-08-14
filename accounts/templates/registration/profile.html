@@ -74,10 +74,12 @@
         <span class="link-blue" style="cursor: pointer;" onclick="showPasswordChange()">Spremeni geslo</span><br>
 
         <!-- Odjava -->
+        <div style="display:flex; justify-content: space-between">
         <span class="link-blue" style="cursor: pointer;" onclick="document.getElementById('logout-form').submit();">Odjava</span><br>
 
         <!-- Gumb za izbris računa -->
         <span class="link-red" style="cursor: pointer;" onclick="openModal('deleteModal')">Izbriši račun</span>
+            </div>
     </div>
         <div id="password-change-section" style="display: none; margin-top: 1.5rem; border-top: 1px solid #ccc; padding-top: 1rem;">
     <form method="post" action="{% url 'password_change' %}">

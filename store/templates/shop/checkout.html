@@ -1,37 +1,106 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>Checkout</h2>
+<div class="h1">Izpolni podatke za dostavo!</div>
 
 {% if cart %}
-<table>
-  <thead><tr><th>Izdelek</th><th>Količina</th><th>Cena</th></tr></thead>
-  <tbody>
-    {% for item in cart %}
-    <tr>
-      <td>{{ item.product_name }}</td>
-      <td>{{ item.quantity }}</td>
-      <td>{{ item.total_price }}€</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="poll-container">
 
 <form id="checkout-form">
   {% csrf_token %}
-  <label>Email:</label><br>
-  <input type="email" name="email" required><br><br>
+  <div class="form-group-floating">
+  <input type="name" name="name" class="input-floating" placeholder=" " required>
+    <label>Ime:*</label>
+    </div>
+  <div class="form-group-floating">
+  <input type="surname" name="surname" class="input-floating" placeholder=" " required>
+    <label>Priimek:*</label>
+    </div>
 
-  <label>Naslov:</label><br>
-  <textarea name="address" required></textarea><br><br>
+<div class="form-group-floating">
+  <input name="address" class="input-floating" placeholder=" " required>
+  <label>Naslov:*</label>
+  </div>
 
-  <label>Telefon:</label><br>
-  <input type="text" name="phone" required><br><br>
+  <div class="form-group-floating">
+  <input name="post" class="input-floating" placeholder=" " required>
+  <label>Pošta:*</label>
+  </div>
 
+  <div class="form-group-floating">
+  <input type="email" name="email" class="input-floating" placeholder=" " required>
+    <label>Email:*</label>
+    </div>
+
+  <div class="form-group-floating">
+    <input type="text" name="phone" class="input-floating" placeholder=" ">
+  <label>Telefon:</label>
+  </div>
+
+  <div class="form-group-floating">
+    <input type="text" name="comment" class="input-floating" placeholder=" ">
+  <label>Opombe:</label>
+  </div>
+
+<div style="display: flex; margin-bottom:2rem; align-items: baseline;">
+  <div class="text">Račun na podjetje</div>
+  <input type="checkbox" name="company" id="company-checkbox"
+       {% if request.session.company_checked %}checked{% endif %}>
+</div>
+
+
+<!-- Polja, ki se prikažejo, če je checkbox označen -->
+  <div id="company-fields" style="display: none;">
+  <div class="form-group-floating">
+    <input type="text" name="company_name" class="input-floating" placeholder=" " required>
+    <label>Naslov podjetja:*</label>
+  </div>
+  <div class="form-group-floating">
+    <input type="text" name="vat_number" class="input-floating" placeholder=" " required>
+    <label>Davčna številka:*</label>
+  </div>
+
+  <div class="form-group-floating">
+  <input name="company_address" class="input-floating" placeholder=" " required>
+  <label>Naslov:*</label>
+  </div>
+
+  <div class="form-group-floating">
+  <input name="company_post" class="input-floating" placeholder=" " required>
+  <label>Pošta:*</label>
+  </div>
+</div>
   <button type="submit">Nadaljuj na plačilo</button>
 </form>
+</div>
+{% else %}
+<p>Košarica je prazna.</p>
+{% endif %}
 
 <script>
+const companyCheckbox = document.getElementById('company-checkbox');
+const companyFields = document.getElementById('company-fields');
+
+// load state
+if (localStorage.getItem('companyChecked') === 'true') {
+    companyCheckbox.checked = true;
+    companyFields.style.display = 'block';
+} else {
+    companyFields.style.display = 'none';
+}
+
+// nastavi required ob loadu
+companyFields.querySelectorAll('input').forEach(input => {
+    input.required = companyCheckbox.checked;
+});
+
+// on change
+companyCheckbox.addEventListener('change', function() {
+    companyFields.style.display = this.checked ? 'block' : 'none';
+    companyFields.querySelectorAll('input').forEach(input => input.required = this.checked);
+    localStorage.setItem('companyChecked', this.checked);
+});
+// submit
 document.getElementById('checkout-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const formData = new FormData(this);
@@ -49,10 +118,7 @@ document.getElementById('checkout-form').addEventListener('submit', async functi
     alert(data.error || 'Napaka pri ustvarjanju plačila');
   }
 });
-</script>
 
-{% else %}
-<p>Košarica je prazna.</p>
-{% endif %}
+</script>
 
 {% endblock %}

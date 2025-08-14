@@ -1,6 +1,6 @@
 body {
     height: 100%;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
   background-color: black;
   color: #dcdcdc;
   line-height: 1.6;
@@ -31,6 +31,10 @@ body {
   gap: 1rem;
   align-items: center;
   text-align: center;
+  flex-wrap: wrap; /* elementi se zložijo, če zmanjka prostora */
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 body a {
@@ -150,6 +154,22 @@ color: #000000;
   -webkit-text-stroke: 1px transparent;
 }
 
+.confirm_button{
+color: #000000;
+  text-align: center;
+  font-family: "RadioCanadaBig-Regular", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-stroke: 1px transparent;
+    height: auto; /* ali lahko 'auto' z ustreznim paddingom */
+    line-height: 1.5rem; /* približno enako kot input */
+  padding: 0.4rem 0.5rem;
+  border-radius:10px;
+}
+
 
 .signin_button {
     display: inline-block;
@@ -209,7 +229,7 @@ color: #000000;
     cursor: pointer;
     color: #ffffff;
     text-align: center;
-    font-family: 'Radio Canada', sans-serif;
+    font-family: "RadioCanadaBig-Regular", sans-serif;
     font-size: 17px;
     line-height: 20px;
     letter-spacing: 0.1px;
@@ -382,10 +402,21 @@ color: #000000;
 }
 
 
-h2 {
+.h1{
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    margin-top: 2rem;
+}
+
+.h2 {
   text-align: center;
   margin-bottom: 1.5rem;
   color: var(--text-color);
+  font-weight: 700;
+}
+.text{
+margin-bottom: 1.5rem;
   font-weight: 700;
 }
 
@@ -403,7 +434,7 @@ h2 {
   margin: 0 auto;
     margin: 80px auto;
     padding: 30px;
-    font-family: Arial, sans-serif;
+    font-family: "RadioCanadaBig-Regular", sans-serif;
     text-align: center;
 }
 .vozek_button {
@@ -502,16 +533,6 @@ h2 {
   padding: 1rem 0;
 }
 
-.cart-product {
-  display: flex;           /* razporedi elemente v vrstico */
-  align-items: center;     /* poravnaj vertikalno */
-  gap: 1rem;               /* razmak med elementi v vrstici */
-  background-color: #111;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #444;
-}
-
 .cart-input {
     flex: 0 0 14%;
   max-width: 14.5%;
@@ -557,7 +578,17 @@ h2 {
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid #444;
-  margin-bottom: 1rem;
+  margin-bottom:2rem;
+  margin-left:2rem;
+  justify-content: space-between;
+  align-items: stretch;
+}
+.cart-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    min-height: 100px; /* ali koliko pač želiš, da ima višino */
 }
 
 .cart-summary {
@@ -565,6 +596,35 @@ h2 {
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid #444;
+}
+.cart-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* če je več vrstic znotraj */
+    justify-content: center; /* navpična centriranost */
+}
+
+.cart-counter {
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 12px;
+    position: relative;
+    top: -10px;
+    left: 5px;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.5s;
 }
 
 .product-detail-form {
@@ -591,6 +651,8 @@ h2 {
   border-radius: 8px;
 }
 
+
+
 /* glasovanja */
 
 .poll-container {
@@ -600,7 +662,7 @@ h2 {
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    font-family: Arial, sans-serif;
+    font-family: "RadioCanadaBig-Regular", sans-serif;
     text-align: center;
   }
 
@@ -652,7 +714,7 @@ h2 {
 }
 
 .input-floating {
-    width: 100%;
+    width: 96%;
     padding: 12px 12px 12px 12px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -678,7 +740,7 @@ h2 {
 }
 
 .input-floating:focus + label,
-.input-floating:not(:placeholder-shown):valid + label {
+.input-floating:not(:placeholder-shown) + label {
     top: -2px;
     left: 8px;
     font-size: 12px;
@@ -954,7 +1016,7 @@ Ce bomo kdaj rabli, se html:
     border: 1px solid #ddd;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    font-family: Arial, sans-serif;
+    font-family: "RadioCanadaBig-Regular", sans-serif;
 }
 
 .profile-heading {

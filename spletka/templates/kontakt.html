@@ -1,30 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="center-block" style="width: 80%">
-      <h2>Serbos!</h2>
 
-<div class="poll-container" style="max-width: 80%">
+      <div class="h1">Kontaktiraj nas</div>
+<div class="poll-container" style="max-width: 50%;">
 <form method="post">
     {% csrf_token %}
     <div class="form-group-floating">
-        <input type="text" name="name" class="input-floating" style="width:100%" required>
+        <input type="text" name="name" class="input-floating" placeholder=" " required>
         <label>Ime</label>
     </div>
 
     <div class="form-group-floating">
-        <input type="email" name="email" class="input-floating" style="width:100%" required>
+        <input type="email" name="email" class="input-floating" placeholder=" " required>
         <label>Email</label>
     </div>
 
     <div class="form-group-floating">
-        <textarea class="input-floating" name="idea" rows="5" style="width:100%" required></textarea>
+        <textarea class="input-floating" name="idea" rows="5" placeholder=" " required></textarea>
         <label>Ideja, priporočilo, brainstorm, povabilo na pivo. Karkoli.</label>
     </div>
 
-    <button type="submit" class="signin_button" style="width:80%">Pošlji idejo</button>
+    <button type="submit" class="signin_button prijavi_se_button prijavi_se_rectangle" style="width:40%; display: inline-block; height: 4rem; font-size: 17px;">Pošlji idejo</button>
 </form>
-</div>
 </div>
 
 {% endblock %}

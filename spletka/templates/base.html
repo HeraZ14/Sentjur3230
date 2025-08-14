@@ -20,9 +20,16 @@
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>
         </div>
         <div class="header-auth" style="justify-content: flex-end; position: absolute; right: 3%; top: 50%;transform: translateY(-50%);display: flex; gap: 1rem;">
-            <a class="registration_button " href="{% url 'vojzek' %}">Vojzek</a>
+            <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'vojzek' %}">
+            Vojzek
+            <span id="cart-counter"
+          class="cart-counter"
+          style="display: {% if cart_item_count > 0 %}inline-block{% else %}none{% endif %};">
+        {{ cart_item_count }}
+            </span>
+            </a>
         {% if user.is_authenticated %}
-          <a class="signin_button" href="{% url 'profile' %}">Moj profil</a>
+          <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'profile' %}">Moj profil</a>
           {% else %}
           <a class="prijavi_se_button prijavi_se_rectangle" style="width:65px;" href="{% url 'login' %}">Prijavi se</a>
           <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'register' %}">Registriraj se</a>
@@ -54,3 +61,5 @@
     {% endblock %}
 </body>
 </html>
+
+

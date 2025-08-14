@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block content %}
-<h2 style="color: #dcdcdc;">Čvekaj s sebi enakimi</h2>
+<div class="h1" style="color: #dcdcdc;">Čvekaj s sebi enakimi</div>
 <div class="poll-container" style="text-align: center;color: #dcdcdc;">
      <div style="text-align: left;">
 <form method="post" id="mainForm" method="post" action="{% url 'forum' %}">
     {% csrf_token %}
     <div class="form-group-floating">
-        <textarea  name="content" class="input-floating" rows="5" required></textarea>
+        <textarea  name="content" class="input-floating" rows="5" placeholder=" " required></textarea>
         <label>Začni lajež</label>
     </div>
     <input type="hidden" name="captcha_answer" id="captchaHidden">
@@ -68,13 +68,10 @@
                 <input type="hidden" name="parent" value="{{ comment.id }}">
 
                 <div class="form-group-floating">
-                    <textarea name="content" class="input-floating" rows="3" required></textarea>
+                    <textarea name="content" class="input-floating" rows="3" placeholder=" " required></textarea>
                     <label>Odgovor</label>
                 </div>
-                <div class="form-group-floating">
-                    <input class="input-floating" type="text" name="captcha_answer" required id="id_captcha_answer_{{ comment.id }}">
-                    <label>{{ form.captcha_answer.label }}</label>
-                </div>
+
                 <button class="signin_button" type="submit">Laji nazaj</button>
             </form>
         </div>

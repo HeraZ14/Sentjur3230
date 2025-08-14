@@ -1,7 +1,14 @@
 Stripe: cmd
 cd C:\Users\MSi\PyCharmMiscProject\stripe
-.\stripe listen --forward-to localhost:8000/webhook/
+.\stripe listen --forward-to localhost:8000/webhook/stripe/
+
+#Check session (nov cmd):
+cd C:\Users\MSi\PyCharmMiscProject\stripe
+stripe trigger checkout.session.completed
 
 Ngrok (local hosting service: cmd
 cd C:\Users\MSi\PyCharmMiscProject\ngrok
 .\ngrok.exe http 8000
+
+Captcha valid_answers:
+Zajebancija-forms.py

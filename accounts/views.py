@@ -72,6 +72,7 @@ def delete_account(request):
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
+        print(form.is_valid())
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # ohrani login

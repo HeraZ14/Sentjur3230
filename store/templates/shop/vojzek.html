@@ -14,42 +14,69 @@
 {% if cart %}
 <div class="cart-wrapper">
     <!-- LEVI STOLPEC - izdelki -->
+
     <div class="cart-left">
+        <div class="cart-product" style="margin-top:4rem; margin-bottom:4rem; border:None; background:None">
+            <div class="h1" style="margin-left: 2rem;">
+        VOJZEK
+            </div>
+
+    </div>
+        <div class="text" style="margin-left: 6rem;">
+        Dostava: Printamo 1x na teden, če se pa res lepo prosi pa na 14 dni.
+            </div>
         {% for item in cart %}
         <div class="cart-product">
+            <div class="cart-image">
             <img src="{{ item.image_url }}" alt="{{ item.product_name }}" width="200">
+            </div>
 
-            <form method="POST" action="{% url 'update_cart' %}" style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="cart-details">
+            <h3>{{ item.product_name }}</h3>
+            <p>Velikost: {{ item.size_name }}</p>
+            <p>Cena na kos: {{ item.price_per_unit }}€</p>
+
+            <form method="POST" action="{% url 'update_cart' %}" class="update-form">
                 {% csrf_token %}
                 <input type="hidden" name="product_id" value="{{ item.product_id }}">
                 <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
                 <input type="hidden" name="selected_size_id" value="{{ item.selected_size_id }}">
-                <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1" style="width: 80px;" class="cart-input">
-                <button class="signin_button" type="submit">Posodobi</button>
+                <div class="vozek-wrapper">
+                <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1" class="cart-input" style="max-width:8.5%;">
+                <button class="confirm_button" style="font-size: 15px;"  type="submit">Posodobi</button>
+                </div>
             </form>
+        </div>
 
-            <form method="POST" action="{% url 'remove_from_cart' %}" style="display: flex; align-items: center; gap: 0.5rem;" onsubmit="return confirm('Si ziher, da hočeš odstraniti najboljši izdelek?')">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ item.product_id }}">
-                <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
-                <button class="registration_button" type="submit">Odstrani</button>
-            </form>
 
-            <span>Skupaj: {{ item.total_price }}€</span>
+            <div class="cart-actions">
+
+        <form method="POST" action="{% url 'remove_from_cart' %}"
+              onsubmit="return confirm('Si ziher, da hočeš odstraniti najboljši izdelek?')">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ item.product_id }}">
+            <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
+            <button class="registration_button" type="submit">Odstrani</button>
+        </form>
+            <span class="cart-total">Skupaj: {{ item.total_price }}€</span>
+    </div>
         </div>
         {% endfor %}
     </div>
 
     <!-- DESNI STOLPEC - izračun in checkout -->
-    <div class="cart-right">
+    <div class="cart-right" style="margin-top:2rem;">
         <div class="cart-summary">
-            <p>Skupna cena: {{ total_price }}€</p>
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj brez DDV:</p><p style="font-size:20px">{{ total_price_no_ddv }}€</p></div>
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">DDV:</p><p style="font-size:20px">{{ ddv }}€</p></div>
+            <hr style="margin-bottom:1rem;">
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price }}€</p></div>
             <a class="checkout-button" href="{% url 'checkout' %}">Na blagajno</a>
         </div>
     </div>
 </div>
 {% else %}
-<p>Vozek je prazn.</p>
+<p>Vojzek je prazn.</p>
 {% endif %}
 
 
@@ -65,5 +92,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }, 3000); // 3000 ms = 3 sekunde
   });
+    const cart = document.querySelector('.cart-right');
+
+    window.addEventListener('scroll', () => {
+        let scrollY = window.scrollY;
+        cart.style.marginTop = (scrollY + 20) + 'px'; // 20px od vrha
+    });
 </script>
 {% endblock %}
