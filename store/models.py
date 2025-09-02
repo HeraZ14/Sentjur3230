@@ -5,6 +5,7 @@ import datetime
 from django.db.models import TextField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django import forms
 
 
 # Create your models here.
@@ -22,7 +23,10 @@ class Product(models.Model):
     weight = models.FloatField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE,default=1)
     description = models.TextField(default="", blank=True,null=True)
+    composition = models.TextField(default="", blank=True,null=True)
+    return_items = models.TextField(default="", blank=True,null=True)
     image = models.ImageField(upload_to='uploads/product/')
+    personalized = models.BooleanField(default=False)
     def total_stock(self):
         print(f"Product: {self.name}, Sizes: {[ps.quantity for ps in self.product_sizes.all()]}")
         return sum(ps.quantity for ps in self.product_sizes.all())
@@ -101,8 +105,11 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
+    name = models.CharField(max_length=100, default="", blank=True, null=True)
+    surname = models.CharField(max_length=100, default="", blank=True, null=True)
     address = models.TextField(max_length=100, default="", blank=True, null=True)
+    city = models.TextField(max_length=100, default="", blank=True, null=True)
+    postal_number = models.TextField(max_length=100, default="", blank=True, null=True)
     phone = models.CharField(max_length=100, default="", blank=True, null=True)
     email = models.EmailField(max_length=100, default="", blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -125,6 +132,21 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     price = models.ForeignKey(ProductPrice, on_delete=models.CASCADE,null=True, blank=True)
     price_at_order = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    personalized = models.TextField(max_length=100, default="", blank=True, null=True)
+
+class CheckoutForm(forms.Form):
+    first_name = forms.CharField(max_length=50, required=True)
+    last_name = forms.CharField(max_length=50, required=True)
+    email = forms.EmailField(required=True)
+    address = forms.CharField(max_length=200, required=True)
+    postal_code = forms.CharField(max_length=10, required=True)
+    city = forms.CharField(max_length=50, required=True)
+    phone = forms.CharField(max_length=20, required=True)
+    company_name = forms.CharField(max_length=50, required=True)
+    vat_number = forms.CharField(max_length=50, required=True)
+    company_address = forms.CharField(max_length=200, required=True)
+    company_postal_code = forms.CharField(max_length=10, required=True)
+    company_city = forms.CharField(max_length=50, required=True)
 
 class StripeLogs(models.Model):
     event_id = models.CharField(max_length=255, unique=True)

@@ -32,7 +32,7 @@ DOMAIN = "http://localhost:8000"  # pozneje spremeni na https://sentjur-metropol
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok-free.app', 'sentjur-metropola.si', 'www.sentjur-metropola.si']
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.ngrok-free.app",

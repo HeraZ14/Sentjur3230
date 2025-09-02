@@ -13,7 +13,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs
+from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm
 
 
 # Create your views here.
@@ -52,6 +52,7 @@ def add_to_cart(request):
     selected_size_id = request.POST.get('selected_size_id')
     selected_price_id = request.POST.get('selected_price_id')
     selected_quantity = request.POST.get('selected_quantity')
+    personalized_text = request.POST.get('personalized_text')
     if not selected_price_id or not selected_size_id:
         messages.warning(request, "Izpolni obvezna polja gospodič.")
 
@@ -62,6 +63,7 @@ def add_to_cart(request):
             "selected_price_id": selected_price_id,
             "selected_size_id": selected_size_id,
             "selected_quantity": selected_quantity,
+            "personalized_text": personalized_text,
         })
 
     size_name = (Size.objects.get(pk=selected_size_id)).name
@@ -86,11 +88,10 @@ def add_to_cart(request):
     for item in cart:
         if str(item['product_id']) == str(product.id):
             if item['selected_price_id'] == selected_price_id:
-                item['quantity'] += int(selected_quantity)
-                found = True
-            print('začetek f: ', same_item_quantity)
+                if item['personalized_text'] == personalized_text:
+                    item['quantity'] += int(selected_quantity)
+                    found = True
             same_item_quantity += int(item['quantity'])
-            print('Konec f: ',same_item_quantity)
 
         if available_stock < int(selected_quantity) + same_item_quantity:
             messages.error(request, f"Na voljo je samo še {available_stock} kosov.")
@@ -109,6 +110,7 @@ def add_to_cart(request):
                 'price_item': price_item,
                 'quantity': int(selected_quantity),
                 'image_url': product.image.url if product.image else '',
+                'personalized_text': personalized_text,
             })
         else:
             messages.error(request, f"Na voljo je samo še {available_stock} kosov.")
@@ -150,6 +152,8 @@ def update_cart(request):
     selected_price_id = int(request.POST.get('selected_price_id'))
     selected_quantity = request.POST.get('selected_quantity')
     selected_size_id = request.POST.get('selected_size_id')
+    personalized_text = request.POST.get('personalized_text')
+    print(personalized_text)
 
 
     get_available_stock = ProductSize.objects.get(product_id=product_id, size_id=selected_size_id)
@@ -167,7 +171,8 @@ def update_cart(request):
     for item in cart:
         if str(item['product_id']) == str(product_id):
             if item['selected_price_id'] == selected_price_id:
-                item['quantity'] = selected_quantity
+                if item['personalized_text'] == personalized_text:
+                    item['quantity'] = selected_quantity
             else:
                 same_item_quantity += int(item['quantity'])
 
@@ -217,7 +222,29 @@ def get_cart_items(request):
 
 def checkout(request):
     cart = request.session.get('cart', [])
-    return render(request, 'shop/checkout.html', {'cart': cart})
+    checkout_data = request.session.get('checkout_data', {})
+
+    if request.method == "POST":
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            pass
+        else:
+            request.session['checkout_data'] = request.POST.dict()
+    else:
+        form = CheckoutForm(initial=checkout_data)
+
+    return render(request, "shop/checkout.html", {
+        "form": form,
+        "cart": cart,
+        "checkout_data": checkout_data
+    })
+
+@csrf_exempt  # ker ga kličeš preko JS fetch
+def save_checkout_session(request):
+    if request.method == "POST":
+        request.session['checkout_data'] = request.POST.dict()
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "error"}, status=400)
 
 
 #Stripe plačila (paypal, revolut, applepay, googlepay, sepa, card itd...
@@ -233,15 +260,16 @@ def stripe_webhook(request):
         )
     except (ValueError, stripe.error.SignatureVerificationError):
         return HttpResponse(status=400)
-
+    print(event)
     if event['type'] == 'payment_intent.succeeded':
         intent = event['data']['object']
         metadata = intent.get('metadata', {})
         order_id = metadata.get('order_id')
         email = intent.get('receipt_email')
-
+        print(order_id)
         if order_id:
             try:
+                print(f"Metadata iz webhooka: {metadata}")
                 order = Order.objects.get(id=order_id)
                 order.status = True
                 payment_method_id = intent.get('payment_method')
@@ -357,7 +385,6 @@ def create_payment_intent(request):
                 # Dodaj po potrebi – preveri v dashboardu, kaj imaš omogočeno
             ]
         )
-        print(order.id)
         return JsonResponse({
             'client_secret': intent.client_secret,
             'order_id': order.id

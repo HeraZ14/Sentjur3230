@@ -17,7 +17,8 @@ urlpatterns = [
     path('api/create-payment-intent/', views.create_payment_intent, name='create_payment_intent'),
     path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'),
     path('webhook/coinbase/', views.coinbase_webhook, name='coinbase_webhook'),
-    path("api/crypto/<int:order_id>/", views.crypto_payment_redirect, name="crypto_payment_redirect")
+    path("api/crypto/<int:order_id>/", views.crypto_payment_redirect, name="crypto_payment_redirect"),
+path('save-checkout-session/', views.save_checkout_session, name='save_checkout_session'),
 
 
 

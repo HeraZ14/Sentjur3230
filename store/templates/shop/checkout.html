@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load my_tags %}
 {% block content %}
 
 <div class="h1">Izpolni podatke za dostavo!</div>
@@ -9,68 +10,80 @@
 <form id="checkout-form">
   {% csrf_token %}
   <div class="form-group-floating">
-  <input type="name" name="name" class="input-floating" placeholder=" " required>
-    <label>Ime:*</label>
+  <input name="name" class="input-floating" value="{{ request.POST.name|default:checkout_data|get_item:'name'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+    <label style="color:black;">Ime:*</label>
     </div>
   <div class="form-group-floating">
-  <input type="surname" name="surname" class="input-floating" placeholder=" " required>
-    <label>Priimek:*</label>
+  <input name="surname" class="input-floating" value="{{ request.POST.surname|default:checkout_data|get_item:'surname'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+    <label style="color:black;">Priimek:*</label>
     </div>
 
 <div class="form-group-floating">
-  <input name="address" class="input-floating" placeholder=" " required>
-  <label>Naslov:*</label>
+  <input name="address" class="input-floating" value="{{ request.POST.address|default:checkout_data|get_item:'address'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+  <label style="color:black;">Naslov:*</label>
   </div>
 
   <div class="form-group-floating">
-  <input name="post" class="input-floating" placeholder=" " required>
-  <label>Pošta:*</label>
+  <input name="post" class="input-floating" value="{{ request.POST.post|default:checkout_data|get_item:'post'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+  <label style="color:black;">Pošta:*</label>
   </div>
 
   <div class="form-group-floating">
-  <input type="email" name="email" class="input-floating" placeholder=" " required>
-    <label>Email:*</label>
+  <input name="city" class="input-floating" value="{{ request.POST.city|default:checkout_data|get_item:'city'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+    <label style="color:black;">Mesto:*</label>
     </div>
 
   <div class="form-group-floating">
-    <input type="text" name="phone" class="input-floating" placeholder=" ">
-  <label>Telefon:</label>
+  <input type="email" name="email" class="input-floating" value="{{ request.POST.email|default:checkout_data|get_item:'email'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+    <label style="color:black;">Email:*</label>
+    </div>
+
+  <div class="form-group-floating">
+    <input type="text" name="phone" class="input-floating" value="{{ request.POST.phone|default:checkout_data|get_item:'phone'|default:'' }}" style="background:white; color: black;" placeholder=" ">
+  <label style="color:black;">Telefon:</label>
   </div>
 
   <div class="form-group-floating">
-    <input type="text" name="comment" class="input-floating" placeholder=" ">
-  <label>Opombe:</label>
+    <input type="text" name="comment" class="input-floating" value="{{ request.POST.comment|default:checkout_data|get_item:'comment'|default:'' }}" style="background:white; color: black;" placeholder=" ">
+  <label style="color:black;">Opombe:</label>
   </div>
 
 <div style="display: flex; margin-bottom:2rem; align-items: baseline;">
-  <div class="text">Račun na podjetje</div>
-  <input type="checkbox" name="company" id="company-checkbox"
-       {% if request.session.company_checked %}checked{% endif %}>
+  <label class="custom-checkbox">
+    Račun na podjetje
+    <input type="checkbox" name="company" id="company-checkbox"
+           {% if request.session.company_checked %}checked{% endif %}>
+    <span class="checkmark"></span>
+  </label>
 </div>
 
 
 <!-- Polja, ki se prikažejo, če je checkbox označen -->
   <div id="company-fields" style="display: none;">
   <div class="form-group-floating">
-    <input type="text" name="company_name" class="input-floating" placeholder=" " required>
-    <label>Naslov podjetja:*</label>
+    <input type="text" name="company_name" class="input-floating" value="{{ request.POST.company_name|default:checkout_data|get_item:'company_name'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+    <label style="color:black;">Naslov podjetja:*</label>
   </div>
   <div class="form-group-floating">
-    <input type="text" name="vat_number" class="input-floating" placeholder=" " required>
-    <label>Davčna številka:*</label>
-  </div>
-
-  <div class="form-group-floating">
-  <input name="company_address" class="input-floating" placeholder=" " required>
-  <label>Naslov:*</label>
+    <input type="text" name="vat_number" class="input-floating" value="{{ request.POST.vat_number|default:checkout_data|get_item:'vat_number'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+    <label style="color:black;">Davčna številka:*</label>
   </div>
 
   <div class="form-group-floating">
-  <input name="company_post" class="input-floating" placeholder=" " required>
-  <label>Pošta:*</label>
+  <input name="company_address" class="input-floating" value="{{ request.POST.company_address|default:checkout_data|get_item:'company_address'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+  <label style="color:black;">Naslov:*</label>
+  </div>
+
+  <div class="form-group-floating">
+  <input name="company_post" class="input-floating" value="{{ request.POST.company_post|default:checkout_data|get_item:'company_post'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+  <label style="color:black;">Pošta:*</label>
+  </div>
+    <div class="form-group-floating">
+  <input name="company_city" class="input-floating" value="{{ request.POST.company_city|default:checkout_data|get_item:'company_city'|default:'' }}" style="background:white; color: black;" placeholder=" " required>
+  <label style="color:black;">City:*</label>
   </div>
 </div>
-  <button type="submit">Nadaljuj na plačilo</button>
+  <button type="submit" class="vozek-button" style="max-width:100%; width: -moz-available; height:60px; font-size: 20px">Nadaljuj na plačilo</button>
 </form>
 </div>
 {% else %}
@@ -103,21 +116,31 @@ companyCheckbox.addEventListener('change', function() {
 // submit
 document.getElementById('checkout-form').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const formData = new FormData(this);
+
+  const formDataSession = new FormData(this);
+  await fetch("{% url 'save_checkout_session' %}", {
+    method: "POST",
+    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+    body: formDataSession
+  });
+
   const response = await fetch("{% url 'create_payment_intent' %}", {
     method: 'POST',
     headers: {
-      'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      'X-CSRFToken': formDataSession.get('csrfmiddlewaretoken'),
     },
-    body: formData,
+    body: formDataSession,
   });
+
   const data = await response.json();
+
   if (data.client_secret && data.order_id) {
     window.location.href = `/stripe_pay/?client_secret=${data.client_secret}&order_id=${data.order_id}`;
   } else {
     alert(data.error || 'Napaka pri ustvarjanju plačila');
   }
 });
+
 
 </script>
 

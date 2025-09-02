@@ -16,14 +16,13 @@
     <!-- LEVI STOLPEC - izdelki -->
 
     <div class="cart-left">
-        <div class="cart-product" style="margin-top:4rem; margin-bottom:4rem; border:None; background:None">
+        <div class="cart-product" style="border:None; background:None">
             <div class="h1" style="margin-left: 2rem;">
         VOJZEK
             </div>
 
     </div>
         <div class="text" style="margin-left: 6rem;">
-        Dostava: Printamo 1x na teden, če se pa res lepo prosi pa na 14 dni.
             </div>
         {% for item in cart %}
         <div class="cart-product">
@@ -31,8 +30,11 @@
             <img src="{{ item.image_url }}" alt="{{ item.product_name }}" width="200">
             </div>
 
-                <div class="cart-details">
-            <h3>{{ item.product_name }}</h3>
+                <div class="cart-details" style="line-height: 1;">
+            <p style="font-size:20px;">{{ item.product_name }}</p>
+            {% if item.personalized_text %}
+            <p>Napis: {{ item.personalized_text }}</p>
+            {% endif %}
             <p>Velikost: {{ item.size_name }}</p>
             <p>Cena na kos: {{ item.price_per_unit }}€</p>
 
@@ -41,6 +43,7 @@
                 <input type="hidden" name="product_id" value="{{ item.product_id }}">
                 <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
                 <input type="hidden" name="selected_size_id" value="{{ item.selected_size_id }}">
+                <input type="hidden" name="personalized_text" value="{{ item.personalized_text }}">
                 <div class="vozek-wrapper">
                 <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1" class="cart-input" style="max-width:8.5%;">
                 <button class="confirm_button" style="font-size: 15px;"  type="submit">Posodobi</button>
@@ -56,9 +59,9 @@
             {% csrf_token %}
             <input type="hidden" name="product_id" value="{{ item.product_id }}">
             <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
-            <button class="registration_button" type="submit">Odstrani</button>
+            <button class="registration_button" type="submit">X</button>
         </form>
-            <span class="cart-total">Skupaj: {{ item.total_price }}€</span>
+            <span class="cart-total" style="font-size:26px;">Skupaj: {{ item.total_price }}€</span>
     </div>
         </div>
         {% endfor %}

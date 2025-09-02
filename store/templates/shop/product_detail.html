@@ -10,16 +10,14 @@
             {% endfor %}
         </div>
     {% endif %}
-<div class="product-grid">
-<div class="product-detail">
+<div class="product-grid" style="margin-top:3rem;">
+<div class="product-detail" style="max-width:680px;">
     <div class="product-card">
-                <a href="{% url 'product_detail' product.id %}">
-                    <h3>{{ product.name }}</h3>
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
-                    {% endif %}
-                </a>
-            </div>
+            <p>{{ product.name }}</p>
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+            {% endif %}
+    </div>
 
 <div class="product-detail-form">
 <form method="POST" action="/add-to-cart/">
@@ -48,8 +46,17 @@
                     {% endfor %}
                 </select>
 
+                {% if product.personalized %}
                     <div class="vozek-wrapper" style="margin-top: 1rem;">
-                    <input type="submit" class="vozek_button" value="V vojzek">
+                    <div class="form-group-floating" style="border-radius: 8px; width: 96%;">
+                    <input type="text" name="personalized_text" class="input-floating" placeholder=" " style="background:white;">
+                    <label style="color: black;">Napis</label>
+                     </div>
+                        </div>
+                {% endif %}
+
+                    <div class="vozek-wrapper" style="margin-top: 1rem;">
+                    <input type="submit" class="vozek-button" value="V vojzek">
                     <input type="number" name="selected_quantity" min="1" value="{{ selected_quantity|default:'1' }}" class="cart-input" required>
                     </div>
                 <div style="margin-top: 1rem;">
@@ -57,10 +64,62 @@
                 </div>
                 </form>
     </div>
+    <div class="product-extra-info">
+    <div class="accordion-item">
+        <button class="accordion-header">Opis izdelka</button>
+        <div class="accordion-content">
+            <p>{{ product.description|linebreaksbr }}</p>
+        </div>
     </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Sestava</button>
+        <div class="accordion-content">
+            <p>{{ product.composition|linebreaksbr }}</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Dostava in vračila</button>
+        <div class="accordion-content">
+            {% if product.return_items %}
+        {{ product.return_items|linebreaksbr }}
+        {% else %}
+            <p class="default-return">Dostava v 2–3 dneh. Možnost vračila v 14 dneh.</p>
+        {% endif %}
+
+        </div>
+    </div>
+</div>
+    </div>
+
 
     </div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'store/product_detail.js' %}"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const accordions = document.querySelectorAll(".accordion-header");
+
+        accordions.forEach(header => {
+            header.addEventListener("click", function () {
+                accordions.forEach(h => {
+                    if (h !== this) {
+                        h.classList.remove("active");
+                        h.nextElementSibling.style.maxHeight = null;
+                    }
+                });
+
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (this.classList.contains("active")) {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                } else {
+                    content.style.maxHeight = null;
+                }
+            });
+        });
+    });
+    </script>
 {% endblock %}

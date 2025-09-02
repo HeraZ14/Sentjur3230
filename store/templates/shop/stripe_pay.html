@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Zaključi plačilo</h2>
+<div class="payment-container">
+    <h1 class="payment-title">Zaključi plačilo</h1>
 
-<form id="payment-form">
-  <div id="payment-element"></div>
-  <button id="submit">Plačaj</button>
-  <div id="error-message"></div>
-</form>
+    <div class="payment-card">
+        <!-- Stripe Card Payment -->
+        <form id="payment-form" class="stripe-form">
+            <div id="payment-element" class="stripe-element"></div>
+            <button id="submit" class="vozek-button stripe-btn">Plačaj</button>
+            <div id="error-message" class="stripe-error"></div>
+        </form>
 
-<form method="POST" id="crypto-payment-form" action="">
-  {% csrf_token %}
-  <button type="submit">Plačaj s kriptovaluto</button>
-</form>
+        <!-- Crypto Payment -->
+        <form method="POST" id="crypto-payment-form" class="crypto-form">
+            {% csrf_token %}
+            <button type="submit" class="vozek-button crypto-btn">Plačaj s kriptovaluto</button>
+        </form>
+    </div>
+</div>
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
@@ -23,7 +29,6 @@
   const paymentElement = elements.create("payment");
   paymentElement.mount("#payment-element");
 
-  // Nastavi kripto action
   if (orderId) {
     const cryptoForm = document.getElementById("crypto-payment-form");
     cryptoForm.action = `/api/crypto/${orderId}/`;
@@ -43,3 +48,4 @@
   });
 </script>
 {% endblock %}
+
