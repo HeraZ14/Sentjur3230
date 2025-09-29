@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Potrditev plačila</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background: #fff;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c7a7b;
+        }
+        .summary {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f1fdfc;
+            border-radius: 8px;
+        }
+        .customer, .company {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fdfdf1;
+            border-radius: 8px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        strong {
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Plačilo uspešno!</h2>
+        <p>Pozdravljeni {{ order.name }} {{ order.surname }},</p>
+
+        <p>Vaše naročilo (ID: <strong>{{ order.id }}</strong>) je bilo uspešno <strong>PLAČANO</strong>.</p>
+
+        <div class="summary">
+            <h3>Povzetek naročila:</h3>
+            <ul>
+                {% for item in order.items.all %}
+                    <li>{{ item.quantity }} × {{ item.product.name }} — {{ item.price_at_order }} €</li>
+                {% endfor %}
+            </ul>
+            <p><strong>Skupaj: {{ order.total_price }} €</strong></p>
+        </div>
+
+        <div class="customer">
+            <h3>Podatki naročnika:</h3>
+            <p>{{ order.name }} {{ order.surname }}<br>
+            {{ order.address }}<br>
+            {{ order.postal_code }} {{ order.city }}<br>
+            Tel: {{ order.phone }}<br>
+            Email: {{ order.email }}</p>
+        </div>
+
+        {% if order.company_check %}
+        <div class="company">
+            <h3>Podatki podjetja:</h3>
+            <p><strong>{{ order.company_name }}</strong><br>
+            Naslov: {{ order.company_address }}<br>
+            {{ order.company_postal_code }} {{ order.company_city }}<br>
+            Davčna številka: {{ order.vat_number }}</p>
+        </div>
+        {% endif %}
+
+        <p>Naša ekipa že pripravlja vašo pošiljko.</p>
+        <p>Če imate kakršnakoli vprašanja, nas kontaktirajte na
+           <a href="mailto:upravitelj@sentjur-metropola.si">upravitelj@sentjur-metropola.si</a>.</p>
+
+        <div class="footer">
+            <p>&copy; {{ current_year }} Šentjur Merch. Vse pravice pridržane.</p>
+        </div>
+    </div>
+</body>
+</html>

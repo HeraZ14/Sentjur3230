@@ -9,6 +9,7 @@ body {
 
 }
 
+
 .header {
   background-color: #2F2F2F;
   text-align: center;
@@ -421,10 +422,21 @@ margin-bottom: 1.5rem;
 
 .vozek-wrapper {
   display: flex;
-  gap: 0.5%; /* malo prostora med elementoma */
+  gap: 0.5rem;          /* razmik med elementoma */
+  justify-content: center; /* postavi oba na horizontalno sredino */
+  align-items: center;     /* poravna tudi vertikalno (če imata različno višino) */
 }
 .vozek-wrapper > * {
-  box-sizing: border-box; /* samo za ta dva elementa */
+  flex: 0 0 auto; /* ne razteguje, ostane kompaktno */
+}
+.prazn-vozek {
+    background: #fffafa;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    text-align: center;
+    margin: 0;
+    font-size: 18px;
 }
 
 .center-block {
@@ -559,40 +571,48 @@ margin-bottom: 1.5rem;
 }
 .cart-wrapper {
   display: flex;
+  flex-direction: column;
   gap: 10%;
-  align-items: flex-start;
+  align-items: center;
 }
+@media (min-width: 768px) {
+  .cart-wrapper {
+    flex-direction: row;
+    align-items: flex-start;
 
-.cart-left {
+  }
+
+  .cart-left {
   flex: 0 0 60%;
-}
+  }
 
-.cart-right {
+  .cart-right {
     align-items: center;
   flex: 0 0 20%;
+  position: sticky;
+  top: 100px;
+  }
 }
 
 .cart-product {
   display: flex;
   align-items: center;
-  gap: 1rem;
   background-color: #2F2F2F;
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid #444;
   margin-bottom:2rem;
-  margin-left:2rem;
   justify-content: space-between;
   align-items: stretch;
+  margin: 0 0 2rem 0;
 }
 .cart-actions {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-end;
-    min-height: 100px; /* ali koliko pač želiš, da ima višino */
-    margin-bottom: 1%;
-    margin-top: 2%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.5rem; /* bolj fleksibilno kot min-height */
+  margin: 2% 0 1% 0;
 }
 
 .cart-summary {
@@ -602,10 +622,12 @@ margin-bottom: 1.5rem;
   border: 1px solid #444;
 }
 .cart-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column; /* če je več vrstic znotraj */
-    justify-content: center; /* navpična centriranost */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .cart-counter {
@@ -617,6 +639,17 @@ margin-bottom: 1.5rem;
     position: relative;
     top: -10px;
     left: 5px;
+}
+
+.cart-image img {
+  max-width: 100px;   /* za mobitel */
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .cart-image img {
+    max-width: 200px; /* šele na večjih ekranih večja slika */
+  }
 }
 
 @keyframes shake {

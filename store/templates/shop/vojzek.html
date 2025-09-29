@@ -45,7 +45,7 @@
                 <input type="hidden" name="selected_size_id" value="{{ item.selected_size_id }}">
                 <input type="hidden" name="personalized_text" value="{{ item.personalized_text }}">
                 <div class="vozek-wrapper">
-                <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1" class="cart-input" style="max-width:8.5%;">
+                <input type="number" name="selected_quantity" value="{{ item.quantity }}" min="1" class="cart-input">
                 <button class="confirm_button" style="font-size: 15px;"  type="submit">Posodobi</button>
                 </div>
             </form>
@@ -59,9 +59,11 @@
             {% csrf_token %}
             <input type="hidden" name="product_id" value="{{ item.product_id }}">
             <input type="hidden" name="selected_price_id" value="{{ item.selected_price_id }}">
+            <input type="hidden" name="selected_size_id" value="{{ item.selected_size_id }}">
+            <input type="hidden" name="personalized_text" value="{{ item.personalized_text }}">
             <button class="registration_button" type="submit">X</button>
         </form>
-            <span class="cart-total" style="font-size:26px;">Skupaj: {{ item.total_price }}€</span>
+            <span class="cart-total" style="font-size:20px;">Skupaj: {{ item.total_price }}€</span>
     </div>
         </div>
         {% endfor %}
@@ -79,7 +81,9 @@
     </div>
 </div>
 {% else %}
-<p>Vojzek je prazn.</p>
+<div class="prazn-vozek" style="color: black;">
+        <p>Vojzek je prazn.</p>
+    </div>
 {% endif %}
 
 
@@ -95,11 +99,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }, 3000); // 3000 ms = 3 sekunde
   });
-    const cart = document.querySelector('.cart-right');
 
-    window.addEventListener('scroll', () => {
-        let scrollY = window.scrollY;
-        cart.style.marginTop = (scrollY + 20) + 'px'; // 20px od vrha
-    });
 </script>
 {% endblock %}

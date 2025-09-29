@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'css/vars.css' %}">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
   <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=My+Soul&family=Radio+Canada:wdth,wght@100..125,300..700&display=swap" rel="stylesheet">
 
@@ -19,7 +19,7 @@
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'sentjur-logo.png' %}" /></a>
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>
         </div>
-        <div class="header-auth" style="justify-content: flex-end; position: absolute; right: 3%; top: 50%;transform: translateY(-50%);display: flex; gap: 1rem;">
+        <div class="header-auth" style="justify-content: flex-end; display: flex; gap: 1rem;">
             <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'vojzek' %}">
             Vojzek
             <span id="cart-counter"

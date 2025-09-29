@@ -57,7 +57,16 @@ INSTALLED_APPS = [
 LOGIN_REDIRECT_URL = '/profile/'     # ali karkoli
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 LOGIN_URL = '/accounts/login/'       # pot do login page
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Nastavitve za pošiljanje e-mailov
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "sentjur-metropola.si"         # tvoj outgoing server
+EMAIL_PORT = 465                            # SSL port
+EMAIL_USE_SSL = True                        # ker port 465 uporablja SSL
+EMAIL_USE_TLS = False                       # ne uporablja TLS hkrati z SSL
+EMAIL_HOST_USER = "upravitelj@sentjur-metropola.si"
+EMAIL_HOST_PASSWORD = "Hellothere3230"   # geslo tega emaila
+DEFAULT_FROM_EMAIL = "upravitelj@sentjur-metropola.si"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -149,3 +158,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+

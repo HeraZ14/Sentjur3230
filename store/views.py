@@ -10,10 +10,12 @@ from django.core.mail import send_mail
 from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm
+from spletka.settings import EMAIL_HOST_USER
 
 
 # Create your views here.
@@ -87,7 +89,7 @@ def add_to_cart(request):
     same_item_quantity = 0
     for item in cart:
         if str(item['product_id']) == str(product.id):
-            if item['selected_price_id'] == selected_price_id:
+            if item['selected_price_id'] == selected_price_id and item['selected_size_id'] == selected_size_id:
                 if item['personalized_text'] == personalized_text:
                     item['quantity'] += int(selected_quantity)
                     found = True
@@ -130,13 +132,17 @@ def add_to_cart(request):
 def remove_from_cart(request):
         product_id = request.POST.get('product_id')
         selected_price_id = int(request.POST.get('selected_price_id'))
+        selected_size_id = request.POST.get('selected_size_id')
+        personalized_text = request.POST.get('personalized_text')
 
         cart = request.session.get('cart', [])
 
         updated_cart = []
         for item in cart:
             if (str(item['product_id']) == str(product_id)
-                    and item['selected_price_id'] == selected_price_id):
+                    and item['selected_price_id'] == selected_price_id
+                    and item['selected_size_id'] == selected_size_id
+                    and item['personalized_text'] == personalized_text):
                 if item['quantity'] > 0:
                     item['quantity'] = 0
                 # Else: ne dodamo več (kar pomeni, da ga izbrišemo)
@@ -153,7 +159,6 @@ def update_cart(request):
     selected_quantity = request.POST.get('selected_quantity')
     selected_size_id = request.POST.get('selected_size_id')
     personalized_text = request.POST.get('personalized_text')
-    print(personalized_text)
 
 
     get_available_stock = ProductSize.objects.get(product_id=product_id, size_id=selected_size_id)
@@ -260,16 +265,13 @@ def stripe_webhook(request):
         )
     except (ValueError, stripe.error.SignatureVerificationError):
         return HttpResponse(status=400)
-    print(event)
     if event['type'] == 'payment_intent.succeeded':
         intent = event['data']['object']
         metadata = intent.get('metadata', {})
         order_id = metadata.get('order_id')
         email = intent.get('receipt_email')
-        print(order_id)
         if order_id:
             try:
-                print(f"Metadata iz webhooka: {metadata}")
                 order = Order.objects.get(id=order_id)
                 order.status = True
                 payment_method_id = intent.get('payment_method')
@@ -278,13 +280,16 @@ def stripe_webhook(request):
                     order.payment_method = method.type
                 order.save()
                 if email:
+                    html_message = render_to_string("shop/emails/payment_confirmation.html", {"order": order})
                     send_mail(
-                        subject='Plačilo uspešno',
-                        message='Vaše naročilo je bilo uspešno plačano. Hvala!',
-                        from_email='no-reply@tvoja-domena.si',
+                        subject=f'Plačilo uspešno #{order.id}',
+                        message="",
+                        from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[email],
+                        html_message=html_message,  # točno ime parametra
                         fail_silently=True,
                     )
+
                 print(f"✅ Naročilo {order_id} za {email} uspešno plačano (Elements).")
                 stripe_logs_create(event['id'], event['type'], order, event, True)
             except Order.DoesNotExist:
@@ -309,10 +314,39 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 def payment_success(request):
-    if 'cart' in request.session:
-        del request.session['cart']
-    messages.success(request, "Naročilo je bilo uspešno oddano. Preveri email.")
-    return redirect('home')
+    order_id = request.GET.get("order_id")
+
+    if not order_id:
+        messages.error(request, "Ni podatkov o naročilu.")
+        return redirect("home")
+
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        messages.error(request, "Naročilo ne obstaja.")
+        return redirect("home")
+
+    # Ko pride sem, pomeni da je checkout šel čez.
+    # Webhook pa bo v nekaj sekundah potrdil plačilo in poslal mail.
+    if "cart" in request.session:
+        del request.session["cart"]
+
+    subject = f"Potrditev naročila #{order.id}"
+    html_message = render_to_string("shop/emails/order_confirmation.html", {"order": order})
+    send_mail(
+        subject,
+        "",  # plain-text verzija (pusti prazno ali dodaj)
+        settings.DEFAULT_FROM_EMAIL,
+        [order.email],  # predpostavljam, da ima order customer z email poljem
+        html_message=html_message,
+        fail_silently=False,
+    )
+
+    messages.success(
+        request,
+        "Naročilo je bilo uspešno oddano. Potrditev plačila boš prejel po e-pošti."
+    )
+    return redirect("home")
 
 def payment_cancel(request):
     messages.warning(request, "Plačilo je bilo preklicano.")
@@ -337,12 +371,26 @@ def create_payment_intent(request):
     # CSRF je že poslan prek Fetch z headerjem, zato lahko uporabljamo request.POST
     email = request.POST.get('email')
     address = request.POST.get('address')
-    phone = request.POST.get('phone')
+    phone = request.POST.get('phone', '')
+    city = request.POST.get('city', '')
+    postal_code = request.POST.get('postal_code', '')
+    name = request.POST.get('name')
+    surname = request.POST.get('surname')
+    comment = request.POST.get('comment')
+    company_check = request.POST.get('company') == 'on'
+    company_name = request.POST.get('company_name')
+    vat_number = request.POST.get('vat_number')
+    company_address = request.POST.get('company_address')
+    company_postal_code = request.POST.get('company_postal_code')
+    company_city = request.POST.get('company_city')
 
-    if not email or not address or not phone:
+
+
+    if not email or not address:
         return JsonResponse({'error': 'Vsa polja so obvezna.'}, status=400)
 
     cart = request.session.get('cart', [])
+    print(cart)
     if not cart:
         return JsonResponse({'error': 'Košarica je prazna.'}, status=400)
 
@@ -358,17 +406,34 @@ def create_payment_intent(request):
         email=email,
         address=address,
         phone=phone,
-        status=False
+        status=False,
+        city=city,
+        postal_code=postal_code,
+        name=name,
+        surname=surname,
+        comment=comment,
+        company_check=company_check,
+        company_name=company_name,
+        company_address=company_address,
+        vat_number=vat_number,
+        company_postal_code=company_postal_code,
+        company_city=company_city,
+
+
     )
 
     for item in cart:
+        print(item)
         product = Product.objects.get(id=item['product_id'])
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         OrderItem.objects.create(
             order=order,
             product=product,
             quantity=item['quantity'],
-            price=price,
+            price=price, #price id
+            price_at_order=price.price,
+            price_tax=price.price_tax,
+            personalized=item.get('personalized_text'),
         )
 
     try:

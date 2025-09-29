@@ -1,0 +1,75 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Potrditev naročila</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; }
+        h2 { color: #2c3e50; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f4f4f4; text-align: left; }
+        .total { font-weight: bold; }
+        .section { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Hvala za tvoje naročilo!</h2>
+    <p>Vaše naročilo (ID: {{ order.id }}) je bilo uspešno sprejeto.</p>
+
+    <div class="section">
+        <h3>Podrobnosti naročila:</h3>
+        <table>
+            <tr>
+                <th>Izdelek</th>
+                <th>Količina</th>
+                <th>Cena</th>
+                <th>Skupaj</th>
+            </tr>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price_at_order }} €</td>
+                <td>{{ item.quantity|multiply:item.price_at_order }} €</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3" class="total">Skupaj brez davka:</td>
+                <td>{{ order.total_price_without_tax }} €</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="total">Davek (22%):</td>
+                <td>{{ order.tax_amount }} €</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="total">Skupaj z davkom:</td>
+                <td>{{ order.total_price }} €</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h3>Podatki o naročniku:</h3>
+        <p><strong>Ime:</strong> {{ order.name }} {{ order.surname }}</p>
+        <p><strong>Email:</strong> {{ order.email }}</p>
+        <p><strong>Telefon:</strong> {{ order.phone }}</p>
+        <p><strong>Naslov:</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}</p>
+    </div>
+
+    {% if order.company_check %}
+    <div class="section">
+        <h3>Podatki o podjetju:</h3>
+        <p><strong>Podjetje:</strong> {{ order.company_name }}</p>
+        <p><strong>Davčna številka:</strong> {{ order.vat_number }}</p>
+        <p><strong>Naslov podjetja:</strong> {{ order.company_address }}, {{ order.company_postal_code }}, {{ order.company_city }}</p>
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <p>Datum naročila: {{ order.date }}</p>
+        <p>Hvala, ker ste izbrali našo trgovino!</p>
+    </div>
+</body>
+</html>

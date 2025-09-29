@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import User
 from django.db import models
 import datetime
@@ -55,6 +57,10 @@ class ProductPrice(models.Model):
     def __str__(self):
         return f"{self.product.name} – {self.price_type.name}: {self.price} €"
 
+    @property
+    def price_tax(self):
+        return round(self.price/122*22, 2)
+
 @receiver(post_save, sender=Product)
 def generate_product_prices(sender, instance, **kwargs):
     from .models import PriceTypes, ProductPrice
@@ -109,12 +115,19 @@ class Order(models.Model):
     surname = models.CharField(max_length=100, default="", blank=True, null=True)
     address = models.TextField(max_length=100, default="", blank=True, null=True)
     city = models.TextField(max_length=100, default="", blank=True, null=True)
-    postal_number = models.TextField(max_length=100, default="", blank=True, null=True)
+    postal_code = models.TextField(max_length=100, default="", blank=True, null=True)
     phone = models.CharField(max_length=100, default="", blank=True, null=True)
     email = models.EmailField(max_length=100, default="", blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=100, default="", blank=True, null=True)
+    company_check = models.BooleanField(default=False)
+    company_name = models.CharField(max_length=50,default="", blank=True, null=True)
+    vat_number = models.CharField(max_length=50,default="", blank=True, null=True)
+    company_address = models.CharField(max_length=200,default="", blank=True, null=True)
+    company_postal_code = models.TextField(max_length=10,default="", blank=True, null=True)
+    company_city = models.CharField(max_length=50,default="", blank=True, null=True)
+    comment = models.TextField(default="", blank=True, null=True)
 
     def __str__(self):
         return str(self.user) if self.user else "Anonimen"
@@ -126,12 +139,25 @@ class Order(models.Model):
     def total_price(self):
         return sum(item.price_at_order * item.quantity for item in self.items.all())
 
+    def get_total_without_tax(self):
+        return sum((item.price_at_order - item.price_tax) * item.quantity for item in self.items.all())
+
+    @property
+    def tax_amount(self):
+        return sum(item.price_tax * item.quantity for item in self.items.all())
+
+    @property
+    def total_price_without_tax(self):
+        return self.get_total_without_tax()
+
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.ForeignKey(ProductPrice, on_delete=models.CASCADE,null=True, blank=True)
     price_at_order = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    price_tax = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     personalized = models.TextField(max_length=100, default="", blank=True, null=True)
 
 class CheckoutForm(forms.Form):
