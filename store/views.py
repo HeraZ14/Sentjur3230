@@ -1,12 +1,14 @@
+import csv
 import hashlib
 import hmac
+import io
 import json
 import logging
 
 import stripe
 from coinbase_commerce import Client
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -16,6 +18,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm
 from spletka.settings import EMAIL_HOST_USER
+from stripe import Invoice
 
 
 # Create your views here.
@@ -142,7 +145,7 @@ def remove_from_cart(request):
             if (str(item['product_id']) == str(product_id)
                     and item['selected_price_id'] == selected_price_id
                     and item['selected_size_id'] == selected_size_id
-                    and item['personalized_text'] == personalized_text):
+                    and str(item['personalized_text']) == personalized_text):
                 if item['quantity'] > 0:
                     item['quantity'] = 0
                 # Else: ne dodamo več (kar pomeni, da ga izbrišemo)
@@ -176,7 +179,7 @@ def update_cart(request):
     for item in cart:
         if str(item['product_id']) == str(product_id):
             if item['selected_price_id'] == selected_price_id:
-                if item['personalized_text'] == personalized_text:
+                if str(item['personalized_text']) == personalized_text:
                     item['quantity'] = selected_quantity
             else:
                 same_item_quantity += int(item['quantity'])
@@ -292,6 +295,7 @@ def stripe_webhook(request):
 
                 print(f"✅ Naročilo {order_id} za {email} uspešno plačano (Elements).")
                 stripe_logs_create(event['id'], event['type'], order, event, True)
+                send_invoice_email(order)
             except Order.DoesNotExist:
                 print(f"⚠️ Naročilo z ID {order_id} ni najdeno.")
                 stripe_logs_create(event['id'], event['type'], None, event, False)
@@ -390,7 +394,6 @@ def create_payment_intent(request):
         return JsonResponse({'error': 'Vsa polja so obvezna.'}, status=400)
 
     cart = request.session.get('cart', [])
-    print(cart)
     if not cart:
         return JsonResponse({'error': 'Košarica je prazna.'}, status=400)
 
@@ -423,7 +426,6 @@ def create_payment_intent(request):
     )
 
     for item in cart:
-        print(item)
         product = Product.objects.get(id=item['product_id'])
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         OrderItem.objects.create(
@@ -461,7 +463,6 @@ def create_payment_intent(request):
 def stripe_pay(request):
     client_secret = request.GET.get('client_secret')
     order_id = request.GET.get('order_id')
-    print(order_id)
 
     return render(request, 'shop/stripe_pay.html', {
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
@@ -560,3 +561,78 @@ def coinbase_webhook(request):
         pass  # ali logiraj
 
     return HttpResponse("OK", status=200)
+
+def export_invoice_csv(order):
+    buffer = io.StringIO()
+    writer = csv.writer(buffer, delimiter=';')
+    writer.writerow([
+        "#", "Šifra artikla", "Naziv artikla", "Kol.",
+        #"EM", "Cena brez DDV", "MPC", "R %", "DDV %",
+        #"Vrednost brez DDV", "Vrednost", "Opis artikla",
+        #"Črtna koda",
+    ])
+    numerator = 0
+    for item in order.items.all():
+        numerator += 1
+        writer.writerow([
+            numerator,
+            f"{item.price.id:06d}",
+            item.product.name,
+            item.quantity,
+            #'kos',
+            #f"{float(item.price_at_order) / 1.22:.2f}",
+            #f"{item.price_at_order:.2f}",
+            #'0',
+            #'22',
+            #f"{float(item.price_at_order) * float(item.quantity) / 1.22:.2f}",
+            #f"{float(item.quantity) * float(item.price_at_order):.2f}",
+            #f"Tekstil: {item.product.name}",
+            #'00001',
+        ])
+
+    return buffer.getvalue()  # vrne vsebino CSV kot string
+
+def send_invoice_email(order):
+    csv_content = export_invoice_csv(order)
+
+    subject = f"CSV datoteka za naročilo #{order.id}"
+    if order.company_check:
+        body = f"""Pošiljam naročilo za podjetje:
+                NAZIV: {order.company_name}
+                DAVČNA ŠT.: {order.vat_number}
+                NASLOV: {order.company_address}
+                POŠTA IN KRAJ: {order.company_postal_code}, {order.company_city}
+
+                Hvala za vnos!
+                
+                PODATKI ZA DOSTAVO:
+                {order.name} {order.surname}
+                {order.address}
+                {order.postal_code}, {order.city}
+                """
+    else:
+        body = f"""
+        Pošiljam naročilo za {order.name} {order.surname},
+        
+        Hvala za vnos!
+        
+        PODATKI ZA DOSTAVO:
+                {order.name} {order.surname}
+                {order.address}
+                {order.postal_code}, {order.city}
+        """
+    email = EmailMessage(
+        subject=subject,
+        body=body,
+        from_email="upravitelj@sentjur-metropola.si",  # ali settings.DEFAULT_FROM_EMAIL
+        to=["ziga.heric@gmail.com"],
+    )
+
+    # Dodamo CSV kot priponko
+    email.attach(
+        filename=f"order_{order.id}.csv",
+        content=csv_content,
+        mimetype="text/csv"
+    )
+
+    email.send(fail_silently=False)
