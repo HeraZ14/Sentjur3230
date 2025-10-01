@@ -15,8 +15,15 @@
     <div class="product-card">
             <p>{{ product.name }}</p>
             {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
-            {% endif %}
+                <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image" width="200" onclick="switchImage()">
+                <!-- Skrbno shrani seznam slik v hidden element -->
+                <div id="image-list" style="display:none;">
+                    <img src="{{ product.image.url }}">
+                    {% for img in product.images.all %}
+                        <img src="{{ img.image.url }}">
+                    {% endfor %}
+                </div>
+        {% endif %}
     </div>
 
 <div class="product-detail-form">
@@ -95,6 +102,7 @@
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'store/product_detail.js' %}"></script>
+    <script src="{% static 'store/product_gallery.js' %}"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
         const accordions = document.querySelectorAll(".accordion-header");

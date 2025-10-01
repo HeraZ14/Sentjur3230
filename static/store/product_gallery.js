@@ -1,31 +1,17 @@
-let currentSlide = 0;
+let imageIndex = 0;
+let imageList = [];
 
-function openSlider(startIndex) {
-  currentSlide = startIndex;
-  document.getElementById("sliderModal").style.display = "block";
-  showSlide();
-}
+document.addEventListener("DOMContentLoaded", function () {
+    const images = document.querySelectorAll("#image-list img");
+    images.forEach(img => imageList.push(img.src));
+});
 
-function closeSlider() {
-  document.getElementById("sliderModal").style.display = "none";
-}
+function switchImage() {
+    imageIndex++;
 
-function showSlide() {
-  const slides = document.getElementsByClassName("slider-image");
-  for (let i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";
-  }
-  slides[currentSlide].style.display = "block";
-}
+    if (imageIndex >= imageList.length) {
+        imageIndex = 0; // vrne na glavno sliko
+    }
 
-function prevSlide() {
-  const slides = document.getElementsByClassName("slider-image");
-  currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-  showSlide();
-}
-
-function nextSlide() {
-  const slides = document.getElementsByClassName("slider-image");
-  currentSlide = (currentSlide + 1) % slides.length;
-  showSlide();
+    document.getElementById("main-image").src = imageList[imageIndex];
 }
