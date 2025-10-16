@@ -16,9 +16,10 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm
+from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm, Newsletter
 from spletka.settings import EMAIL_HOST_USER
 from stripe import Invoice
+
 
 
 # Create your views here.
@@ -194,7 +195,7 @@ def update_cart(request):
 
 def cart_view(request):
     cart = request.session.get('cart', [])
-
+    delivery_price = ProductPrice.objects.get(id=10).price
     total_price = 0
     for item in cart:
         item_price = float(item['price_item'])
@@ -211,6 +212,9 @@ def cart_view(request):
         'ddv': ddv,
         'total_price_no_ddv': total_price_no_ddv,
         'total_price': total_price,
+        'delivery_price': delivery_price,
+        'total_price_with_delivery': float(total_price) + float(str(delivery_price)),
+
     }
     return render(request, 'shop/vojzek.html',context)
 
@@ -382,6 +386,7 @@ def create_payment_intent(request):
     surname = request.POST.get('surname')
     comment = request.POST.get('comment')
     company_check = request.POST.get('company') == 'on'
+    newsletter_check = request.POST.get('newsletter') == 'on'
     company_name = request.POST.get('company_name')
     vat_number = request.POST.get('vat_number')
     company_address = request.POST.get('company_address')
@@ -400,10 +405,23 @@ def create_payment_intent(request):
     user = request.user if request.user.is_authenticated else None
 
     total_amount = 0
+    if True:  # GLS dostava, dokler ni drugih možnosti
+        delivery_price = ProductPrice.objects.get(id=10).price
+        delivery_product = delivery_price.product  # če imaš FK do Product
+        cart.append({
+            'product_id': delivery_product.id,
+            'product_name': delivery_product.name,
+            'selected_price_id': delivery_price.id,
+            'selected_size_id': None,
+            'size_name': None,
+            'price_item': str(delivery_price),
+            'quantity': 1,
+            'image_url': None,
+            'personalized_text': None
+        })
     for item in cart:
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         total_amount += int(price.price * 100) * item['quantity']
-
     order = Order.objects.create(
         user=user,
         email=email,
@@ -422,8 +440,13 @@ def create_payment_intent(request):
         company_postal_code=company_postal_code,
         company_city=company_city,
 
-
     )
+
+    obj, created = Newsletter.objects.get_or_create(email=email)
+
+    if not obj.newsletter and newsletter_check:
+        obj.newsletter = True
+        obj.save()
 
     for item in cart:
         product = Product.objects.get(id=item['product_id'])
@@ -454,7 +477,8 @@ def create_payment_intent(request):
         )
         return JsonResponse({
             'client_secret': intent.client_secret,
-            'order_id': order.id
+            'order_id': order.id,
+            'amount': total_amount,
         })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -463,11 +487,12 @@ def create_payment_intent(request):
 def stripe_pay(request):
     client_secret = request.GET.get('client_secret')
     order_id = request.GET.get('order_id')
-
+    amount = float(request.GET.get('amount', 0)) / 100
     return render(request, 'shop/stripe_pay.html', {
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
         'client_secret': client_secret,
         'order_id': order_id,
+        'amount': amount,
     })
 
 

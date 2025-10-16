@@ -29,6 +29,7 @@ class Product(models.Model):
     return_items = models.TextField(default="", blank=True,null=True)
     image = models.ImageField(upload_to='uploads/product/')
     personalized = models.BooleanField(default=False)
+    settings = models.BooleanField(default=False)
     def total_stock(self):
         print(f"Product: {self.name}, Sizes: {[ps.quantity for ps in self.product_sizes.all()]}")
         return sum(ps.quantity for ps in self.product_sizes.all())
@@ -71,6 +72,8 @@ class ProductPrice(models.Model):
 @receiver(post_save, sender=Product)
 def generate_product_prices(sender, instance, **kwargs):
     from .models import PriceTypes, ProductPrice
+    if getattr(instance, 'settings', False):
+        return
     for pt in PriceTypes.objects.all():
         price = round(instance.weight * pt.price, 2)
         ProductPrice.objects.update_or_create(
@@ -180,6 +183,10 @@ class CheckoutForm(forms.Form):
     company_address = forms.CharField(max_length=200, required=True)
     company_postal_code = forms.CharField(max_length=10, required=True)
     company_city = forms.CharField(max_length=50, required=True)
+
+class Newsletter(models.Model):
+    email = models.EmailField(unique=True)
+    newsletter = models.BooleanField(default=False)
 
 class StripeLogs(models.Model):
     event_id = models.CharField(max_length=255, unique=True)

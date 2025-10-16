@@ -58,6 +58,7 @@
 </div>
 
 
+
 <!-- Polja, ki se prikažejo, če je checkbox označen -->
   <div id="company-fields" style="display: none;">
   <div class="form-group-floating">
@@ -83,9 +84,15 @@
   <label style="color:black;">Mesto:*</label>
   </div>
 </div>
+  <label class="custom-checkbox">
+    Prijavljam se na e-novice.
+    <input type="checkbox" name="newsletter" id="newsletter-checkbox">
+    <span class="checkmark"></span>
+  </label>
   <button type="submit" class="vozek-button" style="max-width:100%; width: -moz-available; height:60px; font-size: 20px">Nadaljuj na plačilo</button>
 </form>
 </div>
+
 {% else %}
 <p>Košarica je prazna.</p>
 {% endif %}
@@ -135,7 +142,7 @@ document.getElementById('checkout-form').addEventListener('submit', async functi
   const data = await response.json();
 
   if (data.client_secret && data.order_id) {
-    window.location.href = `/stripe_pay/?client_secret=${data.client_secret}&order_id=${data.order_id}`;
+    window.location.href = `/stripe_pay/?client_secret=${data.client_secret}&order_id=${data.order_id}&amount=${data.amount}`;
   } else {
     alert(data.error || 'Napaka pri ustvarjanju plačila');
   }

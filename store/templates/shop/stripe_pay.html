@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <div class="payment-container">
     <h1 class="payment-title">Zaključi plačilo</h1>
-
     <div class="payment-card">
+        <p style="color: black;">Znesek za plačilo: {{ amount|floatformat:2 }} €</p>
         <!-- Stripe Card Payment -->
         <form id="payment-form" class="stripe-form">
             <div id="payment-element" class="stripe-element"></div>
@@ -11,11 +12,11 @@
             <div id="error-message" class="stripe-error"></div>
         </form>
 
-        <!-- Crypto Payment -->
+        <!-- Crypto Payment
         <form method="POST" id="crypto-payment-form" class="crypto-form">
             {% csrf_token %}
             <button type="submit" class="vozek-button crypto-btn">Plačaj s kriptovaluto</button>
-        </form>
+        </form>-->
     </div>
 </div>
 

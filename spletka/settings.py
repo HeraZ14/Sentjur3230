@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -19,14 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ylu!!)q^bq&nq@)&3)(qpv&_(xoj!yxd*0$)2fl$b-g&#sq#5('
+load_dotenv()
 
-STRIPE_SECRET_KEY = "sk_test_51RhZ7GQILlH3U32jyqbbKE2jpLY3dTToCxbNc036kT5iNuiAbyhmUX7zbABbUEAFpiiRmsc2S8Uxd910WqhB14P000EBSCmkAQ"  # iz Stripe Dashboard
-STRIPE_PUBLISHABLE_KEY = "pk_test_51RhZ7GQILlH3U32jLvpI5ZDdNSHZlbmKEZIPTRKZsXZBNYhc6IMozRkeVrdALvq7BwJhARjZrAb2rBzGM8T68AiE00fyDExrCE"
-STRIPE_WEBHOOK_SECRET = 'whsec_3247759521c4baccc1db2124f1180a990797281accd7bdd53bf303f8dbb511db' #to je treba zamenjati, ko gremo v prod
-COINBASE_API_KEY = 'c2354d2d-233e-4747-87f0-ae9316c70513'
-COINBASE_WEBHOOK_SECRET = 'f50a497e-8af6-4ca7-ab4e-9a259688d078'
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+
+COINBASE_API_KEY = os.getenv("COINBASE_API_KEY")
+COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
+
+
 DOMAIN = "http://localhost:8000"  # pozneje spremeni na https://sentjur-metropola.si
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -150,9 +157,19 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#PRODUKCIJA
+#STATIC_URL = '/static/'
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+#STATIC_ROOT = '/home/sentmet/public_html/static/'
+#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = '/home/sentmet/Sentjur3230/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

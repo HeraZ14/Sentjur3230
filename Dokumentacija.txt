@@ -16,9 +16,10 @@ Zajebancija-forms.py
 Navodila za update aplikacije na cPanel: 
 
 #virtual enviroment, fetch static:
+#Potrebuješ datoteki .htacess, passenger_wsgi.py in datoteko settings.py iz stare aplikacije
 source /home/sentmet/virtualenv/Sentjur3230/3.11/bin/activate && cd /home/sentmet/Sentjur3230
 python manage.py collectstatic
 
-#Potrebuješ datoteki .htacess in datoteko settings.py iz stare aplikacije
+
 
 #datoteke css dodaj tudi v mapi public_html/static/css

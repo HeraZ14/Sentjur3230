@@ -72,11 +72,16 @@
     <!-- DESNI STOLPEC - izračun in checkout -->
     <div class="cart-right" style="margin-top:2rem;">
         <div class="cart-summary">
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj brez DDV:</p><p style="font-size:20px">{{ total_price_no_ddv }}€</p></div>
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">DDV:</p><p style="font-size:20px">{{ ddv }}€</p></div>
+            <div style="display: flex; justify-content: center;"><p style="font-size:20px">IZDELKI</p></div>
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj brez DDV:</p><p style="font-size:20px">{{ total_price_no_ddv }} €</p></div>
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">DDV:</p><p style="font-size:20px">{{ ddv }} €</p></div>
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price }} €</p></div>
             <hr style="margin-bottom:1rem;">
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price }}€</p></div>
-            <a class="checkout-button" href="{% url 'checkout' %}">Na blagajno</a>
+            <div style="display: flex; justify-content: center;"><p style="font-size:20px">DOSTAVA</p></div>
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Dostava GLS:</p><p style="font-size:20px">{{ delivery_price }} €</p></div>
+            <hr style="margin-bottom:1rem;">
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price_with_delivery }} €</p></div>
+            <a class="checkout-button" href="{% url 'checkout' %}">Nadaljuj</a>
         </div>
     </div>
 </div>
