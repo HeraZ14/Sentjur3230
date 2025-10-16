@@ -406,7 +406,7 @@ def create_payment_intent(request):
 
     total_amount = 0
     if True:  # GLS dostava, dokler ni drugih možnosti
-        delivery_price = ProductPrice.objects.get(id=10).price
+        delivery_price = ProductPrice.objects.get(id=10)
         delivery_product = delivery_price.product  # če imaš FK do Product
         cart.append({
             'product_id': delivery_product.id,
@@ -414,7 +414,7 @@ def create_payment_intent(request):
             'selected_price_id': delivery_price.id,
             'selected_size_id': None,
             'size_name': None,
-            'price_item': str(delivery_price),
+            'price_item': str(delivery_price.price),
             'quantity': 1,
             'image_url': None,
             'personalized_text': None
