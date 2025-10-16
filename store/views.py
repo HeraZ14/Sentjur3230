@@ -18,7 +18,6 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm, Newsletter
 from spletka.settings import EMAIL_HOST_USER
-from stripe import Invoice
 
 
 
