@@ -419,6 +419,7 @@ def create_payment_intent(request):
             'image_url': None,
             'personalized_text': None
         })
+    print(cart)
     for item in cart:
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         total_amount += int(price.price * 100) * item['quantity']
