@@ -20,6 +20,7 @@ Thumbs.db
 
 # Environment settings
 .env
+.ssh
 
 # Django static in media (če jih generiraš lokalno)
 staticfiles/
