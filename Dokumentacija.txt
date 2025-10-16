@@ -2,6 +2,8 @@ Stripe: cmd
 cd C:\Users\MSi\PyCharmMiscProject\stripe
 .\stripe listen --forward-to localhost:8000/webhook/stripe/
 
+stripe trigger payment_intent.succeeded
+
 #Check session (nov cmd):
 cd C:\Users\MSi\PyCharmMiscProject\stripe
 stripe trigger checkout.session.completed
@@ -15,11 +17,29 @@ Zajebancija-forms.py
 
 Navodila za update aplikacije na cPanel: 
 
-#virtual enviroment, fetch static:
+#virtual enviroment, fetch static, migracije:
 #Potrebuješ datoteki .htacess, passenger_wsgi.py in datoteko settings.py iz stare aplikacije
 source /home/sentmet/virtualenv/Sentjur3230/3.11/bin/activate && cd /home/sentmet/Sentjur3230
+python manage.py makemigrations
+python manage.py migrate
 python manage.py collectstatic
 
+PUSH NA SERVER:
+CMD:
+cd C:\cwrsync\bin
+
+rsync -avz --protocol=30 --rsync-path=/usr/bin/rsync ^
+      --exclude-from="/cygdrive/c/Users/MSi/PyCharmMiscProject/Sentjur3230/.gitignore" ^
+      --exclude 'spletka/settings.py' ^
+      -e "C:/cwrsync/bin/ssh.exe -p 5050 -T -o StrictHostKeyChecking=no" ^
+      /cygdrive/c/Users/MSi/PyCharmMiscProject/Sentjur3230/ ^
+      sentmet@sentjur-metropola.si:/home/sentmet/Sentjur3230/
 
 
 #datoteke css dodaj tudi v mapi public_html/static/css
+
+TUNEL:
+ssh -p 5050 sentmet@sentjur-metropola.si
+
+PREVERI ERRORS:
+python manage.py check --deploy
