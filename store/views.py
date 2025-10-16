@@ -18,8 +18,9 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm, Newsletter
 from spletka.settings import EMAIL_HOST_USER
+import sys
 
-
+sys.stdout.reconfigure(encoding='utf-8')
 
 # Create your views here.
 

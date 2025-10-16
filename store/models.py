@@ -2,13 +2,10 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.db import models
-import datetime
-
-from django.db.models import TextField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django import forms
-
+import stripe
 
 # Create your models here.
 
@@ -27,7 +24,7 @@ class Product(models.Model):
     description = models.TextField(default="", blank=True,null=True)
     composition = models.TextField(default="", blank=True,null=True)
     return_items = models.TextField(default="", blank=True,null=True)
-    image = models.ImageField(upload_to='uploads/product/')
+    image = models.ImageField(upload_to='uploads/product/', blank=True, null=True)
     personalized = models.BooleanField(default=False)
     settings = models.BooleanField(default=False)
     def total_stock(self):
@@ -48,6 +45,7 @@ class PriceTypes(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(default="", blank=True,null=True, max_length=100)
     price = models.FloatField()
+    settings = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -71,16 +69,51 @@ class ProductPrice(models.Model):
 
 @receiver(post_save, sender=Product)
 def generate_product_prices(sender, instance, **kwargs):
-    from .models import PriceTypes, ProductPrice
     if getattr(instance, 'settings', False):
-        return
-    for pt in PriceTypes.objects.all():
-        price = round(instance.weight * pt.price, 2)
-        ProductPrice.objects.update_or_create(
+        try:
+            settings_price_type = PriceTypes.objects.get(settings=True)
+        except PriceTypes.DoesNotExist:
+            return
+
+        price = instance.weight
+        pp, created = ProductPrice.objects.update_or_create(
             product=instance,
-            price_type=pt,
+            price_type=settings_price_type,
             defaults={'price': price}
         )
+        # Stripe sync
+        if not pp.stripe_product_id:
+            stripe_product = stripe.Product.create(name=instance.name)
+            pp.stripe_product_id = stripe_product.id
+        if not pp.stripe_price_id:
+            stripe_price = stripe.Price.create(
+                product=pp.stripe_product_id,
+                unit_amount=int(pp.price * 100),
+                currency="eur"
+            )
+            pp.stripe_price_id = stripe_price.id
+        pp.save()
+    else:
+        for pt in PriceTypes.objects.filter(settings=False):
+            price = round(instance.weight * pt.price, 2)
+            pp, created = ProductPrice.objects.update_or_create(
+                product=instance,
+                price_type=pt,
+                defaults={'price': price}
+            )
+            # Stripe sync
+            if not pp.stripe_product_id:
+                stripe_product = stripe.Product.create(name=instance.name)
+                pp.stripe_product_id = stripe_product.id
+            if not pp.stripe_price_id:
+                stripe_price = stripe.Price.create(
+                    product=pp.stripe_product_id,
+                    unit_amount=int(pp.price * 100),
+                    currency="eur"
+                )
+                pp.stripe_price_id = stripe_price.id
+            pp.save()
+
 
 class Size(models.Model):
     name = models.CharField(max_length=10)
