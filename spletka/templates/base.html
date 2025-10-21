@@ -19,6 +19,8 @@
         {% if user.is_authenticated %}
         <div class="header-auth" style="justify-content: flex-end; display: flex; gap: 1rem;">
           <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'profile' %}">Moj profil</a>
+          <a class="prijavi_se_button prijavi_se_rectangle" style="color:#C62828;" href="{% url 'logout' %}">Odjava</a>
+
             </div>
           {% else %}
             <div class="header-auth" style="justify-content: flex-end; display: flex; gap: 1rem;">
@@ -26,7 +28,7 @@
           <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'register' %}">Registriraj se</a>
             </div>
           {% endif %}
-        <div class="header-auth" style="margin-top: 40px;">
+        <div class="header-auth">
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'sentjur-logo.png' %}" /></a>
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>
         </div>
