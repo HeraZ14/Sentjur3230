@@ -24,8 +24,11 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic
 
+<<<<<<< HEAD
 #datoteke css dodaj tudi v mapi public_html/static/css (urejeno sedaj avtomatsko)
 
+=======
+>>>>>>> cef5e74 (sync)
 PUSH NA SERVER:
 CMD:
 cd C:\cwrsync\bin
@@ -38,8 +41,17 @@ rsync -avz --protocol=30 --rsync-path=/usr/bin/rsync ^
       sentmet@sentjur-metropola.si:/home/sentmet/Sentjur3230/
 
 
+<<<<<<< HEAD
 TUNEL:
 ssh -p 5050 sentmet@sentjur-metropola.si
 
 PREVERI PROD ERRORS:
+=======
+#datoteke css dodaj tudi v mapi public_html/static/css
+
+TUNEL:
+ssh -p 5050 sentmet@sentjur-metropola.si
+
+PREVERI ERRORS:
+>>>>>>> cef5e74 (sync)
 python manage.py check --deploy
