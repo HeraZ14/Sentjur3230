@@ -195,7 +195,7 @@ def update_cart(request):
 
 def cart_view(request):
     cart = request.session.get('cart', [])
-    delivery_price = ProductPrice.objects.get(id=10).price
+    delivery_price = ProductPrice.objects.get(id=1).price
     total_price = 0
     for item in cart:
         item_price = float(item['price_item'])
