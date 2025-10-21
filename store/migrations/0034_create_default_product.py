@@ -3,7 +3,11 @@ import os
 import django.db.models.deletion
 from store.models import generate_product_prices
 import stripe
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+stripe.api_key = os.getenv('STRIPE_API_KEY')
 
 admin_password = os.getenv('DJANGO_ADMIN_PASSWORD', 'admin123')
 

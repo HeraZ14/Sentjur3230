@@ -906,7 +906,8 @@ margin-bottom: 1.5rem;
 }
 
 .form-actions-row {
-    display: block;
+    display: flex;
+    justify-content: center;
 }
 
 .vote-bar-container {

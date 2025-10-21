@@ -14,12 +14,24 @@
   <title>{% block title %}Metropola{% endblock %}</title>
 </head>
 <body>
+
     <div class="header">
+        {% if user.is_authenticated %}
+        <div class="header-auth" style="justify-content: flex-end; display: flex; gap: 1rem;">
+          <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'profile' %}">Moj profil</a>
+            </div>
+          {% else %}
+            <div class="header-auth" style="justify-content: flex-end; display: flex; gap: 1rem;">
+          <a class="prijavi_se_button prijavi_se_rectangle" style="width:65px;" href="{% url 'login' %}">Prijavi se</a>
+          <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'register' %}">Registriraj se</a>
+            </div>
+          {% endif %}
         <div class="header-auth" style="margin-top: 40px;">
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'sentjur-logo.png' %}" /></a>
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>
         </div>
-        <div class="header-auth" style="justify-content: flex-end; display: flex; gap: 1rem;">
+
+        <div class="header-auth" style="gap: 1rem;">
             <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'vojzek' %}">
             Vojzek
             <span id="cart-counter"
@@ -28,13 +40,8 @@
         {{ cart_item_count }}
             </span>
             </a>
-        {% if user.is_authenticated %}
-          <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'profile' %}">Moj profil</a>
-          {% else %}
-          <a class="prijavi_se_button prijavi_se_rectangle" style="width:65px;" href="{% url 'login' %}">Prijavi se</a>
-          <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'register' %}">Registriraj se</a>
-          {% endif %}
-        </div>
+            </div>
+
         <div class="header-auth" style="margin-bottom: 40px; margin-top: 20px;">
         <a class="transparent_button" href="{% url 'home' %}">Domov</a>
         <a class="transparent_button" href="{% url 'sentjur-merch' %}">Šentjur merch</a>
