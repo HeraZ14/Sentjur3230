@@ -292,7 +292,7 @@ def stripe_webhook(request):
                         subject=f'Plačilo uspešno #{order.id}',
                         message="",
                         from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[email],
+                        recipient_list=[email, settings.INVOICES_MAIL],
                         html_message=html_message,  # točno ime parametra
                         fail_silently=True,
                     )
@@ -345,7 +345,7 @@ def payment_success(request):
         subject,
         "",  # plain-text verzija (pusti prazno ali dodaj)
         settings.DEFAULT_FROM_EMAIL,
-        [order.email],  # predpostavljam, da ima order customer z email poljem
+        [order.email, settings.INVOICES_MAIL],
         html_message=html_message,
         fail_silently=False,
     )
@@ -649,8 +649,8 @@ def send_invoice_email(order):
     email = EmailMessage(
         subject=subject,
         body=body,
-        from_email="upravitelj@sentjur-metropola.si",  # ali settings.DEFAULT_FROM_EMAIL
-        to=["ziga.heric@gmail.com"],
+        from_email="settings.DEFAULT_FROM_EMAIL",
+        to=["settings.INVOICES_EMAIL"],
     )
 
     # Dodamo CSV kot priponko

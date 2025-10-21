@@ -71,9 +71,10 @@ EMAIL_HOST = "sentjur-metropola.si"         # tvoj outgoing server
 EMAIL_PORT = 465                            # SSL port
 EMAIL_USE_SSL = True                        # ker port 465 uporablja SSL
 EMAIL_USE_TLS = False                       # ne uporablja TLS hkrati z SSL
-EMAIL_HOST_USER = "upravitelj@sentjur-metropola.si"
+EMAIL_HOST_USER = "merch3230@sentjur-metropola.si"
 EMAIL_HOST_PASSWORD = "Hellothere3230"   # geslo tega emaila
-DEFAULT_FROM_EMAIL = "upravitelj@sentjur-metropola.si"
+DEFAULT_FROM_EMAIL = "merch3230@sentjur-metropola.si"
+INVOICES_MAIL = "racuni@sentjur-metropola.si"
 
 
 MIDDLEWARE = [
