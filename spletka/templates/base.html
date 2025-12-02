@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'css/vars.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+  <link rel="stylesheet" href="{% static 'css/photoswipe.css' %}">
   <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=My+Soul&family=Radio+Canada:wdth,wght@100..125,300..700&display=swap" rel="stylesheet">
 
@@ -19,7 +20,11 @@
         {% if user.is_authenticated %}
         <div class="header-auth" style="justify-content: flex-end; display: flex; gap: 1rem;">
           <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'profile' %}">Moj profil</a>
-          <a class="prijavi_se_button prijavi_se_rectangle" style="color:#C62828;" href="{% url 'logout' %}">Odjava</a>
+            <!-- Namesto <a href="{% url 'logout' %}">Odjava</a> -->
+        <form method="POST" action="{% url 'logout' %}" style="display: inline; margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="prijavi_se_button prijavi_se_rectangle" style="color:#C62828; height:30px; box-shadow:None;">Odjava</button>
+        </form>
 
             </div>
           {% else %}
@@ -33,6 +38,14 @@
         <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>
         </div>
 
+        <div class="header-auth" style="margin-bottom: 40px; margin-top: 20px;">
+        <a class="transparent_button" href="{% url 'home' %}">Domov</a>
+        <a class="transparent_button" href="{% url 'sentjur-merch' %}">Šentjur merch</a>
+        <!-- This is a comment <a class="transparent_button_smarje" href="{% url 'smarski-merch' %}">Šmarski merch</a>-->
+        <a class="transparent_button" href="{% url 'kontakt' %}">Kontakt</a>
+        <a class="transparent_button" href="{% url 'forum' %}">Čvek</a>
+
+      </div>
         <div class="header-auth" style="gap: 1rem;">
             <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'vojzek' %}">
             Vojzek
@@ -43,15 +56,6 @@
             </span>
             </a>
             </div>
-
-        <div class="header-auth" style="margin-bottom: 40px; margin-top: 20px;">
-        <a class="transparent_button" href="{% url 'home' %}">Domov</a>
-        <a class="transparent_button" href="{% url 'sentjur-merch' %}">Šentjur merch</a>
-        <!-- This is a comment <a class="transparent_button_smarje" href="{% url 'smarski-merch' %}">Šmarski merch</a>-->
-        <a class="transparent_button" href="{% url 'kontakt' %}">Kontakt</a>
-        <a class="transparent_button" href="{% url 'forum' %}">Čvek</a>
-
-      </div>
 
     </div>
 

@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-stripe.api_key = os.getenv('STRIPE_API_KEY')
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
 admin_password = os.getenv('DJANGO_ADMIN_PASSWORD', 'admin123')
 

@@ -11,7 +11,7 @@ body {
 
 
 .header {
-  background-color: #2F2F2F;
+  background-color: black;
   text-align: center;
   padding: 1rem 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -47,7 +47,7 @@ body a {
 
 
 .footer {
-  background-color: var(--footer-bg, #dfd9d9);
+  background-color: white;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -137,8 +137,7 @@ main.block{
 background: #ffffff;
   border-radius: 26px;
   width: 85px;
-  box-shadow: inset 0px 3px 17.9px 1px rgba(0, 0, 0, 0.15),
-    0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
 }
 .prijavi_se_button{
 color: #000000;
@@ -173,20 +172,18 @@ color: #000000;
 
 .signin_button {
     display: inline-block;
-    background-color: #ededed;
+    background-color: white;
         align-items: center;    /* vertikalna poravnava */
         justify-content: center; /* horizontalna poravnava */
         color: #333;
         padding: 6px 12px;
-        border-radius: 10px;
+        border-radius: 26px;
         cursor: pointer;
         font-size: 14px;
         transition: transform 0.2s;
         text-decoration: none;
 }
-.signin_button:hover {
-  transform: scale(1.01);
-}
+
 .checkout-button {
     background-color: #ededed;
         display: flex;          /* naredi vsebnik fleksibilen */
@@ -258,8 +255,6 @@ color: #000000;
     background: #2ec52e;
     color: black;
     padding: 6px 12px;
-    padding: 6px 12px;
-    border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
     transition: transform 0.2s;
@@ -272,7 +267,6 @@ color: #000000;
     background: #c31919;
     color: black;
     padding: 6px 12px;
-    border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
     transition: transform 0.2s;
@@ -289,7 +283,7 @@ color: #000000;
     color: #3e3b3a;
     text-align: center;
     padding: 6px 12px;
-        border-radius: 10px;
+        border-radius: 26px;
         cursor: pointer;
         margin-top: 1rem;
         transition: transform 0.2s;
@@ -298,7 +292,46 @@ color: #000000;
 .tricolor-button-register:hover {
   transform: scale(1.02);
 }
+.zoom-btn {
+  position: absolute;
+  bottom: 30px;
+  right: 27px;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s ease;
+  z-index: 1;
+  width: 38px; /* Eksplicitna velikost proti shrink-to-fit */
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.zoom-btn:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.zoom-icon {
+  width: 18px;
+  height: 18px;
+  fill: white;
+  transform-box: fill-box; /* SVG transform fix */
+  image-rendering: -moz-crisp-edges; /* FF ostri robovi */
+  backface-visibility: hidden; /* Prepreči shift */
+}
+
+/* FF-specific, če je potrebno */
+@supports (-moz-appearance: none) {
+  .product-card:hover .zoom-btn {
+    transform: scale(1.005);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+}
 /*Product cards*/
 
 .product-grid {
@@ -324,12 +357,14 @@ color: #000000;
   transition: transform 0.3s ease;
   cursor: pointer;
     overflow: hidden;
+    will-change: transform;
+
 
 }
 
 .product-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.2));
 }
 
 .product-card img {
@@ -455,7 +490,7 @@ margin-bottom: 1.5rem;
   color: white;
   border: 1px solid #333;
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: 26px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
@@ -552,7 +587,7 @@ margin-bottom: 1.5rem;
   max-width: 14.5%;
   background-color: black;
   color: white;
-  border: 1px solid black;
+  border: 1px solid white;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
@@ -683,7 +718,7 @@ margin-bottom: 1.5rem;
   display: flex;           /* razporedi elemente v vrstico */
   align-items: center;     /* poravnaj vertikalno */
   gap: 1rem;               /* razmak med elementi v vrstici */
-  background-color: #2F2F2F;;
+  background-color: #000;
   padding: 1rem;
   border-radius: 8px;
   flex-wrap: wrap;
@@ -751,7 +786,7 @@ margin-bottom: 1.5rem;
 .poll-container {
     max-width: 700px;
     margin: 80px auto;
-    background-color: #222;
+    background-color: black;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
@@ -811,7 +846,7 @@ margin-bottom: 1.5rem;
     padding: 12px 12px 12px 12px;
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 26px;
     background: black;
     color: #999;
 }
@@ -1309,5 +1344,11 @@ Ce bomo kdaj rabli, se html:
 }
 
 .main-image {
-  cursor: pointer;
+    width: 200px;  /* Ohrani širino */
+    height: auto;  /* Avtomatsko prilagodi višino */
+    object-fit: contain;  /* <-- TO: Ohrani razmerje, brez popačenja (centriraj, če je prostor) */
+    object-position: center;
+    cursor: pointer;  /* Za boljšo UX */
+    border-radius: 8px;  /* Opcijsko: Zaobljeni robovi */
+    transition: opacity 0.3s ease;  /* Gladka sprememba med switch-om */
 }

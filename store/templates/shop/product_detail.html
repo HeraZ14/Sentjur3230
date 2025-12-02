@@ -15,7 +15,12 @@
     <div class="product-card">
             <p>{{ product.name }}</p>
             {% if product.image %}
-                <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image" width="200" onclick="switchImage()">
+                <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image" width="200" <!--onclick="switchImage()"-->>
+                <button class="zoom-btn" id="zoom-btn" aria-label="Povečaj">
+                <svg class="zoom-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 2a8 8 0 015.29 13.71l4 4a1 1 0 01-1.42 1.42l-4-4A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"/>
+                </svg>
+                </button>
                 <!-- Skrbno shrani seznam slik v hidden element -->
                 <div id="image-list" style="display:none;">
                     <img src="{{ product.image.url }}">
@@ -96,14 +101,29 @@
     </div>
 </div>
     </div>
-
-
     </div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'store/product_detail.js' %}"></script>
     <script src="{% static 'store/product_gallery.js' %}"></script>
+    <script type="module" src="{% static 'store/zoom_gallery.js' %}"></script>
     <script>
+    window.PRODUCT_IMAGES = [
+    {
+        src: "{{ product.image.url }}",
+        width: {{ product.image.width|default:1600 }},  // <-- TO: Realna širina (fallback na 1600, če ni)
+        height: {{ product.image.height|default:1200 }}  // <-- TO: Realna višina
+    },
+    {% for img in product.images.all %}
+    {
+        src: "{{ img.image.url }}",
+        width: {{ img.image.width|default:1600 }},  // Realna za vsako sliko
+        height: {{ img.image.height|default:1200 }}
+    },
+    {% endfor %}
+];
+
+
     document.addEventListener("DOMContentLoaded", function () {
         const accordions = document.querySelectorAll(".accordion-header");
 

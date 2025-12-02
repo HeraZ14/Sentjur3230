@@ -26,8 +26,8 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 
 COINBASE_API_KEY = os.getenv("COINBASE_API_KEY")
@@ -40,7 +40,7 @@ DOMAIN = "http://localhost:8000"  # pozneje spremeni na https://sentjur-metropol
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok-free.app', 'sentjur-metropola.si', 'www.sentjur-metropola.si']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'sentjur-metropola.si', 'www.sentjur-metropola.si']
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.ngrok-free.app",
@@ -61,20 +61,23 @@ INSTALLED_APPS = [
     'accounts',
     'zajebancija',
     'widget_tweaks',
+    'django_extensions',
+    'dbbackup',
 ]
 LOGIN_REDIRECT_URL = '/profile/'     # ali karkoli
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 LOGIN_URL = '/accounts/login/'       # pot do login page
+
 # Nastavitve za pošiljanje e-mailov
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "sentjur-metropola.si"         # tvoj outgoing server
 EMAIL_PORT = 465                            # SSL port
 EMAIL_USE_SSL = True                        # ker port 465 uporablja SSL
 EMAIL_USE_TLS = False                       # ne uporablja TLS hkrati z SSL
-EMAIL_HOST_USER = "merch3230@sentjur-metropola.si"
-EMAIL_HOST_PASSWORD = "Hellothere3230"   # geslo tega emaila
-DEFAULT_FROM_EMAIL = "merch3230@sentjur-metropola.si"
-INVOICES_MAIL = "racuni@sentjur-metropola.si"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")   # geslo tega emaila
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+INVOICES_MAIL = os.getenv("INVOICES_MAIL")
 
 
 MIDDLEWARE = [
@@ -153,6 +156,23 @@ USE_I18N = True
 
 USE_TZ = True
 
+# HSTS
+
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = False
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+else:
+    SECURE_SSL_REDIRECT = False
+
+
+# Cookie security
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -177,5 +197,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 
