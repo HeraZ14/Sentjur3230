@@ -24,7 +24,9 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic
 
-
+PREVERI ERRORS:
+>>>>>>> cef5e74 (sync)
+python manage.py check --deploy
 
 <<<<<<< HEAD
 #datoteke css dodaj tudi v mapi public_html/static/css (urejeno sedaj avtomatsko)
@@ -54,6 +56,13 @@ PREVERI PROD ERRORS:
 TUNEL:
 ssh -p 5050 sentmet@sentjur-metropola.si
 
-PREVERI ERRORS:
->>>>>>> cef5e74 (sync)
-python manage.py check --deploy
+NAVODILA ZA UPDATE SPLETNE STRANI(najlazje):
+- naredi kopijo mape Sentjur3230
+- iz kopije mape izbriši
+  - db.sqlite3 BAZO NUJNO (če se baza prepiše smo u pizdi)
+  - mapo MEDIA NUJNO (To je rešljivo, ampak vse slike na novo nalozit)
+  - iz mape spletka, settings.py
+  - .env
+- zazipaj in naloži
+- posebej kopiraj elemente iz mape spletka(pojdi v mapo) in ostale mape in datoteke
+

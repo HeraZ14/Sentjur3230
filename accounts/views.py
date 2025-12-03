@@ -16,6 +16,7 @@ def register(request):
             login(request, user)  # avtomatska prijava
             return redirect('vojzek')  # ali kamorkoli
         else:
+            print("Form is invalid. Errors:", form.errors)  # <-- DEBUG: Detajlne napake
             messages.warning(request, "Podatki so manjkajoči ali pa jih ni.")
     else:
         form = CustomUserCreationForm()

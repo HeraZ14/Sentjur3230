@@ -5,7 +5,7 @@
 <div class="product-grid" style="margin-top:50px;">
     {% if products %}
         {% for product in products %}
-            <div class="product-card">
+            <div class="product-card" style="width: 220px;">
             <a href="{% url 'product_detail' product.id %}">
                 <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
             <h3>{{ product.name }}</h3>

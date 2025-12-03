@@ -33,8 +33,8 @@
           <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'register' %}">Registriraj se</a>
             </div>
           {% endif %}
-        <div class="header-auth">
-        <a href="{% url 'home' %}"><img style="height:100px" src="{% static 'ŠENTJUR-MERCH-LOGO.png' %}" /></a>
+        <div class="header-auth" style="margin-top:50px;margin-bottom: 50px;">
+        <a href="{% url 'sentjur-merch' %}"><img style="height:150px" src="{% static 'ŠENTJUR-MERCH-LOGO.png' %}" /></a>
         <!--<a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>-->
         </div>
 
@@ -49,15 +49,15 @@
     </div>
 
      <main class="block">
-         <div class="header-auth" style="gap: 1rem; position:sticky; top:10px;">
+         <div class="header-auth" style="gap: 1rem; position:sticky; top:10px; z-index: 999;">
             <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'vojzek' %}">
             Vojzek
-            <span id="cart-counter"
+            </a>
+             <span id="cart-counter"
           class="cart-counter"
           style="display: {% if cart_item_count > 0 %}inline-block{% else %}none{% endif %};">
         {{ cart_item_count }}
             </span>
-            </a>
             </div>
          {% block content %}{% endblock %}
      </main>

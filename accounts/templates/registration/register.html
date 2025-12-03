@@ -2,7 +2,7 @@
 {% load static %}
 {% load widget_tweaks %}
 {% block content %}
-<div class="poll-container">
+<div class="poll-container" style="margin:auto;">
         <h2>Registracija</h2>
         {% if messages %}
         <div class="message-container">
@@ -14,26 +14,50 @@
         </div>
         {% endif %}
         <form method="post">
-            {% csrf_token %}
-             {% for field in form %}
-        <div>
+    {% csrf_token %}
 
-            <div class="form-group-floating">
-            {{ field|add_class:"input-floating"|attr:"placeholder: "  }}
-            {{ field.label_tag }}
-            </div>
+    <div class="form-group-floating">
+        <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" class="input-floating" autocomplete="username" placeholder=' ' required>
+        <label for="{{ form.username.id_for_label }}">Uporabniško ime</label>
+    </div>
 
-            {% for error in field.errors %}
-                <div style="color:red;">{{ error }}</div>
-            {% endfor %}
-        </div>
-            {% endfor %}
-
-            {% for error in form.non_field_errors %}
+    {% for error in form.username.errors %}
         <div style="color:red;">{{ error }}</div>
-            {% endfor %}
-            <button type="submit" class="signin_button" style="margin-bottom: 1rem;">Registriraj se</button>
-        </form>
+    {% endfor %}
+
+    <div class="form-group-floating">
+        <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" class="input-floating" autocomplete="email" placeholder=' ' required>
+        <label for="{{ form.email.id_for_label }}">E-pošta</label>
+    </div>
+
+    {% for error in form.email.errors %}
+        <div style="color:red;">{{ error }}</div>
+    {% endfor %}
+
+    <div class="form-group-floating">
+        <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" class="input-floating" autocomplete="new-password" placeholder=' ' required>
+        <label for="{{ form.password1.id_for_label }}">Geslo</label>
+    </div>
+
+    {% for error in form.password1.errors %}
+        <div style="color:red;">{{ error }}</div>
+    {% endfor %}
+
+    <div class="form-group-floating">
+        <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" class="input-floating" autocomplete="new-password" placeholder=' ' required>
+        <label for="{{ form.password2.id_for_label }}">Potrdi geslo</label>
+    </div>
+
+    {% for error in form.password2.errors %}
+        <div style="color:red;">{{ error }}</div>
+    {% endfor %}
+
+    {% for error in form.non_field_errors %}
+        <div style="color:red;">{{ error }}</div>
+    {% endfor %}
+
+    <button type="submit" class="signin_button" style="margin-bottom: 1rem;">Registriraj se</button>
+</form>
     <a href="{% url 'login' %}" class="tricolor-button-register" >Že imate račun? Prijavite se</a>
     </div>
 {% endblock %}
