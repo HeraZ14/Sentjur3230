@@ -16,7 +16,7 @@
     <!-- LEVI STOLPEC - izdelki -->
 
     <div class="cart-left">
-        <div class="cart-product" style="border:None; background:None">
+        <div class="cart-product" style="border:None; background:None;">
             <div class="h1" style="margin-left: 2rem;">
         VOJZEK
             </div>
@@ -70,7 +70,7 @@
     </div>
 
     <!-- DESNI STOLPEC - izračun in checkout -->
-    <div class="cart-right" style="margin-top:2rem;">
+    <div class="cart-right" style="margin-top:20px; margin-bottom:20px;">
         <div class="cart-summary">
             <div style="display: flex; justify-content: center;"><p style="font-size:20px">IZDELKI</p></div>
             <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj brez DDV:</p><p style="font-size:20px">{{ total_price_no_ddv }} €</p></div>
@@ -80,7 +80,7 @@
             <div style="display: flex; justify-content: center;"><p style="font-size:20px">DOSTAVA</p></div>
             <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Dostava GLS:</p><p style="font-size:20px">{{ delivery_price }} €</p></div>
             <hr style="margin-bottom:1rem;">
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price_with_delivery }} €</p></div>
+            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price_with_delivery|floatformat:2 }} €</p></div>
             <a class="checkout-button" href="{% url 'checkout' %}">Nadaljuj</a>
         </div>
     </div>

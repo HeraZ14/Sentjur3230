@@ -33,7 +33,6 @@ body {
   align-items: center;
   text-align: center;
   flex-wrap: wrap; /* elementi se zložijo, če zmanjka prostora */
-  padding: 1rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -459,7 +458,6 @@ margin-bottom: 1.5rem;
   display: flex;
   gap: 0.5rem;          /* razmik med elementoma */
   margin-top: 1rem;
-  justify-content: center;
 }
 .vozek-wrapper > * {
   flex: 0 0 auto; /* ne razteguje, ostane kompaktno */
@@ -484,8 +482,6 @@ margin-bottom: 1.5rem;
     text-align: center;
 }
 .vozek-button {
-    flex: 0 0 76%;
-  max-width: 85%;
   background-color: #649d60;
   color: white;
   border: 1px solid #333;
@@ -494,6 +490,7 @@ margin-bottom: 1.5rem;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  width: -moz-available;
     }
 
  .vozek-button:hover {
@@ -584,7 +581,7 @@ margin-bottom: 1.5rem;
 
 .cart-input {
     flex: 0 0 14%;
-  max-width: 14.5%;
+  max-width: 50px;
   background-color: black;
   color: white;
   border: 1px solid white;
@@ -619,13 +616,14 @@ margin-bottom: 1.5rem;
 
   .cart-left {
   flex: 0 0 60%;
+  margin-left: 20px;
   }
 
   .cart-right {
     align-items: center;
   flex: 0 0 20%;
   position: sticky;
-  top: 100px;
+  top: 10px;
   }
 }
 
@@ -700,19 +698,59 @@ margin-bottom: 1.5rem;
 }
 
 .product-detail-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;  /* Prostor med row-wrapper, personalized in vozek-row */
+    width: 100%;
+}
+/* Horizontalna vrstica za price + size (različno razmerje: 60:40) */
+.row-wrapper {
+    display: flex;
+    gap: 1%;  /* Mali prostor med select-i */
+    width: 100%;
+}
+.row-wrapper .price-select {
+    flex: 0 0 70%;
+}
 
-  box-shadow: var(--card-shadow);
-    position: relative;
-  border-radius: 10px;
-  padding: 1rem;             /* Enotna širina kartice */
-  display: flex;
-  flex-direction: column;
-  align-items: center;        /* Poravnaj vsebino na sredino */
-  text-align: center;         /* Centriraj besedilo */
-  transition: transform 0.3s ease;
-  cursor: pointer;
-    overflow: hidden;
+.row-wrapper .size-select {
+    flex: 0 0 29%;  /* Size: 40% širine */
+}
 
+.personalized-wrapper {
+    width: 100%;
+}
+.personalized-wrapper .form-group-floating {
+    width: 100%;  /* Napolni vrstico */
+}
+
+/* Horizontalna vrstica za vozek gumb + quantity (90:10 razmerje) */
+.vozek-row {
+    display: flex;
+    gap: 1%;  /* Mali prostor med gumbom in quantity */
+    width: 100%;
+    align-items: center;  /* Vertikalno centrirano */
+    margin-top: 10px;
+}
+
+.vozek-row .vozek-button {
+    flex: 0 0 89%;  /* Gumb: 90% širine */
+    white-space: nowrap;  /* Besedilo ne wrap-a */
+}
+
+.vozek-row .cart-input {
+    flex: 0 0 10%;  /* Quantity: 10% širine, fiksno */
+    max-width: 60px;  /* Ne raste preko 60px */
+    text-align: center;
+}
+
+/* Splošno za vse form elemente (brez siljenja) */
+.form-field {
+    width: 100%;  /* Napolni svoj container */
+    box-sizing: border-box !important;  /* Padding/border ne sili ven */
+    padding: 0.75rem;
+    border-radius: 4px;
+    font-size: 14px;
 }
 .product-detail {
   display: flex;           /* razporedi elemente v vrstico */

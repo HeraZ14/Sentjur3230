@@ -4,6 +4,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django import forms
 import stripe
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFit
 
 # Create your models here.
 
@@ -34,7 +36,13 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to='uploads/product_gallery/')
+    image = ProcessedImageField(  # <-- Spremeni iz ImageField
+        upload_to='uploads/product_gallery/',
+        processors=[ResizeToFit(1600, 1600)],  # <-- Max 1200x800, proporcionalno skaliranje (ohranja razmerja!)
+        format='WEBP',
+        options={'quality': 85},
+        verbose_name='Slika'
+    )
 
     def __str__(self):
         return f"{self.product.name} - {self.id}"

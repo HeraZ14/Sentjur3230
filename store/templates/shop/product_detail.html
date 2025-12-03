@@ -11,11 +11,11 @@
         </div>
     {% endif %}
 <div class="product-grid" style="margin-top:3rem;">
-<div class="product-detail" style="max-width:680px;">
+<div class="product-detail" style="max-width:500px;">
     <div class="product-card">
             <p>{{ product.name }}</p>
             {% if product.image %}
-                <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image" width="200" <!--onclick="switchImage()"-->>
+                <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image" width="200" ><!--onclick="switchImage()"-->
                 <button class="zoom-btn" id="zoom-btn" aria-label="Povečaj">
                 <svg class="zoom-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 2a8 8 0 015.29 13.71l4 4a1 1 0 01-1.42 1.42l-4-4A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"/>
@@ -32,46 +32,51 @@
     </div>
 
 <div class="product-detail-form">
-<form method="POST" action="/add-to-cart/">
-                    {% csrf_token %}
-                    <input type="hidden" name="product_id" value="{{ product.id }}">
-                    <input type="hidden" name="productprice_id" value="{{ productprice.id }}">
-                    <select name="selected_price_id" onchange="updateDisplayedText(this)" required>
-                    <option disabled {% if not selected_price_id %}selected{% endif %} hidden>Izberi ceno</option>
-                    {% for p in product.productprice_set.all %}
-                        {% if p.product.id == product.id %}
-                            <option value="{{ p.id }}" data-original-text="{{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}"
-                                {% if p.id|stringformat:"s" == selected_price_id|stringformat:"s" %} selected {% endif %}>
-                                {{ p.price_type.name }} {{ p.price }}€: {{ p.price_type.description }}
-                            </option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+    <form method="POST" action="/add-to-cart/">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <input type="hidden" name="productprice_id" value="{{ productprice.id }}">
 
-
-                <select name="selected_size_id" required>
-                    <option disabled {% if not selected_size_id %}selected{% endif %} hidden>Izberi velikost</option>
-                    {% for ps in product.product_sizes.all %}
-                        <option value="{{ ps.size.id }}" {% if ps.size.id|stringformat:"s" == selected_size_id|stringformat:"s" %} selected {% endif %}>
-                            {{ ps.size.name }} (Še {{ ps.quantity }} kosov)
+        <!-- Price + Size v isti vrstici (različno razmerje) -->
+        <div class="row-wrapper">
+            <select name="selected_price_id" class="form-field price-select" onchange="updateDisplayedText(this)" required>
+                <option disabled {% if not selected_price_id %}selected{% endif %} hidden>Izberi ceno</option>
+                {% for p in product.productprice_set.all %}
+                    {% if p.product.id == product.id %}
+                        <option value="{{ p.id }}" data-original-text="{{ p.price }}€: {{ p.price_type.name }} - {{ p.price_type.description }}"
+                            {% if p.id|stringformat:"s" == selected_price_id|stringformat:"s" %} selected {% endif %}>
+                            {{ p.price }}€: {{ p.price_type.name }} - {{ p.price_type.description }}
                         </option>
-                    {% endfor %}
-                </select>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <select name="selected_size_id" class="form-field size-select" required>
+                <option disabled {% if not selected_size_id %}selected{% endif %} hidden>Izberi velikost</option>
+                {% for ps in product.product_sizes.all %}
+                    <option value="{{ ps.size.id }}" {% if ps.size.id|stringformat:"s" == selected_price_id|stringformat:"s" %} selected {% endif %}>
+                        {{ ps.size.name }} (Še {{ ps.quantity }} kosov)
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-                {% if product.personalized %}
-                    <div class="vozek-wrapper" style="margin-top: 1rem; justify-content: normal;">
-                    <div class="form-group-floating" style="border-radius: 8px; width: 96%;">
-                    <input type="text" name="personalized_text" class="input-floating" placeholder=" " style="background:white;">
+        {% if product.personalized %}
+            <!-- Personalized ostane vertikalno -->
+            <div class="personalized-wrapper">
+                <div class="form-group-floating" style="border-radius: 8px; width: 96%;">
+                    <input type="text" name="personalized_text" class="input-floating form-field" placeholder=" " style="background:white;">
                     <label style="color: black;">Napis</label>
-                     </div>
-                        </div>
-                {% endif %}
+                </div>
+            </div>
+        {% endif %}
 
-                    <div class="vozek-wrapper">
-                    <input type="submit" class="vozek-button" value="V vojzek">
-                    <input type="number" name="selected_quantity" min="1" value="{{ selected_quantity|default:'1' }}" class="cart-input" required>
-                    </div>
-                </form>
+        <!-- Voziček gumb + quantity v isti vrstici (90:10 razmerje) -->
+        <div class="vozek-row">
+            <input type="submit" class="vozek-button form-field" style="border-radius:4px" value="V vojzek">
+            <input type="number" name="selected_quantity" min="1" value="{{ selected_quantity|default:'1' }}" class="cart-input form-field" required>
+        </div>
+
+    </form>
     </div>
     <div class="product-extra-info">
     <div class="accordion-item">

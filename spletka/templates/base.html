@@ -23,7 +23,7 @@
             <!-- Namesto <a href="{% url 'logout' %}">Odjava</a> -->
         <form method="POST" action="{% url 'logout' %}" style="display: inline; margin: 0;">
             {% csrf_token %}
-            <button type="submit" class="prijavi_se_button prijavi_se_rectangle" style="color:#C62828; height:30px; box-shadow:None;">Odjava</button>
+            <button type="submit" class="prijavi_se_button prijavi_se_rectangle" style="color:#C62828; height:30px; box-shadow:None;cursor:pointer;">Odjava</button>
         </form>
 
             </div>
@@ -34,8 +34,8 @@
             </div>
           {% endif %}
         <div class="header-auth">
-        <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'sentjur-logo.png' %}" /></a>
-        <a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>
+        <a href="{% url 'home' %}"><img style="height:100px" src="{% static 'ŠENTJUR-MERCH-LOGO.png' %}" /></a>
+        <!--<a href="{% url 'home' %}"><img style="height:55px" src="{% static 'home.png' %}" /></a>-->
         </div>
 
         <div class="header-auth" style="margin-bottom: 40px; margin-top: 20px;">
@@ -46,7 +46,10 @@
         <a class="transparent_button" href="{% url 'forum' %}">Čvek</a>
 
       </div>
-        <div class="header-auth" style="gap: 1rem;">
+    </div>
+
+     <main class="block">
+         <div class="header-auth" style="gap: 1rem; position:sticky; top:10px;">
             <a class="prijavi_se_button prijavi_se_rectangle" href="{% url 'vojzek' %}">
             Vojzek
             <span id="cart-counter"
@@ -56,10 +59,8 @@
             </span>
             </a>
             </div>
-
-    </div>
-
-     <main class="block">{% block content %}{% endblock %}</main>
+         {% block content %}{% endblock %}
+     </main>
 
     <div class="footer">
       <div class="footer-auth">

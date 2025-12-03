@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'django_extensions',
     'dbbackup',
+    'imagekit',
+
 ]
 LOGIN_REDIRECT_URL = '/profile/'     # ali karkoli
 LOGOUT_REDIRECT_URL = '/accounts/login/'
