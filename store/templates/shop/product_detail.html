@@ -11,8 +11,8 @@
         </div>
     {% endif %}
 <div class="product-grid" style="margin-top:3rem;">
-<div class="product-detail" style="max-width:500px;">
-    <div class="product-card" style="width:500px;">
+<div class="product-detail">
+    <div class="product-card">
             <p>{{ product.name }}</p>
             {% if product.image %}
                 <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image" width="400" ><!--onclick="switchImage()"-->
@@ -31,6 +31,7 @@
         {% endif %}
     </div>
 
+<div class="product-detail-desktop">
 <div class="product-detail-form">
     <form method="POST" action="/add-to-cart/">
         {% csrf_token %}
@@ -79,17 +80,18 @@
     </form>
     </div>
     <div class="product-extra-info">
-    <div class="accordion-item">
-        <button class="accordion-header">Opis izdelka</button>
-        <div class="accordion-content">
-            <p>{{ product.description|linebreaksbr }}</p>
-        </div>
-    </div>
 
     <div class="accordion-item">
         <button class="accordion-header">Sestava</button>
         <div class="accordion-content">
             <p>{{ product.composition|linebreaksbr }}</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <button class="accordion-header">Opis izdelka</button>
+        <div class="accordion-content">
+            <p>{{ product.description|linebreaksbr }}</p>
         </div>
     </div>
 
@@ -105,6 +107,7 @@
         </div>
     </div>
 </div>
+    </div>
     </div>
     </div>
 {% endblock %}

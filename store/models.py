@@ -24,7 +24,15 @@ class Product(models.Model):
     description = models.TextField(default="", blank=True,null=True)
     composition = models.TextField(default="", blank=True,null=True)
     return_items = models.TextField(default="", blank=True,null=True)
-    image = models.ImageField(upload_to='uploads/product/', blank=True, null=True)
+    image = ProcessedImageField(  # <-- Spremeni iz ImageField
+        upload_to='uploads/product/',  # Ohrani isto mapo
+        processors=[ResizeToFit(1600, 1600)],  # Max 1600x1600, proporcionalno (ohranja razmerja!)
+        format='WEBP',
+        options={'quality': 90},
+        blank=True,
+        null=True,
+        verbose_name='Slika'
+    )
     personalized = models.BooleanField(default=False)
     settings = models.BooleanField(default=False)
     def total_stock(self):
@@ -38,9 +46,9 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     image = ProcessedImageField(  # <-- Spremeni iz ImageField
         upload_to='uploads/product_gallery/',
-        processors=[ResizeToFit(1600, 1600)],  # <-- Max 1200x800, proporcionalno skaliranje (ohranja razmerja!)
+        processors=[ResizeToFit(1600, 1600)],  # <-- Max 1600x1600, proporcionalno skaliranje (ohranja razmerja!)
         format='WEBP',
-        options={'quality': 85},
+        options={'quality': 90},
         verbose_name='Slika'
     )
 

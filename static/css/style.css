@@ -354,9 +354,9 @@ color: #000000;
   text-align: center;         /* Centriraj besedilo */
   transition: transform 0.3s ease;
   cursor: pointer;
-    overflow: hidden;
-    will-change: transform;
-
+  overflow: hidden;
+  will-change: transform;
+  max-width:350px;
 
 }
 
@@ -669,8 +669,9 @@ margin-bottom: 1.5rem;
     font-size: 12px;
     position: relative;
     top: -10px;
-    right: 40px;
     z-index: 999;
+    position: absolute;
+    right: 5px;
 
 }
 
@@ -757,10 +758,15 @@ margin-bottom: 1.5rem;
   align-items: center;     /* poravnaj vertikalno */
   gap: 1rem;               /* razmak med elementi v vrstici */
   background-color: #000;
-  padding: 1rem;
-  border-radius: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
+}
+@media (max-width: 767px) {
+  .product-detail {
+    max-width: 350px;
+    flex-wrap: wrap;
+  }
+}
+
+.product-detail-desktop {
 }
 
 .product-extra-info {
