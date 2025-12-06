@@ -10,6 +10,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for pp in ProductPrice.objects.all():
+            pp.stripe_product_id = ""
+            pp.stripe_price_id = ""
+            pp.save()
+        for pp in ProductPrice.objects.all():
             if not pp.stripe_product_id:
                 stripe_product = stripe.Product.create(name=pp.product.name)
                 pp.stripe_product_id = stripe_product.id

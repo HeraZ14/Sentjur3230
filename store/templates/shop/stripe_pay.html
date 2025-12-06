@@ -5,13 +5,12 @@
     <h1 class="payment-title">Zaključi plačilo</h1>
     <div class="payment-card">
         <p style="color: black;">Znesek za plačilo: {{ amount|floatformat:2 }} €</p>
-        <!-- Stripe Card Payment -->
-        <form id="payment-form" class="stripe-form">
+        <!-- POPRAVEK: Dodaj onsubmit="return false;" za blokado default submit-a -->
+        <form id="payment-form" class="stripe-form" onsubmit="return false;">
             <div id="payment-element" class="stripe-element"></div>
             <button id="submit" class="vozek-button stripe-btn">Plačaj</button>
             <div id="error-message" class="stripe-error"></div>
         </form>
-
 
         <!--<form method="POST" id="crypto-payment-form" class="crypto-form">
             {% csrf_token %}
@@ -22,31 +21,101 @@
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  const stripe = Stripe("{{ stripe_publishable_key }}");
-  const clientSecret = "{{ client_secret }}";
-  const orderId = "{{ order_id }}";
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientSecret = urlParams.get('client_secret') || "{{ client_secret }}";
+    const orderId = urlParams.get('order_id') || "{{ order_id }}";
+    const amount = parseFloat(urlParams.get('amount')) || parseFloat("{{ amount }}") || 0;
+    const stripePublishableKey = "{{ stripe_publishable_key }}";
 
-  const elements = stripe.elements({ clientSecret });
-  const paymentElement = elements.create("payment");
-  paymentElement.mount("#payment-element");
+    console.log('DEBUG: Inicializacija – params?', { clientSecret: !!clientSecret, orderId, amount });
 
-  if (orderId) {
-    const cryptoForm = document.getElementById("crypto-payment-form");
-    cryptoForm.action = `/api/crypto/${orderId}/`;
-  }
-
-  document.getElementById("payment-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.origin + "/success/?order_id=" + orderId,
-      },
-    });
-    if (error) {
-      document.getElementById("error-message").textContent = error.message;
+    if (!clientSecret || !orderId || amount <= 0) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = 'Napaka: Neveljavni podatki za plačilo. Pojdite nazaj na zaključek naročila.';
+      errorDiv.style.color = 'red';
+      console.error('DEBUG: Manjkajo params – ne nadaljuj');
+      return;
     }
+
+    const stripe = Stripe(stripePublishableKey);
+    const elements = stripe.elements({ clientSecret });
+    const paymentElement = elements.create("payment");
+    paymentElement.mount("#payment-element");
+
+    console.log('DEBUG: Elements mount-an – Stripe ready');
+
+    if (orderId) {
+      const cryptoForm = document.getElementById("crypto-payment-form");
+      if (cryptoForm) {
+        cryptoForm.action = `/api/crypto/${orderId}/`;
+      } else {
+        console.warn('Crypto payment form not found – skipping setup (likely commented out).');
+      }
+    }
+
+    const paymentForm = document.getElementById("payment-form");
+    const submitButton = document.getElementById("submit");
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      console.log('DEBUG: Submit sprožen – preventDefault deluje, noben reload!');
+
+      if (submitButton.disabled) {
+        console.log('DEBUG: Button že disabled – ignoriraj');
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Obdelujem...';
+
+      stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.origin + "/success/?order_id=" + orderId,
+        },
+        redirect: 'always',  // POPRAVEK: Vedno redirect-a za test (kasneje 'if_required')
+      }).then(function(result) {
+        console.log('DEBUG: confirmPayment vrnil result:', result);  // Debug: Poglej celoten result
+
+        if (result.error) {
+          console.error('DEBUG: Stripe error:', result.error.message);
+          document.getElementById("error-message").textContent = result.error.message;
+          submitButton.disabled = false;
+          submitButton.textContent = 'Plačaj';
+        } else {
+          // POPRAVEK: Manual redirect za success (če Stripe ne naredi avto)
+          console.log('DEBUG: Plačilo uspešno – manual redirect na success');
+          // Opcijsko: Query intent status za potrditev
+          stripe.retrievePaymentIntent(clientSecret).then(function(intent) {
+            console.log('DEBUG: Intent status po confirm-u:', intent.status);
+            if (intent.status === 'succeeded') {
+              window.location.href = window.location.origin + "/success/?order_id=" + orderId;
+            } else {
+              // Če ni succeeded, prikaži error
+              document.getElementById("error-message").textContent = 'Plačilo ni potrjeno. Status: ' + intent.status;
+              submitButton.disabled = false;
+              submitButton.textContent = 'Plačaj';
+            }
+          }).catch(function(e) {
+            console.error('DEBUG: Error pri retrieve intent:', e);
+            // Fallback redirect
+            window.location.href = window.location.origin + "/success/?order_id=" + orderId;
+          });
+        }
+      }).catch(function(e) {
+        console.error('DEBUG: Nepričakovana napaka:', e);
+        document.getElementById("error-message").textContent = 'Napaka pri obdelavi: ' + e.message;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Plačaj';
+      });
+    }
+
+    paymentForm.addEventListener("submit", handleSubmit);
+    submitButton.addEventListener("click", handleSubmit);
+
+    console.log('DEBUG: Handler-ji attached – ready za test');
   });
 </script>
 {% endblock %}
-

@@ -419,9 +419,11 @@ def create_payment_intent(request):
             'image_url': None,
             'personalized_text': None
         })
+        print("Dostava")
     for item in cart:
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         total_amount += int(price.price * 100) * item['quantity']
+        print("Cena")
     order = Order.objects.create(
         user=user,
         email=email,
@@ -460,6 +462,7 @@ def create_payment_intent(request):
             price_tax=price.price_tax,
             personalized=item.get('personalized_text'),
         )
+        print("VOZEK")
 
     try:
         intent = stripe.PaymentIntent.create(
@@ -475,6 +478,7 @@ def create_payment_intent(request):
                 # Dodaj po potrebi – preveri v dashboardu, kaj imaš omogočeno
             ]
         )
+        print("KURBA")
         return JsonResponse({
             'client_secret': intent.client_secret,
             'order_id': order.id,

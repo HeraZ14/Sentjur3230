@@ -90,6 +90,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware'
 ]
 
 ROOT_URLCONF = 'spletka.urls'
@@ -200,5 +201,26 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+CSP_DEFAULT_SRC = ["'self'"]
+CSP_SCRIPT_SRC = [
+    "'self'",
+    "https://js.stripe.com",
+    "'sha256-IWeeNd9tUZgZ3OVbwT28gR48201QaHIefPNX21XDH/8='",
+    "'sha256-7PZaH7TzFg4JdT5xJguN7Och6VcMcP1LW4N3fQ936Fs='",
+    "'sha256-MqH8JJslY2fF2bGYY1rZlpCNrRCnWKRzrrDefixUJTI='",
+    "'sha256-ZswfTY7H35rbv8WC7NXBoiC7WNu86vSzCDChNWwZZDM='",
+    "'sha256-ztC0qTicT1VTELAv+KGyCV5L/eJlJLgJjcGBny8O9Vo='",
+    # Dodaj nove hash-e iz konzole tukaj, če se pojavijo
+]
+CSP_STYLE_SRC = [
+    "'self'",
+    "https://js.stripe.com",
+    "'sha256-0hAheEzaMe6uXIKV4EehS9pu1am1lj/KnnzrOYqckXk='",
+    "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
+    # Za style atribute: če vidiš napako z atributi, dodaj 'unsafe-hashes'
+]
+CSP_CONNECT_SRC = ["'self'", "https://api.stripe.com", "https://*.stripe.com"]
+CSP_FRAME_SRC = ["'self'", "https://js.stripe.com"]
+CSP_IMG_SRC = ["'self'", "https://*.stripe.com", "data:", "blob:"]  # Dodaj blob: za Stripe slike
+CSP_FONT_SRC = ["'self'", "https://*.stripe.com", "data:"]
 
