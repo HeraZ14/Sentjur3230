@@ -3,12 +3,12 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Potrditev plačila</title>
+    <title>Napaka pri plačilu</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             color: #333;
-            background-color: #f1fdfc; /* Zelenkasto ozadje za plačilo */
+            background-color: #fdf1f1; /* Rdečkasto ozadje za napako */
             margin: 0;
             padding: 0;
         }
@@ -22,39 +22,40 @@
         }
         h2 { color: #2c3e50; }
         h3 { color: #34495e; }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-            border: 1px solid #ddd; /* Dodane črte okoli tabele */
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-top: 10px; 
+            border: 1px solid #ddd; /* Črte okoli tabele */
         }
-        th, td {
+        th, td { 
             border: 1px solid #ddd; /* Črte med celicami */
-            padding: 12px; /* Malo več prostora za lepši videz */
+            padding: 12px; /* Več prostora za lepši videz */
             text-align: left;
         }
-        th {
-            background-color: #f4f4f4;
+        th { 
+            background-color: #f4f4f4; 
             font-weight: bold;
         }
-        .total {
-            font-weight: bold;
-            background-color: #f9f9f9;
+        .total { 
+            font-weight: bold; 
+            background-color: #ffeaea; /* Svetlo rdečkast poudarek za total */
+            color: #e74c3c;
         }
         .section { margin-top: 20px; }
         .summary {
             margin: 20px 0;
             padding: 15px;
-            background: #e8f5e8; /* Svetlo zelenkasto za summary */
+            background: #ffeaea; /* Svetlo rdečkasto za summary */
             border-radius: 8px;
-            border-left: 4px solid #27ae60;
+            border-left: 4px solid #e74c3c;
         }
         .customer, .company {
             margin: 20px 0;
             padding: 15px;
-            background: #f1fdfc; /* Zelenkasto za stranko/podjetje */
+            background: #fdf1f1; /* Rdečkasto za stranko/podjetje */
             border-radius: 8px;
-            border-left: 4px solid #27ae60;
+            border-left: 4px solid #e74c3c;
         }
         .footer {
             margin-top: 30px;
@@ -64,24 +65,42 @@
             border-top: 1px solid #ddd;
             padding-top: 15px;
         }
-        ul { padding-left: 20px; }
-        strong { color: #222; }
-        p { line-height: 1.6; } /* Boljša berljivost */
-        a { color: #27ae60; text-decoration: none; } /* Zelen link za email */
-        a:hover { text-decoration: underline; }
+        ul {
+            padding-left: 20px;
+        }
+        strong {
+            color: #222;
+        }
+        p {
+            line-height: 1.6; /* Boljša berljivost */
+        }
+        a {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .error-note {
+            background: #fff5f5;
+            border: 1px solid #e74c3c;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Plačilo uspešno!</h2>
+        <h2>Napaka pri plačilu</h2>
         <div class="summary">
             <p>Pozdravljeni {{ order.name }} {{ order.surname }},</p>
-            <p>Vaše naročilo (ID: <strong>{{ order.id }}</strong>) je bilo uspešno <strong>PLAČANO</strong>.</p>
-            <p>Hvala za tvoje naročilo! Paket odpravimo v najkrajšem možnem času.</p>
+            <p>Žal je prišlo do napake pri obdelavi vašega plačila za naročilo (ID: <strong>{{ order.id }}</strong>).</p>
+            <p>Prosimo, poskusite ponovno ali nas kontaktirajte za pomoč.</p>
         </div>
 
         <div class="section">
-            <h3>Podrobnosti naročila:</h3>
+            <h3>Povzetek naročila:</h3>
             <table>
                 <tr>
                     <th>Izdelek</th>
@@ -133,12 +152,12 @@
         {% endif %}
 
         <div class="section">
-            <p>Če imate kakršnakoli vprašanja, nas kontaktirajte na
-               <a href="mailto:merch3230@sentjur-metropola.si">merch3230@sentjur-metropola.si</a>.</p>
+            <p>Datum naročila: {{ order.date }}</p>
         </div>
 
         <div class="footer">
             <p>&copy; {{ current_year }} Šentjur Merch. Vse pravice pridržane.</p>
+            <p>Za pomoč nas kontaktirajte na <a href="mailto:merch3230@sentjur-metropola.si">merch3230@sentjur-metropola.si</a>.</p>
         </div>
     </div>
 </body>

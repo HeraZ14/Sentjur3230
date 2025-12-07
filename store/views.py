@@ -304,14 +304,46 @@ def stripe_webhook(request):
                 print(f"⚠️ Naročilo z ID {order_id} ni najdeno.")
                 stripe_logs_create(event['id'], event['type'], None, event, False)
 
+
     elif event['type'] == 'payment_intent.payment_failed':
         intent = event['data']['object']
         metadata = intent.get('metadata', {})
         order_id = metadata.get('order_id')
+        email = intent.get('receipt_email')
         error_message = intent.get('last_payment_error', {}).get('message', 'Ni sporočila.')
+        if order_id:
+            try:
+                order = Order.objects.get(id=order_id)
+                # Dodaj status=False za sled v bazi (podobno kot pri succeeded)
+                order.status = False
+                order.save()  # Shrani spremembo
+                if email:
+                    # Dodaj error_message v context za template
+                    html_message = render_to_string(
+                        "shop/emails/payment_failed.html",
+                        {"order": order, "error_message": error_message}
+                    )
+                    send_mail(
+                        subject=f'Napaka pri plačilu #{order.id}',  # Popravljen subject
+                        message="",
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[email],  # Samo uporabnik, ne INVOICES_MAIL
+                        html_message=html_message,
+                        fail_silently=True,
+                    )
 
-        print(f"❌ Plačilo spodletelo za naročilo {order_id}: {error_message}")
-        stripe_logs_create(event['id'], event['type'], None, event, False)
+                    print(f"📧 Email o napaki poslan za naročilo {order_id} na {email}.")
+                print(f"❌ Plačilo spodletelo za naročilo {order_id}: {error_message}")
+                stripe_logs_create(event['id'], event['type'], order, event, False)  # Log z order, False
+
+            except Order.DoesNotExist:
+                print(f"⚠️ Naročilo z ID {order_id} ni najdeno.")
+                stripe_logs_create(event['id'], event['type'], None, event, False)
+
+        else:
+            # Če ni order_id, samo print in log (brez emaila)
+            print(f"❌ Plačilo spodletelo brez order_id: {error_message}")
+            stripe_logs_create(event['id'], event['type'], None, event, False)
         
     elif event['type'] == 'payment_intent.processing':
         intent = event['data']['object']
@@ -345,7 +377,7 @@ def payment_success(request):
         subject,
         "",  # plain-text verzija (pusti prazno ali dodaj)
         settings.DEFAULT_FROM_EMAIL,
-        [order.email, settings.INVOICES_MAIL],
+        [order.email, settings.DEFAULT_FROM_EMAIL],
         html_message=html_message,
         fail_silently=False,
     )
@@ -419,11 +451,9 @@ def create_payment_intent(request):
             'image_url': None,
             'personalized_text': None
         })
-        print("Dostava")
     for item in cart:
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         total_amount += int(price.price * 100) * item['quantity']
-        print("Cena")
     order = Order.objects.create(
         user=user,
         email=email,
@@ -453,16 +483,20 @@ def create_payment_intent(request):
     for item in cart:
         product = Product.objects.get(id=item['product_id'])
         price = ProductPrice.objects.get(id=item['selected_price_id'])
+        if item['selected_size_id'] is not None:
+            size = ProductSize.objects.get(id=item['selected_size_id'])
+        else:
+            size = None
         OrderItem.objects.create(
             order=order,
             product=product,
             quantity=item['quantity'],
+            size = size,
             price=price, #price id
             price_at_order=price.price,
             price_tax=price.price_tax,
             personalized=item.get('personalized_text'),
         )
-        print("VOZEK")
 
     try:
         intent = stripe.PaymentIntent.create(
@@ -478,7 +512,6 @@ def create_payment_intent(request):
                 # Dodaj po potrebi – preveri v dashboardu, kaj imaš omogočeno
             ]
         )
-        print("KURBA")
         return JsonResponse({
             'client_secret': intent.client_secret,
             'order_id': order.id,
@@ -595,7 +628,8 @@ def export_invoice_csv(order):
     buffer = io.StringIO()
     writer = csv.writer(buffer, delimiter=';')
     writer.writerow([
-        "#", "Šifra artikla", "Naziv artikla", "Kol.",
+        "#", "Šifra artikla","Kol."
+        # "Naziv artikla",
         #"EM", "Cena brez DDV", "MPC", "R %", "DDV %",
         #"Vrednost brez DDV", "Vrednost", "Opis artikla",
         #"Črtna koda",
@@ -606,7 +640,6 @@ def export_invoice_csv(order):
         writer.writerow([
             numerator,
             f"{item.price.id:06d}",
-            item.product.name,
             item.quantity,
             #'kos',
             #f"{float(item.price_at_order) / 1.22:.2f}",

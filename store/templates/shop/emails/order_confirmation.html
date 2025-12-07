@@ -5,71 +5,136 @@
     <meta charset="UTF-8">
     <title>Potrditev naročila</title>
     <style>
-        body { font-family: Arial, sans-serif; color: #333; }
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #fdfdf1; /* Rumenkasto ozadje za naročilo */
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background: #fff;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
         h2 { color: #2c3e50; }
-        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background-color: #f4f4f4; text-align: left; }
-        .total { font-weight: bold; }
+        h3 { color: #34495e; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid #ddd; /* Dodane črte okoli tabele */
+        }
+        th, td {
+            border: 1px solid #ddd; /* Črte med celicami */
+            padding: 12px; /* Malo več prostora za lepši videz */
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        .total {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
         .section { margin-top: 20px; }
+        .summary {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff9e6; /* Svetlo rumenkasto za summary */
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+        .customer, .company {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fdfdf1; /* Rumenkasto za stranko/podjetje */
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+        ul { padding-left: 20px; }
+        strong { color: #222; }
+        p { line-height: 1.6; } /* Boljša berljivost */
     </style>
 </head>
 <body>
-    <h2>Hvala za tvoje naročilo!</h2>
-    <p>Vaše naročilo (ID: {{ order.id }}) je bilo uspešno sprejeto.</p>
+    <div class="container">
+        <h2>Hvala za tvoje naročilo!</h2>
+        <div class="summary">
+            <p>Vaše naročilo (ID: <strong>{{ order.id }}</strong>) je bilo uspešno sprejeto.</p>
+        </div>
 
-    <div class="section">
-        <h3>Podrobnosti naročila:</h3>
-        <table>
-            <tr>
-                <th>Izdelek</th>
-                <th>Količina</th>
-                <th>Cena</th>
-                <th>Skupaj</th>
-            </tr>
-            {% for item in order.items.all %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.price_at_order }} €</td>
-                <td>{{ item.quantity|multiply:item.price_at_order }} €</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="3" class="total">Skupaj brez davka:</td>
-                <td>{{ order.total_price_without_tax }} €</td>
-            </tr>
-            <tr>
-                <td colspan="3" class="total">Davek (22%):</td>
-                <td>{{ order.tax_amount }} €</td>
-            </tr>
-            <tr>
-                <td colspan="3" class="total">Skupaj z davkom:</td>
-                <td>{{ order.total_price }} €</td>
-            </tr>
-        </table>
-    </div>
+        <div class="section">
+            <h3>Podrobnosti naročila:</h3>
+            <table>
+                <tr>
+                    <th>Izdelek</th>
+                    <th>Velikost</th>
+                    <th>Količina</th>
+                    <th>Cena</th>
+                    <th>Skupaj</th>
+                </tr>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.size.size.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price_at_order }} €</td>
+                    <td>{{ item.quantity|multiply:item.price_at_order }} €</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" class="total">Skupaj brez davka:</td>
+                    <td class="total">{{ order.total_price_without_tax }} €</td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="total">Davek (22%):</td>
+                    <td class="total">{{ order.tax_amount }} €</td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="total">Skupaj z davkom:</td>
+                    <td class="total">{{ order.total_price }} €</td>
+                </tr>
+            </table>
+        </div>
 
-    <div class="section">
-        <h3>Podatki o naročniku:</h3>
-        <p><strong>Ime:</strong> {{ order.name }} {{ order.surname }}</p>
-        <p><strong>Email:</strong> {{ order.email }}</p>
-        <p><strong>Telefon:</strong> {{ order.phone }}</p>
-        <p><strong>Naslov:</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}</p>
-    </div>
+        <div class="customer">
+            <h3>Podatki o naročniku:</h3>
+            <p><strong>Ime:</strong> {{ order.name }} {{ order.surname }}<br>
+            <strong>Email:</strong> {{ order.email }}<br>
+            <strong>Telefon:</strong> {{ order.phone }}<br>
+            <strong>Naslov:</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}</p>
+        </div>
 
-    {% if order.company_check %}
-    <div class="section">
-        <h3>Podatki o podjetju:</h3>
-        <p><strong>Podjetje:</strong> {{ order.company_name }}</p>
-        <p><strong>Davčna številka:</strong> {{ order.vat_number }}</p>
-        <p><strong>Naslov podjetja:</strong> {{ order.company_address }}, {{ order.company_postal_code }}, {{ order.company_city }}</p>
-    </div>
-    {% endif %}
+        {% if order.company_check %}
+        <div class="company">
+            <h3>Podatki o podjetju:</h3>
+            <p><strong>Podjetje:</strong> {{ order.company_name }}<br>
+            <strong>Davčna številka:</strong> {{ order.vat_number }}<br>
+            <strong>Naslov podjetja:</strong> {{ order.company_address }}, {{ order.company_postal_code }}, {{ order.company_city }}</p>
+        </div>
+        {% endif %}
 
-    <div class="section">
-        <p>Datum naročila: {{ order.date }}</p>
-        <p>Hvala, ker ste izbrali našo trgovino!</p>
+        <div class="section">
+            <p>Datum naročila: {{ order.date }}</p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; {{ current_year }} Šentjur Merch. Vse pravice pridržane.</p>
+            <p>Če imate vprašanja, nas kontaktirajte na <a href="mailto:merch3230@sentjur-metropola.si">merch3230@sentjur-metropola.si</a>.</p>
+        </div>
     </div>
 </body>
 </html>
