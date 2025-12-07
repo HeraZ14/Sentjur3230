@@ -653,8 +653,8 @@ def send_invoice_email(order):
     email = EmailMessage(
         subject=subject,
         body=body,
-        from_email="settings.DEFAULT_FROM_EMAIL",
-        to=["settings.INVOICES_EMAIL"],
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[settings.INVOICES_MAIL],
     )
 
     # Dodamo CSV kot priponko
