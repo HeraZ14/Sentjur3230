@@ -79,7 +79,7 @@ class ProductPrice(models.Model):
 
     @property
     def price_tax(self):
-        return round(self.price/122*22, 2)
+        return round(self.price*22/100)
 
 @receiver(post_save, sender=Product)
 def generate_product_prices(sender, instance, **kwargs):
@@ -89,7 +89,7 @@ def generate_product_prices(sender, instance, **kwargs):
         except PriceTypes.DoesNotExist:
             return
 
-        price = instance.weight
+        price = round(instance.weight * 1.22,2)
         pp, created = ProductPrice.objects.update_or_create(
             product=instance,
             price_type=settings_price_type,
@@ -109,7 +109,7 @@ def generate_product_prices(sender, instance, **kwargs):
         pp.save()
     else:
         for pt in PriceTypes.objects.filter(settings=False):
-            price = round(instance.weight * pt.price, 2)
+            price = round(instance.weight * pt.price * 1.22, 2)
             pp, created = ProductPrice.objects.update_or_create(
                 product=instance,
                 price_type=pt,

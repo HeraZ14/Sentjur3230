@@ -14,6 +14,7 @@ class Command(BaseCommand):
             pp.stripe_price_id = ""
             pp.save()
         for pp in ProductPrice.objects.all():
+            print(pp)
             if not pp.stripe_product_id:
                 stripe_product = stripe.Product.create(name=pp.product.name)
                 pp.stripe_product_id = stripe_product.id
@@ -25,6 +26,7 @@ class Command(BaseCommand):
                     currency="eur"
                 )
                 pp.stripe_price_id = stripe_price.id
+
 
             pp.save()
 

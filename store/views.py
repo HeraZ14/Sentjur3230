@@ -7,8 +7,10 @@ import logging
 
 import stripe
 from coinbase_commerce import Client
+from django import db
 from django.conf import settings
 from django.core.mail import send_mail, EmailMessage
+from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -280,13 +282,11 @@ def stripe_webhook(request):
         if order_id:
             try:
                 order = Order.objects.get(id=order_id)
-                order.status = True
                 payment_method_id = intent.get('payment_method')
                 if payment_method_id:
                     method = stripe.PaymentMethod.retrieve(payment_method_id)
                     order.payment_method = method.type
-                order.save()
-                if email:
+                if email and not order.status:
                     html_message = render_to_string("shop/emails/payment_confirmation.html", {"order": order})
                     send_mail(
                         subject=f'Plačilo uspešno #{order.id}',
@@ -296,9 +296,15 @@ def stripe_webhook(request):
                         html_message=html_message,  # točno ime parametra
                         fail_silently=True,
                     )
+                order.status = True
+                order.save()
 
                 print(f"✅ Naročilo {order_id} za {email} uspešno plačano (Elements).")
-                stripe_logs_create(event['id'], event['type'], order, event, True)
+                try:
+                    stripe_logs_create(event["id"], event["type"], order, event, True)
+                except IntegrityError:
+                    # to pomeni podvojen event → ignoriraj in vrni 200 da stripe zaključi retry
+                    return JsonResponse({"status": "duplicate_ignored"}, status=200)
                 send_invoice_email(order)
             except Order.DoesNotExist:
                 print(f"⚠️ Naročilo z ID {order_id} ni najdeno.")
