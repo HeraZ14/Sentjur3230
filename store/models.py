@@ -59,6 +59,7 @@ class PriceTypes(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(default="", blank=True,null=True, max_length=100)
     price = models.FloatField()
+    is_main = models.BooleanField(default=False)
     settings = models.BooleanField(default=False)
 
     def __str__(self):
@@ -68,6 +69,7 @@ class ProductPrice(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price_type = models.ForeignKey(PriceTypes, on_delete=models.CASCADE)
     price = models.FloatField()
+    is_main = models.BooleanField(default=False)
     stripe_product_id = models.CharField(max_length=100, blank=True, null=True)
     stripe_price_id = models.CharField(max_length=100, blank=True, null=True)
 
@@ -93,7 +95,7 @@ def generate_product_prices(sender, instance, **kwargs):
         pp, created = ProductPrice.objects.update_or_create(
             product=instance,
             price_type=settings_price_type,
-            defaults={'price': price}
+            defaults={'price': price, 'is_main': True}
         )
         # Stripe sync
         if not pp.stripe_product_id:
@@ -109,11 +111,14 @@ def generate_product_prices(sender, instance, **kwargs):
         pp.save()
     else:
         for pt in PriceTypes.objects.filter(settings=False):
+            main = False
+            if pt.is_main:
+                main = True
             price = round(instance.weight * pt.price * 1.22, 2)
             pp, created = ProductPrice.objects.update_or_create(
                 product=instance,
                 price_type=pt,
-                defaults={'price': price}
+                defaults={'price': price, 'is_main': main}
             )
             # Stripe sync
             if not pp.stripe_product_id:
@@ -126,6 +131,7 @@ def generate_product_prices(sender, instance, **kwargs):
                     currency="eur"
                 )
                 pp.stripe_price_id = stripe_price.id
+
             pp.save()
 
 

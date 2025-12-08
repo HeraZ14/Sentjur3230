@@ -634,7 +634,7 @@ def export_invoice_csv(order):
     buffer = io.StringIO()
     writer = csv.writer(buffer, delimiter=';')
     writer.writerow([
-        "#", "Šifra artikla","Kol."
+        "#", "Šifra artikla","Kol.", "R %"
         # "Naziv artikla",
         #"EM", "Cena brez DDV", "MPC", "R %", "DDV %",
         #"Vrednost brez DDV", "Vrednost", "Opis artikla",
@@ -643,10 +643,19 @@ def export_invoice_csv(order):
     numerator = 0
     for item in order.items.all():
         numerator += 1
+
+        pp = ProductPrice.objects.get(product=item.product, id=item.price_id)
+        print(pp.is_main)
+        if not pp.is_main:
+            father = ProductPrice.objects.get(product=item.product, is_main=True)
+            rabat = 100 - item.price.price/father.price*100
+        else:
+            rabat = 0
         writer.writerow([
             numerator,
             f"{item.price.id:06d}",
             item.quantity,
+            rabat,
             #'kos',
             #f"{float(item.price_at_order) / 1.22:.2f}",
             #f"{item.price_at_order:.2f}",
@@ -689,6 +698,26 @@ def send_invoice_email(order):
                 {order.address}
                 {order.postal_code}, {order.city}
         """
+
+    items_text = "POSTAVKE NAROČILA:\n"
+
+    for item in order.items.all():
+        total = item.quantity * item.price_at_order
+        if item.size:
+            size = item.size.size.name
+        else:
+            size = ""
+        items_text += (
+            f"- {item.product.name} | "
+            f"{size} | "
+            f"količina: {item.quantity} | "
+            f"cena: {item.price_at_order} € | "
+            f"skupaj: {total} €\n"
+        )
+
+    # združi
+    body += "\n" + items_text
+
     email = EmailMessage(
         subject=subject,
         body=body,
