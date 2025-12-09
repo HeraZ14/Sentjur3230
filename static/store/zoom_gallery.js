@@ -2,8 +2,10 @@ import PhotoSwipeLightbox from '/static/store/photoswipe-lightbox.esm.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('zoom-btn');
-    if (!button) {
-        return;  // Brez warn-a za production
+    const mainImage = document.getElementById('main-image'); // ← dodal
+
+    if (!button || !mainImage) {
+        return;
     }
     const images = window.PRODUCT_IMAGES || [];
     if (!images.length) {
@@ -21,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
     lightbox.init();
 
-    button.addEventListener('click', () => {
-        lightbox.loadAndOpen(0);
-    });
+    const openZoom = () => lightbox.loadAndOpen(0);
+
+    button.addEventListener('click', openZoom);
+    mainImage.addEventListener('click', openZoom);
 });
