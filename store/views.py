@@ -645,7 +645,6 @@ def export_invoice_csv(order):
         numerator += 1
 
         pp = ProductPrice.objects.get(product=item.product, id=item.price_id)
-        print(pp.is_main)
         if not pp.is_main:
             father = ProductPrice.objects.get(product=item.product, is_main=True)
             rabat = 100 - item.price.price/father.price*100
@@ -653,7 +652,7 @@ def export_invoice_csv(order):
             rabat = 0
         writer.writerow([
             numerator,
-            f"{item.price.id:06d}",
+            f"{item.product_id:06d}",
             item.quantity,
             rabat,
             #'kos',

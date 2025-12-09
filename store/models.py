@@ -81,7 +81,7 @@ class ProductPrice(models.Model):
 
     @property
     def price_tax(self):
-        return round(self.price*22/100)
+        return round(self.price - self.price*1.22,2)
 
 @receiver(post_save, sender=Product)
 def generate_product_prices(sender, instance, **kwargs):
