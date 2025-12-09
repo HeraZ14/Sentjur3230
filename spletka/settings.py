@@ -80,6 +80,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")   # geslo tega emaila
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 INVOICES_MAIL = os.getenv("INVOICES_MAIL")
+MAMA_MAIL = os.getenv("MAMA_MAIL")
 
 
 MIDDLEWARE = [
