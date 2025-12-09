@@ -490,7 +490,7 @@ def create_payment_intent(request):
         product = Product.objects.get(id=item['product_id'])
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         if item['selected_size_id'] is not None:
-            size = ProductSize.objects.get(id=item['selected_size_id'])
+            size = Size.objects.get(id=item['selected_size_id'])
         else:
             size = None
         OrderItem.objects.create(
@@ -703,7 +703,7 @@ def send_invoice_email(order):
     for item in order.items.all():
         total = item.quantity * item.price_at_order
         if item.size:
-            size = item.size.size.name
+            size = item.size.name
         else:
             size = ""
         items_text += (

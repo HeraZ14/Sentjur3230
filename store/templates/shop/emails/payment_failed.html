@@ -112,7 +112,7 @@
                 {% for item in order.items.all %}
                 <tr>
                     <td>{{ item.product.name }}</td>
-                    <td>{{ item.size.size.name }}</td>
+                    <td>{{ item.size.name }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.price_at_order }} €</td>
                     <td>{{ item.quantity|multiply:item.price_at_order }} €</td>
