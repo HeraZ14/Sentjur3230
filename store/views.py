@@ -647,7 +647,7 @@ def export_invoice_csv(order):
         pp = ProductPrice.objects.get(product=item.product, id=item.price_id)
         if not pp.is_main:
             father = ProductPrice.objects.get(product=item.product, is_main=True)
-            rabat = 100 - item.price.price/father.price*100
+            rabat = str(100 - item.price.price/father.price*100).replace(".",",")
         else:
             rabat = 0
         writer.writerow([
