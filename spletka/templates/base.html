@@ -62,8 +62,42 @@
             </div>
          {% block content %}{% endblock %}
      </main>
+   {% block scripts %}
+    <script src="{% static 'zajebancija/poll_logic.js' %}"></script>
+    {% endblock %}
+</body>
+<footer>
+<div class="dance-floor" id="danceFloor">
+    <div class="dancer layer" style="--depth: 1;">
+        <div class="dancer-text">
+        ŠENTJUR<br>METROPOLA
+    </div>
+    </div>
+    <div class="dancer layer" style="--depth: 2;">
+        <div class="dancer-text">
+        ŠENTJUR<br>METROPOLA
+    </div>
+    </div>
+    <div class="dancer layer" style="--depth: 3;"><div class="dancer-text">
+        ŠENTJUR<br>METROPOLA
+    </div>
+    </div>
+    <div class="dancer layer" style="--depth: 4;"><div class="dancer-text">
+        ŠENTJUR<br>METROPOLA
+    </div>
+    </div>
+    <div class="dancer layer" style="--depth: 5;">
+        <div class="dancer-text">
+        ŠENTJUR<br>METROPOLA
+    </div>
+    </div>
+    <audio id="partyAudio" preload="auto"></audio>
+    <button class="party-play-btn" id="partyPlayBtn">
+    ▶
+</button>
+</div>
 
-    <div class="footer">
+<div class="footer">
       <div class="footer-auth">
           <!--<img class="x-logo" src="{% static 'x-logo0.svg' %}" />-->
          <a href="https://www.instagram.com/sentjur.merch/" target="_blank" rel="noopener noreferrer"><img class="logo-instagram" src="{% static 'logo-instagram0.svg' %}" /></a>
@@ -71,10 +105,61 @@
           <!--<img class="linked-in" src="{% static 'linked-in0.svg' %}" />-->
       </div>
     </div>
-   {% block scripts %}
-    <script src="{% static 'zajebancija/poll_logic.js' %}"></script>
-    {% endblock %}
-</body>
+</footer>
+<script>
+const floor = document.getElementById("danceFloor");
+const dancers = document.querySelectorAll(".layer");
+
+floor.addEventListener("mousemove", (e) => {
+    const rect = floor.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const center = rect.width / 2;
+    const delta = (x - center) / center; // -1 do 1
+
+    dancers.forEach(d => {
+        const depth = parseFloat(getComputedStyle(d).getPropertyValue('--depth'));
+        d.style.transform = `translateX(-50%) translateZ(${depth * 40}px) rotateY(${delta * depth * 10}deg) scaleY(1)`;
+    });
+});
+
+const playBtn = document.getElementById("partyPlayBtn");
+const audio = document.getElementById("partyAudio");
+
+const playlist = [
+    "{% static 'audio/Jenki1.mp3' %}",
+    "{% static 'audio/Jenki2.mp3' %}",
+    "{% static 'audio/Jenki3.mp3' %}",
+    "{% static 'audio/Šentjurčani.mp3' %}"
+];
+
+let currentTrack = 0;
+let playing = false;
+
+function playRandom() {
+    const randomIndex = Math.floor(Math.random() * playlist.length);
+    audio.src = playlist[randomIndex];
+    audio.play();
+    playBtn.textContent = "❚❚";
+    playing = true;
+}
+
+// Ko skladba konča, predvajaj naključno naslednjo
+audio.addEventListener("ended", () => {
+    playRandom();
+});
+
+// Klik na gumb
+playBtn.addEventListener("click", () => {
+    if (!playing) {
+        playRandom();
+    } else {
+        audio.pause();
+        playBtn.textContent = "▶";
+        playing = false;
+    }
+});
+
+</script>
 </html>
 
 
