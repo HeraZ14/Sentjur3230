@@ -72,16 +72,80 @@
     <!-- DESNI STOLPEC - izračun in checkout -->
     <div class="cart-right" style="margin-top:20px; margin-bottom:20px;">
         <div class="cart-summary">
-            <div style="display: flex; justify-content: center;"><p style="font-size:20px">IZDELKI</p></div>
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj brez DDV:</p><p style="font-size:20px">{{ total_price_no_ddv|floatformat:2 }} €</p></div>
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">DDV:</p><p style="font-size:20px">{{ ddv|floatformat:2 }} €</p></div>
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price|floatformat:2 }} €</p></div>
-            <hr style="margin-bottom:1rem;">
-            <div style="display: flex; justify-content: center;"><p style="font-size:20px">DOSTAVA</p></div>
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Dostava GLS:</p><p style="font-size:20px">{{ delivery_price|floatformat:2 }} €</p></div>
-            <hr style="margin-bottom:1rem;">
-            <div style="display: flex; justify-content: space-between;"><p style="font-size:20px">Skupaj:</p><p style="font-size:20px">{{ total_price_with_delivery|floatformat:2 }} €</p></div>
-            <a class="checkout-button" href="{% url 'checkout' %}">Nadaljuj</a>
+            <div style="display: flex; justify-content: center;"><p style="font-size:17px">IZDELKI</p></div>
+            <div style="display: flex; justify-content: space-between; padding:14px 16px;"><p style="font-size:17px;">Skupaj brez DDV:</p><p style="font-size:17px">{{ total_price_no_ddv|floatformat:2 }} €</p></div>
+            <div style="display: flex; justify-content: space-between; padding:14px 16px;"><p style="font-size:17px; margin:0;">DDV:</p><p style="font-size:17px; margin:0;">{{ ddv|floatformat:2 }} €</p></div>
+            <div style="display: flex; justify-content: space-between; padding:14px 16px;"><p style="font-size:17px">Skupaj:</p><p style="font-size:17px">{{ total_price|floatformat:2 }} €</p></div>
+                <hr style="margin-bottom:1rem;">
+
+<div style="display:flex; justify-content:center;">
+    <p style="font-size:17px">DOSTAVA</p>
+</div>
+
+<div class="delivery-switch vertical">
+    <input type="radio" id="delivery-gls" name="delivery_method" value="gls"
+        {% if selected_delivery == "gls" %}checked{% endif %}>
+    <input type="radio" id="delivery-parcel" name="delivery_method" value="parcel"
+        {% if selected_delivery == "parcel" %}checked{% endif %}>
+    <input type="radio" id="delivery-pickup" name="delivery_method" value="pickup"
+        {% if selected_delivery == "pickup" %}checked{% endif %}>
+
+    <label for="delivery-gls" class="option" style="font-size:17px">
+        Dostava GLS
+        <span class="price" style="font-size:17px">{{ gls_delivery_price|floatformat:2 }} €</span>
+    </label>
+
+    <label for="delivery-parcel" class="option" style="font-size:17px; cursor: pointer;">
+        GLS Paketomat
+        <span class="price" style="font-size:17px">2.00 €</span>
+        <span id="selected-parcelshop" style="display: block; font-size: 14px; color: #666; margin-top: 4px;"></span>
+    </label>
+
+
+    <label for="delivery-pickup" class="option" style="font-size:17px">
+        Osebni prevzem
+        <span class="price" style="font-size:17px">0.00 €</span>
+    </label>
+
+    <div class="slider"></div>
+</div>
+
+<!-- Hidden fields to store ParcelShop data -->
+<input type="hidden" id="parcelshop-id" name="parcelshop_id" value="">
+<input type="hidden" id="parcelshop-name" name="parcelshop_name" value="">
+<input type="hidden" id="parcelshop-address" name="parcelshop_address" value="">
+
+<!-- GLS Dialog -->
+<div id="gls-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999;">
+    <div style="position: relative; width: 90%; max-width: 1200px; height: 85%; margin: 2% auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <button id="close-gls-map" style="position: absolute; top: 15px; right: 15px; z-index: 10000; padding: 10px 20px; cursor: pointer; background: #e74c3c; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold;">✕ Zapri</button>
+
+        <!-- Loading spinner -->
+        <div id="gls-loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 9999;">
+            <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="margin-top: 20px; font-size: 16px; color: #666;">Nalagam zemljevid...</p>
+        </div>
+
+        <div id="gls-widget-container" style="width: 100%; height: 100%; padding: 20px; box-sizing: border-box;">
+            <!-- Widget se bo dinamično dodal tukaj -->
+        </div>
+    </div>
+</div>
+
+<div id="prices"
+    data-base-total="{{ total_price|floatformat:2 }}"
+    data-gls="{{ gls_delivery_price|floatformat:2 }}"
+    data-parcel="2.00">
+</div>
+<hr style="margin-bottom:1rem;">
+<div style="display: flex; justify-content: space-between; padding:14px 16px;">
+    <p style="font-size:17px">Skupaj:</p>
+    <p id="total-price" style="font-size:17px">{{ total_price_with_delivery|floatformat:2 }} €</p>
+</div>
+<a id="checkout-button" class="checkout-button" href="{% url 'checkout' %}" style="padding:14px 16px;">
+    Nadaljuj
+</a>
+
         </div>
     </div>
 </div>
@@ -92,18 +156,238 @@
 {% endif %}
 
 
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    // Alert auto-dismiss
     const alerts = document.querySelectorAll(".alert");
     setTimeout(() => {
-      alerts.forEach(alert => {
-        alert.style.transition = "opacity 0.5s ease-out";
-        alert.style.opacity = "0";
-        setTimeout(() => alert.remove(), 500); // Počakaj, da se animacija zaključi, nato odstrani
-      });
-    }, 3000); // 3000 ms = 3 sekunde
-  });
+        alerts.forEach(alert => {
+            alert.style.transition = "opacity 0.5s ease-out";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 3000);
 
+    // Price calculation - TAKOJ DOSTOPNO
+    const baseTotal = parseFloat(document.getElementById("prices").dataset.baseTotal);
+    const glsPrice = parseFloat(document.getElementById("prices").dataset.gls);
+    const parcelPrice = 2.00;
+    const totalEl = document.getElementById("total-price");
+
+    function updateTotal() {
+        const selected = document.querySelector('input[name="delivery_method"]:checked');
+        if (!selected) return;
+
+        let delivery = 0;
+        if (selected.value === 'gls') {
+            delivery = glsPrice;
+        } else if (selected.value === 'parcel') {
+            delivery = parcelPrice;
+        }
+
+        totalEl.textContent = (baseTotal + delivery).toFixed(2) + ' €';
+    }
+
+    updateTotal();
+
+    // Helper za CSRF token - TAKOJ DOSTOPEN
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Spremenljivka za tracking, ali je GLS widget pripravljen
+    let glsReady = false;
+    let pendingModalOpen = false;
+
+    // Handle delivery method changes - TAKOJ DELUJE
+    document.querySelectorAll('input[name="delivery_method"]').forEach(radio => {
+        radio.addEventListener("change", function () {
+            const selectedMethod = this.value;
+
+            console.log('Delivery method:', selectedMethod);
+
+            // Če je parcel in GLS ni ready, počakaj
+            if (selectedMethod === 'parcel') {
+                if (glsReady) {
+                    openGLSModal();
+                } else {
+                    pendingModalOpen = true;
+                    console.log('GLS script se še nalaga, modal se bo odprl ko bo ready...');
+                }
+            }
+
+            updateTotal();
+
+            fetch("/update-cart-delivery/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    delivery_method: selectedMethod,
+                    parcelshop_id: document.getElementById('parcelshop-id') ? document.getElementById('parcelshop-id').value : '',
+                    parcelshop_name: document.getElementById('parcelshop-name') ? document.getElementById('parcelshop-name').value : '',
+                    parcelshop_address: document.getElementById('parcelshop-address') ? document.getElementById('parcelshop-address').value : ''
+                })
+            }).catch(err => console.error('Napaka:', err));
+        });
+    });
+
+    // Naloži GLS script kot module
+    const script = document.createElement('script');
+    script.src = 'https://map.gls-slovenia.com/widget/gls-dpm.js';
+    script.type = 'module';
+
+    script.onload = function() {
+        console.log('GLS script loaded');
+        setTimeout(() => {
+            console.log('Custom element check:', customElements.get('gls-dpm'));
+            glsReady = true;
+            initApp();
+
+            // Če je uporabnik že izbral parcel prej, odpri modal sedaj
+            if (pendingModalOpen) {
+                openGLSModal();
+                pendingModalOpen = false;
+            }
+        }, 2000);
+    };
+
+    script.onerror = function() {
+        console.error('Failed to load GLS script');
+    };
+
+    document.head.appendChild(script);
+
+    // Globalne spremenljivke za modal
+    let modal, closeBtn, loadingIndicator, widgetInitialized = false;
+
+    function openGLSModal() {
+        if (!modal) return;
+        modal.style.display = 'block';
+        setTimeout(() => initializeGLSWidget(), 300);
+    }
+
+    function initApp() {
+        console.log('initApp called');
+
+        // Modal elements
+        modal = document.getElementById('gls-modal-overlay');
+        closeBtn = document.getElementById('close-gls-map');
+        loadingIndicator = document.getElementById('gls-loading');
+
+        // Close modal handlers
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    // Initialize GLS widget
+    function initializeGLSWidget() {
+        console.log('initializeGLSWidget called');
+
+        if (widgetInitialized) {
+            console.log('Widget already initialized');
+            return;
+        }
+
+        const container = document.getElementById('gls-widget-container');
+        console.log('Container:', container);
+
+        if (!container) {
+            console.error('Container not found!');
+            return;
+        }
+
+        // Prikaži loading
+        loadingIndicator.style.display = 'block';
+
+        // Odstrani stari widget
+        const oldWidget = document.getElementById('glsMap');
+        if (oldWidget) {
+            console.log('Removing old widget');
+            oldWidget.remove();
+        }
+
+        // Ustvari nov widget
+        console.log('Creating widget element...');
+        const widget = document.createElement('gls-dpm');
+        widget.setAttribute('country', 'si');
+        widget.setAttribute('language', 'sl');
+        widget.id = 'glsMap';
+        widget.style.width = '100%';
+        widget.style.height = '100%';
+        widget.style.display = 'block';
+
+        console.log('Appending widget...');
+        container.appendChild(widget);
+        console.log('Widget appended');
+
+        // Preveri widget
+        setTimeout(() => {
+            const w = document.getElementById('glsMap');
+            console.log('Widget after append:', w);
+            console.log('Widget shadowRoot:', w ? w.shadowRoot : 'N/A');
+            loadingIndicator.style.display = 'none';
+        }, 1500);
+
+        // Handle selection
+        widget.addEventListener('change', (event) => {
+            const selectedLocation = event.detail;
+
+            modal.style.display = 'none';
+
+            if (document.getElementById('parcelshop-id')) {
+                document.getElementById('parcelshop-id').value = selectedLocation.id || '';
+            }
+            if (document.getElementById('parcelshop-name')) {
+                document.getElementById('parcelshop-name').value = selectedLocation.name || '';
+            }
+            if (document.getElementById('parcelshop-address')) {
+                document.getElementById('parcelshop-address').value = selectedLocation.address || '';
+            }
+
+            const displayText = (selectedLocation.name || '') + (selectedLocation.address ? ' - ' + selectedLocation.address : '');
+            const displayElement = document.getElementById('selected-parcelshop');
+            if (displayElement) {
+                displayElement.textContent = displayText;
+            }
+
+            fetch("/update-cart-delivery/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    delivery_method: 'parcel',
+                    parcelshop_id: selectedLocation.id || '',
+                    parcelshop_name: selectedLocation.name || '',
+                    parcelshop_address: selectedLocation.address || ''
+                })
+            }).catch(err => console.error('Napaka:', err));
+        });
+
+        widgetInitialized = true;
+    }
+});
 </script>
 {% endblock %}

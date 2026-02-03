@@ -197,7 +197,8 @@ def update_cart(request):
 
 def cart_view(request):
     cart = request.session.get('cart', [])
-    delivery_price = ProductPrice.objects.get(id=1).price
+    selected_delivery = request.session.get('delivery_method', 'gls')
+    gls_delivery_price = ProductPrice.objects.get(id=1).price
     total_price = 0
     for item in cart:
         item_price = float(item['price_item'])
@@ -214,8 +215,9 @@ def cart_view(request):
         'ddv': ddv,
         'total_price_no_ddv': total_price_no_ddv,
         'total_price': total_price,
-        'delivery_price': delivery_price,
-        'total_price_with_delivery': float(total_price) + float(str(delivery_price)),
+        'gls_delivery_price': gls_delivery_price,
+        'total_price_with_delivery': float(total_price) + float(str(gls_delivery_price)),
+        'selected_delivery': selected_delivery,
 
     }
     return render(request, 'shop/vojzek.html',context)
@@ -443,7 +445,9 @@ def create_payment_intent(request):
     user = request.user if request.user.is_authenticated else None
 
     total_amount = 0
-    if True:  # GLS dostava, dokler ni drugih možnosti
+    delivery_method = request.session['delivery_method']
+    print(delivery_method)
+    if delivery_method == "gls":  # GLS dostava, dokler ni drugih možnosti
         delivery_price = ProductPrice.objects.get(id=1)
         delivery_product = delivery_price.product  # če imaš FK do Product
         cart.append({
@@ -731,3 +735,18 @@ def send_invoice_email(order):
     )
 
     email.send(fail_silently=False)
+
+
+def update_cart_delivery(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        delivery_method = data.get("delivery_method")
+        if delivery_method not in ["gls", "pickup", "parcel"]:
+            return JsonResponse({"status": "error", "message": "Invalid delivery type"}, status=400)
+
+        # Store only the delivery type in session
+        request.session['delivery_method'] = delivery_method
+
+        return JsonResponse({"status": "ok"})
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
