@@ -1429,7 +1429,6 @@ Ce bomo kdaj rabli, se html:
 .delivery-switch.vertical .option {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 14px 16px;
     font-size: 16px;
     font-weight: 500;
@@ -1439,6 +1438,12 @@ Ce bomo kdaj rabli, se html:
 
 .delivery-switch.vertical .price {
     font-size: 15px;
+}
+.delivery-switch.vertical .option-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
 }
 
 /* Slider */
