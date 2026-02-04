@@ -198,7 +198,14 @@ def update_cart(request):
 def cart_view(request):
     cart = request.session.get('cart', [])
     selected_delivery = request.session.get('delivery_method', 'gls')
+    #paketomat
+    parcel_id = request.session.get('parcel_id', '')
+    parcel_name = request.session.get('parcel_name', '')
+    parcel_address = request.session.get('parcel_address', '')
+
     gls_delivery_price = ProductPrice.objects.get(id=1).price
+    parcel_delivery_price = ProductPrice.objects.get(id=34).price
+
     total_price = 0
     for item in cart:
         item_price = float(item['price_item'])
@@ -216,8 +223,12 @@ def cart_view(request):
         'total_price_no_ddv': total_price_no_ddv,
         'total_price': total_price,
         'gls_delivery_price': gls_delivery_price,
+        'parcel_delivery_price': parcel_delivery_price,
         'total_price_with_delivery': float(total_price) + float(str(gls_delivery_price)),
         'selected_delivery': selected_delivery,
+        'parcel_id': parcel_id,
+        'parcel_name': parcel_name,
+        'parcel_address': parcel_address,
 
     }
     return render(request, 'shop/vojzek.html',context)
@@ -415,7 +426,6 @@ def create_payment_intent(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid method'}, status=405)
-
     # CSRF je že poslan prek Fetch z headerjem, zato lahko uporabljamo request.POST
     email = request.POST.get('email')
     address = request.POST.get('address')
@@ -446,8 +456,7 @@ def create_payment_intent(request):
 
     total_amount = 0
     delivery_method = request.session['delivery_method']
-    print(delivery_method)
-    if delivery_method == "gls":  # GLS dostava, dokler ni drugih možnosti
+    if delivery_method == "gls":  #GLS dostava
         delivery_price = ProductPrice.objects.get(id=1)
         delivery_product = delivery_price.product  # če imaš FK do Product
         cart.append({
@@ -461,6 +470,21 @@ def create_payment_intent(request):
             'image_url': None,
             'personalized_text': None
         })
+    elif delivery_method == "parcel": #GLS paketomat
+        delivery_price = ProductPrice.objects.get(id=34)
+        delivery_product = delivery_price.product  # če imaš FK do Product
+        cart.append({
+            'product_id': delivery_product.id,
+            'product_name': delivery_product.name,
+            'selected_price_id': delivery_price.id,
+            'selected_size_id': None,
+            'size_name': None,
+            'price_item': str(delivery_price.price),
+            'quantity': 1,
+            'image_url': None,
+            'personalized_text': None
+        })
+
     for item in cart:
         price = ProductPrice.objects.get(id=item['selected_price_id'])
         total_amount += int(price.price * 100) * item['quantity']
@@ -746,6 +770,11 @@ def update_cart_delivery(request):
 
         # Store only the delivery type in session
         request.session['delivery_method'] = delivery_method
+        if delivery_method == 'parcel':
+            request.session['parcel_id'] = data.get('parcel_id', '')
+            request.session['parcel_name'] = data.get('parcel_name', '')
+            request.session['parcel_address'] = data.get('parcel_address', '')
+            print(request.session['parcel_id'], request.session['parcel_name'], request.session['parcel_address'])
 
         return JsonResponse({"status": "ok"})
 

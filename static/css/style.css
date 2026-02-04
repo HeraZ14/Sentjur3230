@@ -1452,7 +1452,7 @@ Ce bomo kdaj rabli, se html:
     left: 4px;
     right: 4px;
     top: 4px;
-    height: calc(33% - 4px);
+    height: calc(29%);
     background: #090808;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.12);
@@ -1466,11 +1466,11 @@ Ce bomo kdaj rabli, se html:
 }
 
 #delivery-parcel:checked ~ .slider {
-    transform: translateY(100%);
+    transform: translateY(112%);
 }
 
 #delivery-pickup:checked ~ .slider {
-    transform: translateY(200%);
+    transform: translateY(224%);
 }
 
 gls-dpm-dialog[open] {

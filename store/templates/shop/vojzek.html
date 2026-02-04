@@ -90,22 +90,22 @@
     <input type="radio" id="delivery-pickup" name="delivery_method" value="pickup"
         {% if selected_delivery == "pickup" %}checked{% endif %}>
 
-    <label for="delivery-gls" class="option" style="font-size:17px">
+    <label for="delivery-gls" class="option" style="font-size:17px; height:55px;align-items:center;">
         Dostava GLS
         <span class="price" style="font-size:17px">{{ gls_delivery_price|floatformat:2 }} €</span>
     </label>
 
-    <label for="delivery-parcel" class="option" style="font-size:17px; cursor: pointer;display: flex;flex-direction: column;">
+    <label for="delivery-parcel" class="option" style="font-size:17px; cursor: pointer;display: flex;flex-direction: column;height:55px;justify-content:center;">
         <div class="option-row">
         <span>GLS Paketomat</span>
-        <span class="price" style="font-size:17px">2.00 €</span>
+        <span class="price" style="font-size:17px">{{ parcel_delivery_price|floatformat:2 }} €</span>
         </div>
         <small id="selected-parcelshop" style="display: block; font-size: 14px; color: #666; margin-top: 4px;"></small>
     </label>
 
 
-    <label for="delivery-pickup" class="option" style="font-size:17px">
-        Osebni prevzem
+    <label for="delivery-pickup" class="option" style="font-size:17px;height:55px;align-items:center;">
+        Osebni prevzem (3230)
         <span class="price" style="font-size:17px">0.00 €</span>
     </label>
 
@@ -113,9 +113,9 @@
 </div>
 
 <!-- Hidden fields to store ParcelShop data -->
-<input type="hidden" id="parcelshop-id" name="parcelshop_id" value="">
-<input type="hidden" id="parcelshop-name" name="parcelshop_name" value="">
-<input type="hidden" id="parcelshop-address" name="parcelshop_address" value="">
+<input type="hidden" id="parcel-id" name="parcel_id" value="{{ parcel_id }}">
+<input type="hidden" id="parcel-name" name="parcel_name" value="{{ parcel_name }}">
+<input type="hidden" id="parcel-address" name="parcel_address" value="{{ parcel_address }}">
 
 <!-- GLS Dialog -->
 <div id="gls-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999;">
@@ -137,7 +137,7 @@
 <div id="prices"
     data-base-total="{{ total_price|floatformat:2 }}"
     data-gls="{{ gls_delivery_price|floatformat:2 }}"
-    data-parcel="2.00">
+    data-parcel="{{ parcel_delivery_price|floatformat:2 }}">
 </div>
 <hr style="margin-bottom:1rem;">
 <div style="display: flex; justify-content: space-between; padding:14px 16px;">
@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Price calculation - TAKOJ DOSTOPNO
     const baseTotal = parseFloat(document.getElementById("prices").dataset.baseTotal);
     const glsPrice = parseFloat(document.getElementById("prices").dataset.gls);
-    const parcelPrice = 2.00;
+    const parcelPrice = parseFloat(document.getElementById("prices").dataset.parcel);
     const totalEl = document.getElementById("total-price");
 
     function updateTotal() {
@@ -217,7 +217,6 @@ document.addEventListener("DOMContentLoaded", function () {
         radio.addEventListener("change", function () {
             const selectedMethod = this.value;
 
-            console.log('Delivery method:', selectedMethod);
 
             // Če je parcel in GLS ni ready, počakaj
             if (selectedMethod === 'parcel') {
@@ -225,7 +224,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     openGLSModal();
                 } else {
                     pendingModalOpen = true;
-                    console.log('GLS script se še nalaga, modal se bo odprl ko bo ready...');
                 }
             }
 
@@ -239,9 +237,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 body: JSON.stringify({
                     delivery_method: selectedMethod,
-                    parcelshop_id: document.getElementById('parcelshop-id') ? document.getElementById('parcelshop-id').value : '',
-                    parcelshop_name: document.getElementById('parcelshop-name') ? document.getElementById('parcelshop-name').value : '',
-                    parcelshop_address: document.getElementById('parcelshop-address') ? document.getElementById('parcelshop-address').value : ''
+                    parcel_id: document.getElementById('parcel-id') ? document.getElementById('parcel-id').value : '',
+                    parcel_name: document.getElementById('parcelp-name') ? document.getElementById('parcel-name').value : '',
+                    parcel_address: document.getElementById('parcel-address') ? document.getElementById('parcel-address').value : ''
                 })
             }).catch(err => console.error('Napaka:', err));
         });
@@ -253,9 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
     script.type = 'module';
 
     script.onload = function() {
-        console.log('GLS script loaded');
         setTimeout(() => {
-            console.log('Custom element check:', customElements.get('gls-dpm'));
             glsReady = true;
             initApp();
 
@@ -283,7 +279,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initApp() {
-        console.log('initApp called');
 
         // Modal elements
         modal = document.getElementById('gls-modal-overlay');
@@ -304,15 +299,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize GLS widget
     function initializeGLSWidget() {
-        console.log('initializeGLSWidget called');
 
         if (widgetInitialized) {
-            console.log('Widget already initialized');
             return;
         }
 
         const container = document.getElementById('gls-widget-container');
-        console.log('Container:', container);
 
         if (!container) {
             console.error('Container not found!');
@@ -325,12 +317,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Odstrani stari widget
         const oldWidget = document.getElementById('glsMap');
         if (oldWidget) {
-            console.log('Removing old widget');
             oldWidget.remove();
         }
 
         // Ustvari nov widget
-        console.log('Creating widget element...');
         const widget = document.createElement('gls-dpm');
         widget.setAttribute('country', 'si');
         widget.setAttribute('language', 'sl');
@@ -339,15 +329,11 @@ document.addEventListener("DOMContentLoaded", function () {
         widget.style.height = '100%';
         widget.style.display = 'block';
 
-        console.log('Appending widget...');
         container.appendChild(widget);
-        console.log('Widget appended');
 
         // Preveri widget
         setTimeout(() => {
             const w = document.getElementById('glsMap');
-            console.log('Widget after append:', w);
-            console.log('Widget shadowRoot:', w ? w.shadowRoot : 'N/A');
             loadingIndicator.style.display = 'none';
         }, 1500);
 
@@ -357,14 +343,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             modal.style.display = 'none';
 
-            if (document.getElementById('parcelshop-id')) {
-                document.getElementById('parcelshop-id').value = selectedLocation.id || '';
+            if (document.getElementById('parcel-id')) {
+                document.getElementById('parcel-id').value = selectedLocation.id || '';
             }
-            if (document.getElementById('parcelshop-name')) {
-                document.getElementById('parcelshop-name').value = selectedLocation.name || '';
+            if (document.getElementById('parcel-name')) {
+                document.getElementById('parcel-name').value = selectedLocation.name || '';
             }
-            if (document.getElementById('parcelshop-address')) {
-                document.getElementById('parcelshop-address').value = selectedLocation.address || '';
+            if (document.getElementById('parcel-address')) {
+                document.getElementById('parcel-address').value = selectedLocation.address || '';
             }
 
             const displayText = (selectedLocation.name || '') + (selectedLocation.address ? ' - ' + selectedLocation.address : '');
@@ -381,9 +367,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 body: JSON.stringify({
                     delivery_method: 'parcel',
-                    parcelshop_id: selectedLocation.id || '',
-                    parcelshop_name: selectedLocation.name || '',
-                    parcelshop_address: selectedLocation.address || ''
+                    parcel_id: selectedLocation.id || '',
+                    parcel_name: selectedLocation.name || '',
+                    parcel_address: selectedLocation.address || ''
                 })
             }).catch(err => console.error('Napaka:', err));
         });
@@ -391,5 +377,34 @@ document.addEventListener("DOMContentLoaded", function () {
         widgetInitialized = true;
     }
 });
+document.addEventListener('DOMContentLoaded', () => {
+    if (!window.savedParcelShop) return;
+
+    const selectedLocation = window.savedParcelShop;
+
+    if (document.getElementById('parcel-id')) {
+        document.getElementById('parcel-id').value = selectedLocation.id || '';
+    }
+    if (document.getElementById('parcel-name')) {
+        document.getElementById('parcel-name').value = selectedLocation.name || '';
+    }
+    if (document.getElementById('parcel-address')) {
+        document.getElementById('parcel-address').value = selectedLocation.address || '';
+    }
+
+    const displayText =
+        (selectedLocation.name || '') +
+        (selectedLocation.address ? ' - ' + selectedLocation.address : '');
+
+    const displayElement = document.getElementById('selected-parcelshop');
+    if (displayElement) {
+        displayElement.textContent = displayText;
+    }
+});
+window.savedParcelShop = {
+    id: "{{ request.session.parcel_id|default:''|escapejs }}",
+    name: "{{ request.session.parcel_name|default:''|escapejs }}",
+    address: "{{ request.session.parcel_address|default:''|escapejs }}"
+};
 </script>
 {% endblock %}
