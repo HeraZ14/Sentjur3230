@@ -124,7 +124,6 @@
             ">
     </button>
         </div>
-
     </label>
 
 
@@ -186,9 +185,7 @@
 window.savedParcelShop = {
     id: "{{ parcel_id|escapejs }}",
     name: "{{ parcel_name|escapejs }}",
-    contact: {
-        address: "{{ parcel_address|escapejs }}"
-    }
+    address: "{{ parcel_address|escapejs }}"
 };
 
 document.addEventListener("DOMContentLoaded", function () {

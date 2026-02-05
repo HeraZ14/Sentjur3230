@@ -49,10 +49,10 @@
             border-radius: 8px;
             border-left: 4px solid #27ae60;
         }
-        .customer, .company {
+        .customer, .company, .delivery {
             margin: 20px 0;
             padding: 15px;
-            background: #f1fdfc; /* Zelenkasto za stranko/podjetje */
+            background: #f1fdfc; /* Zelenkasto za stranko/podjetje/dostavo */
             border-radius: 8px;
             border-left: 4px solid #27ae60;
         }
@@ -77,7 +77,7 @@
         <div class="summary">
             <p>Pozdravljeni {{ order.name }} {{ order.surname }},</p>
             <p>Vaše naročilo (ID: <strong>{{ order.id }}</strong>) je bilo uspešno <strong>PLAČANO</strong>.</p>
-            <p>Hvala za tvoje naročilo! Paket odpravimo v najkrajšem možnem času.</p>
+            <p>Hvala! Paket odpravimo v najkrajšem možnem času.</p>
         </div>
 
         <div class="section">
@@ -112,6 +112,19 @@
                     <td class="total">{{ order.total_price }} €</td>
                 </tr>
             </table>
+        </div>
+        <div class="delivery">
+        <h3>Dostava:</h3>
+        {% if delivery.delivery_type == "gls" %}
+            <p><strong>Način dostave:</strong> GLS Dostava<br>
+        {% elif delivery.delivery_type == "parcel" %}
+            <p><strong>Način dostave:</strong> Paketomat<br>
+            <strong>Paketomat:</strong> {{ delivery.delivery_name }}<br>
+            <strong>Naslov:</strong> {{ delivery.delivery_address }}</p>
+        {% elif delivery.delivery_type == "pickup" %}
+            <p><strong>Način dostave:</strong> Osebni prevzem (3230)<br>
+            V kolikor ste pustili tel. št., vas kontaktiramo, lahko pa tudi vi nas na <strong>031 647 937</strong>.</p>
+        {% endif %}
         </div>
 
         <div class="customer">

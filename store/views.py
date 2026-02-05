@@ -296,12 +296,14 @@ def stripe_webhook(request):
         if order_id:
             try:
                 order = Order.objects.get(id=order_id)
+                delivery = Delivery.objects.get(order_id=order_id)
+                print(delivery)
                 payment_method_id = intent.get('payment_method')
                 if payment_method_id:
                     method = stripe.PaymentMethod.retrieve(payment_method_id)
                     order.payment_method = method.type
                 if email and not order.status:
-                    html_message = render_to_string("shop/emails/payment_confirmation.html", {"order": order})
+                    html_message = render_to_string("shop/emails/payment_confirmation.html", {"order": order,"delivery":delivery})
                     send_mail(
                         subject=f'Plačilo uspešno #{order.id}',
                         message="",
@@ -757,7 +759,7 @@ def send_invoice_email(order):
         subject=subject,
         body=body,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[settings.INVOICES_MAIL, settings.MAMA_MAIL],
+        to=[settings.INVOICES_MAIL],
     )
 
     # Dodamo CSV kot priponko
