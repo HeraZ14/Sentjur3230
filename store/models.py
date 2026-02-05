@@ -224,6 +224,13 @@ class OrderItem(models.Model):
     price_tax = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     personalized = models.TextField(max_length=100, default="", blank=True, null=True)
 
+class Delivery(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='deliveries')
+    delivery_type = models.CharField(max_length=100, default="", blank=True, null=True)
+    delivery_id = models.CharField(max_length=100, default="", blank=True, null=True)
+    delivery_name = models.CharField(max_length=100, default="", blank=True, null=True)
+    delivery_address = models.TextField(max_length=100, default="", blank=True, null=True)
+
 class CheckoutForm(forms.Form):
     first_name = forms.CharField(max_length=50, required=True)
     last_name = forms.CharField(max_length=50, required=True)

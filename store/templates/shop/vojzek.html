@@ -95,12 +95,36 @@
         <span class="price" style="font-size:17px">{{ gls_delivery_price|floatformat:2 }} €</span>
     </label>
 
-    <label for="delivery-parcel" class="option" style="font-size:17px; cursor: pointer;display: flex;flex-direction: column;height:55px;justify-content:center;">
+    <label id="parcel-option" for="delivery-parcel" class="option" style="font-size:17px; cursor: pointer;display: flex;flex-direction: column;height:55px;justify-content:center;">
         <div class="option-row">
         <span>GLS Paketomat</span>
         <span class="price" style="font-size:17px">{{ parcel_delivery_price|floatformat:2 }} €</span>
         </div>
+        <div class="option-row">
         <small id="selected-parcelshop" style="display: block; font-size: 14px; color: #666; margin-top: 4px;"></small>
+        <button type="button" id="change-parcelshop-btn"
+        style="
+            position: relative;
+            cursor: pointer;
+            width: 120px;
+            height: 32px;
+            border: none;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #3498db;
+        ">
+        <img src="/static/sub-substitute-4.gif" alt=""
+            style="
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                pointer-events: none;
+            ">
+    </button>
+        </div>
+
     </label>
 
 
@@ -159,8 +183,23 @@
 
 
 <script>
+window.savedParcelShop = {
+    id: "{{ parcel_id|escapejs }}",
+    name: "{{ parcel_name|escapejs }}",
+    contact: {
+        address: "{{ parcel_address|escapejs }}"
+    }
+};
+
 document.addEventListener("DOMContentLoaded", function () {
-    // Alert auto-dismiss
+
+    // --- Hidden input iz savedParcelShop ---
+    if (window.savedParcelShop && window.savedParcelShop.id) {
+        const idEl = document.getElementById('parcel-id');
+        if (idEl) idEl.value = window.savedParcelShop.id;
+    }
+
+    // --- Alert auto-dismiss ---
     const alerts = document.querySelectorAll(".alert");
     setTimeout(() => {
         alerts.forEach(alert => {
@@ -170,36 +209,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }, 3000);
 
-    // Price calculation - TAKOJ DOSTOPNO
+    // --- Price calculation ---
     const baseTotal = parseFloat(document.getElementById("prices").dataset.baseTotal);
     const glsPrice = parseFloat(document.getElementById("prices").dataset.gls);
     const parcelPrice = parseFloat(document.getElementById("prices").dataset.parcel);
     const totalEl = document.getElementById("total-price");
+
+    function hasParcelShopSelected() {
+        const el = document.getElementById('parcel-id');
+        return el && el.value && el.value.trim() !== '';
+    }
+    const selectedEl = document.getElementById('selected-parcelshop');
+    const changeBtn = document.getElementById("change-parcelshop-btn");
+
+    function updateParcelVisibility() {
+        const visible = hasParcelShopSelected();
+        if (selectedEl) selectedEl.style.display = visible ? 'block' : 'none';
+        if (changeBtn) changeBtn.style.display = visible ? 'inline-block' : 'none';
+    }
+    updateParcelVisibility();
 
     function updateTotal() {
         const selected = document.querySelector('input[name="delivery_method"]:checked');
         if (!selected) return;
 
         let delivery = 0;
-        if (selected.value === 'gls') {
-            delivery = glsPrice;
-        } else if (selected.value === 'parcel') {
-            delivery = parcelPrice;
-        }
+        if (selected.value === 'gls') delivery = glsPrice;
+        else if (selected.value === 'parcel') delivery = parcelPrice;
 
         totalEl.textContent = (baseTotal + delivery).toFixed(2) + ' €';
     }
 
     updateTotal();
 
-    // Helper za CSRF token - TAKOJ DOSTOPEN
+    // --- CSRF helper ---
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            for (let c of cookies) {
+                const cookie = c.trim();
+                if (cookie.startsWith(name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
@@ -208,23 +258,19 @@ document.addEventListener("DOMContentLoaded", function () {
         return cookieValue;
     }
 
-    // Spremenljivka za tracking, ali je GLS widget pripravljen
+    // --- GLS widget state ---
     let glsReady = false;
     let pendingModalOpen = false;
+    let modal, closeBtn, loadingIndicator, widgetInitialized = false;
 
-    // Handle delivery method changes - TAKOJ DELUJE
+    // --- Delivery radio handler ---
     document.querySelectorAll('input[name="delivery_method"]').forEach(radio => {
         radio.addEventListener("change", function () {
             const selectedMethod = this.value;
-
-
-            // Če je parcel in GLS ni ready, počakaj
-            if (selectedMethod === 'parcel') {
-                if (glsReady) {
-                    openGLSModal();
-                } else {
-                    pendingModalOpen = true;
-                }
+            console.log(selectedMethod,hasParcelShopSelected)
+            if (selectedMethod === 'parcel' && !hasParcelShopSelected()) {
+                if (glsReady) openGLSModal();
+                else pendingModalOpen = true;
             }
 
             updateTotal();
@@ -237,15 +283,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 body: JSON.stringify({
                     delivery_method: selectedMethod,
-                    parcel_id: document.getElementById('parcel-id') ? document.getElementById('parcel-id').value : '',
-                    parcel_name: document.getElementById('parcelp-name') ? document.getElementById('parcel-name').value : '',
-                    parcel_address: document.getElementById('parcel-address') ? document.getElementById('parcel-address').value : ''
+                    parcel_id: document.getElementById('parcel-id')?.value || '',
+                    parcel_name: document.getElementById('parcel-name')?.value || '',
+                    parcel_address: document.getElementById('parcel-address')?.value || ''
                 })
             }).catch(err => console.error('Napaka:', err));
         });
     });
 
-    // Naloži GLS script kot module
+    // --- GLS script load ---
     const script = document.createElement('script');
     script.src = 'https://map.gls-slovenia.com/widget/gls-dpm.js';
     script.type = 'module';
@@ -255,22 +301,34 @@ document.addEventListener("DOMContentLoaded", function () {
             glsReady = true;
             initApp();
 
-            // Če je uporabnik že izbral parcel prej, odpri modal sedaj
-            if (pendingModalOpen) {
+            if (pendingModalOpen && !hasParcelShopSelected()) {
                 openGLSModal();
-                pendingModalOpen = false;
             }
+            pendingModalOpen = false;
         }, 2000);
     };
-
-    script.onerror = function() {
-        console.error('Failed to load GLS script');
-    };
-
+    script.onerror = () => console.error('Failed to load GLS script');
     document.head.appendChild(script);
 
-    // Globalne spremenljivke za modal
-    let modal, closeBtn, loadingIndicator, widgetInitialized = false;
+    // --- Modal init ---
+    function initApp() {
+        modal = document.getElementById('gls-modal-overlay');
+        closeBtn = document.getElementById('close-gls-map');
+        loadingIndicator = document.getElementById('gls-loading');
+
+        closeBtn.addEventListener('click', () => modal.style.display = 'none');
+        modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+        // Gumb za menjavo
+        const changeBtn = document.getElementById("change-parcelshop-btn");
+        if (changeBtn) {
+            changeBtn.addEventListener("click", e => {
+                e.preventDefault();
+                e.stopPropagation();
+                openGLSModal();
+            });
+        }
+    }
 
     function openGLSModal() {
         if (!modal) return;
@@ -278,49 +336,17 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => initializeGLSWidget(), 300);
     }
 
-    function initApp() {
-
-        // Modal elements
-        modal = document.getElementById('gls-modal-overlay');
-        closeBtn = document.getElementById('close-gls-map');
-        loadingIndicator = document.getElementById('gls-loading');
-
-        // Close modal handlers
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-    }
-
-    // Initialize GLS widget
     function initializeGLSWidget() {
-
-        if (widgetInitialized) {
-            return;
-        }
+        if (widgetInitialized) return;
 
         const container = document.getElementById('gls-widget-container');
+        if (!container) return console.error('Container not found!');
 
-        if (!container) {
-            console.error('Container not found!');
-            return;
-        }
-
-        // Prikaži loading
         loadingIndicator.style.display = 'block';
 
-        // Odstrani stari widget
         const oldWidget = document.getElementById('glsMap');
-        if (oldWidget) {
-            oldWidget.remove();
-        }
+        if (oldWidget) oldWidget.remove();
 
-        // Ustvari nov widget
         const widget = document.createElement('gls-dpm');
         widget.setAttribute('country', 'si');
         widget.setAttribute('language', 'sl');
@@ -328,36 +354,39 @@ document.addEventListener("DOMContentLoaded", function () {
         widget.style.width = '100%';
         widget.style.height = '100%';
         widget.style.display = 'block';
-
         container.appendChild(widget);
 
-        // Preveri widget
-        setTimeout(() => {
-            const w = document.getElementById('glsMap');
-            loadingIndicator.style.display = 'none';
-        }, 1500);
+        setTimeout(() => loadingIndicator.style.display = 'none', 1500);
+        const parcelLabel = document.querySelector('label[for="delivery-parcel"]');
 
-        // Handle selection
-        widget.addEventListener('change', (event) => {
+        if (parcelLabel) {
+            parcelLabel.addEventListener("click", (e) => {
+                const radio = document.getElementById('delivery-parcel');
+                // Če je radio parcel checked in paketomat še ni izbran
+                if (radio.checked && !hasParcelShopSelected()) {
+                    e.preventDefault();   // prepreči default check toggle, če želiš
+                    openGLSModal();
+                }
+            });
+        }
+
+        widget.addEventListener('change', event => {
             const selectedLocation = event.detail;
-
             modal.style.display = 'none';
 
-            if (document.getElementById('parcel-id')) {
-                document.getElementById('parcel-id').value = selectedLocation.id || '';
-            }
-            if (document.getElementById('parcel-name')) {
-                document.getElementById('parcel-name').value = selectedLocation.name || '';
-            }
-            if (document.getElementById('parcel-address')) {
-                document.getElementById('parcel-address').value = selectedLocation.address || '';
-            }
+            const address = selectedLocation.contact?.address || '';
+            const city = selectedLocation.contact?.city || '';
+            const postalCode = selectedLocation.contact?.postalCode || '';
+            const fullAddress = `${address}, ${postalCode} ${city}`.trim();
 
-            const displayText = (selectedLocation.name || '') + (selectedLocation.address ? ' - ' + selectedLocation.address : '');
+            document.getElementById('parcel-id').value = selectedLocation.id || '';
+            document.getElementById('parcel-name').value = selectedLocation.name || '';
+            document.getElementById('parcel-address').value = fullAddress || '';
+
             const displayElement = document.getElementById('selected-parcelshop');
-            if (displayElement) {
-                displayElement.textContent = displayText;
-            }
+            if (displayElement) displayElement.textContent = selectedLocation.name || '';
+
+            updateParcelVisibility();
 
             fetch("/update-cart-delivery/", {
                 method: "POST",
@@ -369,42 +398,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     delivery_method: 'parcel',
                     parcel_id: selectedLocation.id || '',
                     parcel_name: selectedLocation.name || '',
-                    parcel_address: selectedLocation.address || ''
+                    parcel_address: fullAddress || ''
                 })
             }).catch(err => console.error('Napaka:', err));
         });
 
         widgetInitialized = true;
     }
-});
-document.addEventListener('DOMContentLoaded', () => {
-    if (!window.savedParcelShop) return;
 
-    const selectedLocation = window.savedParcelShop;
+    // --- Prikaži shranjeni parcel shop ---
+    if (window.savedParcelShop && window.savedParcelShop.id) {
+        const selectedLocation = window.savedParcelShop;
 
-    if (document.getElementById('parcel-id')) {
+        const fullAddress = `${selectedLocation.contact?.address || ''}, ${selectedLocation.contact?.postalCode || ''} ${selectedLocation.contact?.city || ''}`.trim();
+
         document.getElementById('parcel-id').value = selectedLocation.id || '';
-    }
-    if (document.getElementById('parcel-name')) {
         document.getElementById('parcel-name').value = selectedLocation.name || '';
-    }
-    if (document.getElementById('parcel-address')) {
-        document.getElementById('parcel-address').value = selectedLocation.address || '';
+        document.getElementById('parcel-address').value = fullAddress || '';
+
+        const displayElement = document.getElementById('selected-parcelshop');
+        if (displayElement) displayElement.textContent = selectedLocation.name || '';
+
+        updateParcelVisibility();
     }
 
-    const displayText =
-        (selectedLocation.name || '') +
-        (selectedLocation.address ? ' - ' + selectedLocation.address : '');
-
-    const displayElement = document.getElementById('selected-parcelshop');
-    if (displayElement) {
-        displayElement.textContent = displayText;
-    }
 });
-window.savedParcelShop = {
-    id: "{{ request.session.parcel_id|default:''|escapejs }}",
-    name: "{{ request.session.parcel_name|default:''|escapejs }}",
-    address: "{{ request.session.parcel_address|default:''|escapejs }}"
-};
 </script>
 {% endblock %}

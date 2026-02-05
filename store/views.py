@@ -18,9 +18,10 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, StripeLogs, CoinbaseLogs, CheckoutForm, Newsletter
+from store.models import Product, Cart, CartItem, Category, PriceTypes, ProductPrice, ProductSize, Size, Order, OrderItem, Delivery, StripeLogs, CoinbaseLogs, CheckoutForm, Newsletter
 from spletka.settings import EMAIL_HOST_USER
 import sys
+
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -454,40 +455,6 @@ def create_payment_intent(request):
 
     user = request.user if request.user.is_authenticated else None
 
-    total_amount = 0
-    delivery_method = request.session['delivery_method']
-    if delivery_method == "gls":  #GLS dostava
-        delivery_price = ProductPrice.objects.get(id=1)
-        delivery_product = delivery_price.product  # če imaš FK do Product
-        cart.append({
-            'product_id': delivery_product.id,
-            'product_name': delivery_product.name,
-            'selected_price_id': delivery_price.id,
-            'selected_size_id': None,
-            'size_name': None,
-            'price_item': str(delivery_price.price),
-            'quantity': 1,
-            'image_url': None,
-            'personalized_text': None
-        })
-    elif delivery_method == "parcel": #GLS paketomat
-        delivery_price = ProductPrice.objects.get(id=34)
-        delivery_product = delivery_price.product  # če imaš FK do Product
-        cart.append({
-            'product_id': delivery_product.id,
-            'product_name': delivery_product.name,
-            'selected_price_id': delivery_price.id,
-            'selected_size_id': None,
-            'size_name': None,
-            'price_item': str(delivery_price.price),
-            'quantity': 1,
-            'image_url': None,
-            'personalized_text': None
-        })
-
-    for item in cart:
-        price = ProductPrice.objects.get(id=item['selected_price_id'])
-        total_amount += int(price.price * 100) * item['quantity']
     order = Order.objects.create(
         user=user,
         email=email,
@@ -514,9 +481,51 @@ def create_payment_intent(request):
         obj.newsletter = True
         obj.save()
 
+    delivery_method = request.session['delivery_method']
+    delivery_id = request.session['parcel_id']
+    delivery_name = request.session['parcel_name']
+    delivery_address = request.session['parcel_address']
+    if delivery_method == "gls":  # GLS dostava
+        delivery_price = ProductPrice.objects.get(id=1)
+        delivery_product = delivery_price.product  # če imaš FK do Product
+        cart.append({
+            'product_id': delivery_product.id,
+            'product_name': delivery_product.name,
+            'selected_price_id': delivery_price.id,
+            'selected_size_id': None,
+            'size_name': None,
+            'price_item': str(delivery_price.price),
+            'quantity': 1,
+            'image_url': None,
+            'personalized_text': None
+        })
+    elif delivery_method == "parcel":  # GLS paketomat
+        delivery_price = ProductPrice.objects.get(id=34)
+        delivery_product = delivery_price.product  # če imaš FK do Product
+        cart.append({
+            'product_id': delivery_product.id,
+            'product_name': delivery_product.name,
+            'selected_price_id': delivery_price.id,
+            'selected_size_id': None,
+            'size_name': None,
+            'price_item': str(delivery_price.price),
+            'quantity': 1,
+            'image_url': None,
+            'personalized_text': None
+        })
+    Delivery.objects.create(
+        order=order,
+        delivery_type=delivery_method,
+        delivery_id=delivery_id,
+        delivery_name=delivery_name,
+        delivery_address=delivery_address,
+    )
+
+    total_amount = 0
     for item in cart:
         product = Product.objects.get(id=item['product_id'])
         price = ProductPrice.objects.get(id=item['selected_price_id'])
+        total_amount += int(price.price * 100) * item['quantity']
         if item['selected_size_id'] is not None:
             size = Size.objects.get(id=item['selected_size_id'])
         else:
