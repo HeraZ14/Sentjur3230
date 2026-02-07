@@ -108,11 +108,11 @@
             cursor: pointer;
             width: 120px;
             height: 32px;
-            border: none;
+            border: 0px;
             border-radius: 4px;
-            overflow: hidden;
-            background: #3498db;
+            overflow: visible;
         ">
+        <span class="parcel-hint">Izberite menjavo</span>
         <img src="/static/sub-substitute-4.gif" alt=""
             style="
                 position: absolute;
@@ -218,6 +218,36 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     const selectedEl = document.getElementById('selected-parcelshop');
     const changeBtn = document.getElementById("change-parcelshop-btn");
+    const parcelLabel = document.querySelector('label[for="delivery-parcel"]');
+
+    let lastLabelClick = 0;
+    let rageClicks = 0;
+
+    parcelLabel.addEventListener("click", () => {
+
+    if (hasParcelShopSelected()) {
+    rageClicks++;
+    };
+
+
+    // po 2 hitrih klikih → opozori
+    if (rageClicks >= 2 && changeBtn) {
+        changeBtn.classList.remove("parcel-attention");
+        changeBtn.classList.remove("parcel-show-hint");
+        void changeBtn.offsetWidth;
+
+        changeBtn.classList.add("parcel-attention");
+        changeBtn.classList.add("parcel-show-hint");
+
+        // skrij po 3 sekundah
+        setTimeout(() => {
+            changeBtn.classList.remove("parcel-show-hint");
+            changeBtn.classList.remove("parcel-attention");
+        }, 3000);
+
+        rageClicks = 0;
+    }
+});
 
     function updateParcelVisibility() {
         const visible = hasParcelShopSelected();
@@ -418,6 +448,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         updateParcelVisibility();
     }
+
 
 });
 </script>

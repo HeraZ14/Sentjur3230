@@ -43,8 +43,14 @@ def sentjur_merch(request):
 
 
 def smarski_merch(request):
-    products = Product.objects.filter(category__name='Šmarski Merch')
-    return render(request, 'zajebancija/glasovanje.html', {'products':products})
+    products = Product.objects.filter(category__name='Šmarski Merch').prefetch_related(
+        Prefetch('productprice_set', queryset=ProductPrice.objects.select_related('price_type'))
+    )
+    priceTypes = PriceTypes.objects.all()
+    return render(request, 'shop/sentjur-merch.html', {
+        'products': products,
+        'priceTypes': priceTypes,
+    })
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)

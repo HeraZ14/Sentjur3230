@@ -1514,3 +1514,59 @@ gls-dpm-dialog::backdrop {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+.parcel-attention {
+    border: 2px solid #e74c3c !important;
+    animation: parcelShake 0.45s ease-in-out 2;
+}
+
+.parcel-attention img {
+    animation: parcelZoom 0.45s ease-in-out 2;
+}
+
+@keyframes parcelShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-3px); }
+    40% { transform: translateX(3px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes parcelZoom {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.parcel-hint {
+    position: absolute;
+    top: 120%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: #ff3b3b;
+    color: white;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: .25s ease;
+}
+
+
+.parcel-hint::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;     /* prej top */
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #ff3b3b;  /* prej border-top-color */
+}
+
+
+.parcel-show-hint .parcel-hint {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
