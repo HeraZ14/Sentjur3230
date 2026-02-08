@@ -765,7 +765,7 @@ def send_invoice_email(order):
         subject=subject,
         body=body,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[settings.INVOICES_MAIL],
+        to=[settings.INVOICES_MAIL, settings.MAMA_MAIL],
     )
 
     # Dodamo CSV kot priponko
