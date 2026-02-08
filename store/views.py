@@ -211,7 +211,7 @@ def cart_view(request):
     parcel_address = request.session.get('parcel_address', '')
 
     gls_delivery_price = ProductPrice.objects.get(id=1).price
-    parcel_delivery_price = ProductPrice.objects.get(id=34).price
+    parcel_delivery_price = ProductPrice.objects.get(id=2).price
 
     total_price = 0
     for item in cart:
@@ -508,7 +508,7 @@ def create_payment_intent(request):
             'personalized_text': None
         })
     elif delivery_method == "parcel":  # GLS paketomat
-        delivery_price = ProductPrice.objects.get(id=34)
+        delivery_price = ProductPrice.objects.get(id=2)
         delivery_product = delivery_price.product  # če imaš FK do Product
         cart.append({
             'product_id': delivery_product.id,
